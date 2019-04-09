@@ -21,7 +21,7 @@ export class Circuit {
         this.numbOfVoltageSource = volt;
         this.numbOfCommonBranch = comm;
         for (var i=0; i < meshnumb; i++){
-            this.meshes.push(new Mesh(meshnumb, res, cur, volt, comm));
+            this.meshes.push(new Mesh(/*meshnumb, res, cur, volt, comm*/));
         }
     }
 

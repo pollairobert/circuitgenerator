@@ -1,36 +1,25 @@
-﻿import {CircuitElements} from "./interfaceCircElement";
-import {Wire} from "./wire";
-import {Resistance} from "./resistance";
-import {CurrentSource} from "./currentsource";
-import {VoltageSource} from "./voltagesource";
-import {Branch, branchCounter} from "./branch";
-import {Mesh, meshCounter} from "./mesh";
-import { Circuit } from "./circuit";
-import {CircuitGenerator} from './circuitgenerator'
-
-var c = new CircuitGenerator();
-c.generateCircuit(2,2,0,1,1);
+"use strict";
+exports.__esModule = true;
+var circuitgenerator_1 = require("./circuitgenerator");
+var c = new circuitgenerator_1.CircuitGenerator();
+c.generateCircuit(2, 2, 0, 1, 1);
 console.log(c.getCircuit());
-console.log('Hurkok szama a halozatban:'+ c.getCircuit().getMeshes()[0].getMaxMesh());
-for (var i=0; i < c.getCircuit().getMeshes().length; i++){
-    
-    console.log('Hurok szama: '+c.getCircuit().getMeshes()[i].getMeshNumber());
+console.log('Hurkok szama a halozatban:' + c.getCircuit().getMeshes()[0].getMaxMesh());
+for (var i = 0; i < c.getCircuit().getMeshes().length; i++) {
+    console.log('Hurok szama: ' + c.getCircuit().getMeshes()[i].getMeshNumber());
     console.log('Ag szam, orientacio, dir, common');
-    for (var j=0; j<c.getCircuit().getMeshes()[i].getBranches().length; j++){
-        console.log('-' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchNumber()+
-                    ', '+ c.getCircuit().getMeshes()[i].getBranches()[j].getOrientation()+
-                    ', '+ c.getCircuit().getMeshes()[i].getBranches()[j].getDirection()+
-                    ', '+ c.getCircuit().getMeshes()[i].getBranches()[j].getCommon());
+    for (var j = 0; j < c.getCircuit().getMeshes()[i].getBranches().length; j++) {
+        console.log('-' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchNumber() +
+            ', ' + c.getCircuit().getMeshes()[i].getBranches()[j].getOrientation() +
+            ', ' + c.getCircuit().getMeshes()[i].getBranches()[j].getDirection() +
+            ', ' + c.getCircuit().getMeshes()[i].getBranches()[j].getCommon());
         console.log('   Elemek:');
-        for (var k=0; k<c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
-            console.log('   -'+ c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getId());
+        for (var k = 0; k < c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements().length; k++) {
+            console.log('   -' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getId());
         }
     }
-    
     //console.log(i);
 }
-
-
 //c.getMeshes()[0].setBranches(c.getMeshes()[1].getBranches()[1]);
 /*console.log('Hurkok szama a halozatban:'+ c.getMeshes()[0].getMaxMesh());
 for (var i=0; i < c.getMeshes().length; i++){
@@ -74,4 +63,4 @@ console.log('+   |  ');
 console.log('V   R  ');
 console.log('-   |  ');
 console.log('|   |  ');
-console.log('------B');*/
+console.log('------B');*/ 

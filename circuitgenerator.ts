@@ -12,7 +12,7 @@ export class CircuitGenerator {
 
     public generateCircuit(mesh: number, res: number, cur: number, volt: number, comm: number): void{
        this.circuit = new Circuit(mesh, res,cur,volt,comm);
-       console.log('Hurkok szama a halozatban:'+ this.circuit.getMeshes()[0].getMaxMesh());
+       /*console.log('Hurkok szama a halozatban:'+ this.circuit.getMeshes()[0].getMaxMesh());
        for (var i=0; i < this.circuit.getMeshes().length; i++){
            console.log('Hurok szama: '+this.circuit.getMeshes()[i].getMeshNumber());
            console.log('Ag szam, orientacio, dir, elem, common');
@@ -28,6 +28,9 @@ export class CircuitGenerator {
            }
            
            //console.log(i);
-       }
+       }*/
+    }
+    public getCircuit(): Circuit{
+        return this.circuit;
     }
 }
