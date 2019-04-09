@@ -3,6 +3,7 @@ import { Wire } from "./wire";
 import { Resistance } from "./resistance";
 import { CurrentSource } from "./currentsource";
 import { VoltageSource } from "./voltagesource";
+import { Mesh } from "./mesh";
 
 export var branchCounter: number = 0;
 export class Branch {
@@ -18,7 +19,7 @@ export class Branch {
     private commBrancResistance: number;
 
     constructor(orient: boolean, dir: boolean, meshNumber: number) {
-        this.setBranchElements(new Wire());
+        //this.setBranchElements(new Wire());
         //this.branchElements.push(new Wire());
         this.meshNumber = meshNumber;
         this.orientation = orient;
@@ -41,16 +42,19 @@ export class Branch {
         this.common = comm;
     }
 
-    public setBranchElements(element: CircuitElements): void {
+    public setBranchElements(element: CircuitElements, mesh: Mesh): void {
         this.branchElements.push(element);
         if (element.getId() === 'R') {
             this.branchResistance += element.getResistance();
+            mesh.setMeshResistance(element.getResistance());
         }
         if (element.getId() === 'V') {
             if (element.getDirection() === true){
                 this.branchVoltage += element.getVoltage();
+                mesh.setMeshVoltage(element.getVoltage());
             } else {
                 this.branchVoltage += (element.getVoltage()*(-1));
+                mesh.setMeshVoltage(element.getVoltage()*(-1));
             }
             
         }

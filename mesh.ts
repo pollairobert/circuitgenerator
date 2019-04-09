@@ -44,8 +44,8 @@ export class Mesh {
 
     public setBranches(branch: Branch): void {
         this.branches.push(branch);
-        this.meshResistance += branch.getBranchResistance();
-        this.meshVoltage += branch.getBranchVoltage();
+        //this.meshResistance += branch.getBranchResistance();
+        //this.meshVoltage += branch.getBranchVoltage();
     }
     public getMeshNumber(): number {
         return this.meshNumber;
@@ -55,6 +55,13 @@ export class Mesh {
         return this.branches;
     }
 
+    public setMeshResistance(res: number): void {
+        this.meshResistance += res;
+    }
+
+    public setMeshVoltage(res: number): void {
+        this.meshVoltage += res;
+    }
     /*public getMaxMesh(): number {
         return this.maxMeshNumb;
     }*/
