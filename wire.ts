@@ -1,22 +1,22 @@
-﻿import {CircuitElements} from "./interfaceCircElement";
+﻿import { CircuitElements } from "./interfaceCircElement";
 
 export class Wire implements CircuitElements {
     private id = 'W';
-    private resistance = 0;
+    private resistance: number  = 0;
     private current: number;
-    private voltage: number;
+    private voltage: number = 0;
     /*constructor(){
         wireCounter += 1;
     }*/
-    public getId(){
+    public getId() {
         return this.id;
     }
 
-    public getResistance(){
+    public getResistance() {
         return this.resistance;
     }
 
-    public setCurrent (cur: number): void {
+    public setCurrent(cur: number): void {
         this.current = cur;
     }
 
@@ -24,10 +24,10 @@ export class Wire implements CircuitElements {
         return this.current;
     }
 
-    public getVoltage(){
+    public getVoltage() {
         return this.voltage;
     }
-    public getDirection(){
+    public getDirection() {
         return false;
     }
 }

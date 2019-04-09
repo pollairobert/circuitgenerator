@@ -1,4 +1,4 @@
-﻿import {CircuitElements} from "./interfaceCircElement";
+﻿import { CircuitElements } from "./interfaceCircElement";
 
 export class VoltageSource implements CircuitElements {
     private id = 'V';
@@ -7,33 +7,33 @@ export class VoltageSource implements CircuitElements {
     private voltage: number;
     private direction: boolean;
 
-    constructor(voltage: number, dir: boolean){
-        this.voltage = voltage; 
+    constructor(voltage: number, dir: boolean) {
+        this.voltage = voltage;
         this.direction = dir;
         this.resistance = 0;
     }
 
-    public setCurrent (cur: number): void {
+    public setCurrent(cur: number): void {
         this.current = cur;
     }
 
-    public getId(){
+    public getId() {
         return this.id;
     }
 
-    public getResistance(){
+    public getResistance() {
         return this.resistance;
     }
 
-    public getCurrent(){
+    public getCurrent() {
         return this.current;
     }
 
-    public getVoltage(){
+    public getVoltage() {
         return this.voltage;
     }
 
-    public getDirection(){
+    public getDirection() {
         return this.direction;
     }
 }
