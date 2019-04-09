@@ -12,6 +12,7 @@ export class Mesh {
     //private maxMeshNumb: number;
     private meshResistance: number = 0;
     private meshVoltage: number = 0;
+    private meshCurrent: number = 0;
 
     constructor(/*maxmesh: number, res: number, cur: number, volt: number, comm: number*/) {
         //this.maxMeshNumb = maxmesh;
@@ -61,6 +62,12 @@ export class Mesh {
 
     public setMeshVoltage(res: number): void {
         this.meshVoltage += res;
+    }
+    public setMeshCurrent(current: number): void {
+        this.meshCurrent = current;
+    }
+    public getMesCurrent(): number {
+        return this.meshCurrent;
     }
     /*public getMaxMesh(): number {
         return this.maxMeshNumb;

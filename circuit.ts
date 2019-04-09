@@ -9,6 +9,8 @@ import { Mesh, meshCounter } from "./mesh";
 export class Circuit {
     private meshes: Mesh[] = [];
     private numberOfMesh: number;
+    private theveninResistance: number = 0;
+    private theveninVoltage: number = 0;
     private numbOfResistance: number;
     private numbOfCurrentSource: number;
     private numbOfVoltageSource: number;
@@ -25,7 +27,18 @@ export class Circuit {
             //this.meshes.push(new Mesh(/*meshnumb, res, cur, volt, comm*/
         //}
     }
-
+    public setThevRes(res: number): void {
+        this.theveninResistance = res;
+    }
+    public setThevVolt(volt: number): void {
+        this.theveninVoltage = volt;
+    }
+    public getThevRes(): number {
+        return this.theveninResistance;
+    }
+    public getThevVolt(): number {
+        return this.theveninVoltage;
+    }
     public setMeshes(mesh: Mesh): void {
         this.meshes.push(mesh);
     }

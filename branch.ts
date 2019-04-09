@@ -49,18 +49,18 @@ export class Branch {
             mesh.setMeshResistance(element.getResistance());
         }
         if (element.getId() === 'V') {
-            if (element.getDirection() === true){
+            if (element.getDirection() === true) {
                 this.branchVoltage += element.getVoltage();
                 mesh.setMeshVoltage(element.getVoltage());
             } else {
-                this.branchVoltage += (element.getVoltage()*(-1));
-                mesh.setMeshVoltage(element.getVoltage()*(-1));
+                this.branchVoltage += (element.getVoltage() * (-1));
+                mesh.setMeshVoltage(element.getVoltage() * (-1));
             }
-            
+
         }
     }
 
-    public deleteBranchElement():void {
+    public deleteBranchElement(): void {
         this.branchElements.pop();
     }
 

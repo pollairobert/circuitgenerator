@@ -10,30 +10,37 @@ import { CircuitGenerator } from './circuitgenerator'
 
 var c = new CircuitGenerator();
 c.generateAndAnalyzeCircuit(1, 3, 0, 2, 0);
-//console.log(c.getCircuit());
-console.log('Hurkok szama a halozatban: ' + c.getCircuit().getNumberOfMesh()/*c.getCircuit().getMeshNumb()*/);
 
-for (var i = 0; i < c.getCircuit().getNumberOfMesh(); i++){
-    console.log(c.getCircuit().getMeshes()[i].getMeshNumber()+ '. SZAMU HUROK:');
-    console.log(' - Hurok ellenallas:'+c.getCircuit().getMeshes()[i].getMeshResistance());
-    console.log(' - Hurok feszultseg:'+c.getCircuit().getMeshes()[i].getMeshVoltage());
-    console.log(' - Hurokban levo agak:');
-    for (var j = 0; j < c.getCircuit().getMeshes()[i].getBranches().length; j++){
-        console.log('   - Ag szama: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchNumber());
-        console.log('   - Ag Orienacio: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getOrientation());
-        console.log('   - Ag Irany: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getDirection());
-        console.log('   - Ag ellenallas: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchResistance());
-        console.log('   - Ag feszultseg: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchVoltage());
-        console.log('   - Ag elemei:');
-        for (var k = 0; k < c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
-            console.log('       - Elem tipusa: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getId());
-            console.log('       - Elem ellenallasa: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getResistance());
-            console.log('       - Elem feszultsege: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage());
-            console.log('       - Elem arama: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getCurrent());
-            console.log('       - Elem iranya: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getDirection());
+if (c.getCircuit().getNumberOfMesh() === 1) {
+    console.log('Hurkok szama a halozatban: ' + c.getCircuit().getNumberOfMesh()/*c.getCircuit().getMeshNumb()*/);
+    for (var i = 0; i < c.getCircuit().getNumberOfMesh(); i++){
+        console.log(c.getCircuit().getMeshes()[i].getMeshNumber()+ '. SZAMU HUROK:');
+        console.log(' - Hurok ellenallas:'+c.getCircuit().getMeshes()[i].getMeshResistance());
+        console.log(' - Hurok feszultseg:'+c.getCircuit().getMeshes()[i].getMeshVoltage());
+        console.log(' - Hurok arama:'+c.getCircuit().getMeshes()[i].getMesCurrent());
+        console.log(' - Hurokban levo agak:');
+        for (var j = 0; j < c.getCircuit().getMeshes()[i].getBranches().length; j++){
+            console.log('   - Ag szama: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchNumber());
+            console.log('   - Ag Orienacio: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getOrientation());
+            console.log('   - Ag Irany: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getDirection());
+            console.log('   - Ag ellenallas: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchResistance());
+            console.log('   - Ag feszultseg: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchVoltage());
+            console.log('   - Ag elemei:');
+            for (var k = 0; k < c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
+                console.log('       - Elem tipusa: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getId());
+                console.log('       - Elem ellenallasa: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getResistance());
+                console.log('       - Elem feszultsege: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage());
+                console.log('       - Elem arama: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getCurrent());
+                console.log('       - Elem iranya: ' + c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getDirection());
+            }
         }
     }
+    console.log('A halozat Thevenin helyettesito generatoranak feszultsege: '+ c.getCircuit().getThevVolt());
+    console.log('A halozat Thevenin helyettesito generatoranak ellenallasa: '+ c.getCircuit().getThevRes());
+} else {
+    console.log(c.getCircuit());
 }
+
 
 /*for (var i = 0; i < c.getMaxMesh(); i++) {
     console.log('Hurok szama: ' + c.getCircuit().getMeshes()[i].getMeshNumber());
