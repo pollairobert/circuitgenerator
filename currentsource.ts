@@ -4,7 +4,7 @@ export class CurrentSource implements CircuitElements {
     private id = 'C';
     private resistance: number;
     private current: number;
-    private voltage: number; //Helyettesito Feszgen feszultsege
+    private subsVoltage: number; //Helyettesito Feszgen feszultsege
     private direction: boolean; //A helyettesito feszgennek az iranya ellentetes ezzel.
 
     constructor(current: number, dir: boolean) {
@@ -13,9 +13,8 @@ export class CurrentSource implements CircuitElements {
         this.resistance = Infinity;
     }
 
-    public setVoltage(): void {
-        //circuitobject.currentGenSubstitutes() fuggveny hivasa
-        //this.current = volt;
+    public setSubsVoltage(subsvol: number): void {
+        this.subsVoltage = subsvol;
     }
 
     public getId() {
@@ -31,7 +30,7 @@ export class CurrentSource implements CircuitElements {
     }
 
     public getVoltage() {
-        return this.voltage;
+        return this.subsVoltage;
     }
 
     public getDirection() {

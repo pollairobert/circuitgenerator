@@ -42,7 +42,16 @@ export class Mesh {
         meshCounter++;
     }
 
+    public setMeshResistance(branch: Branch): void {
+        this.meshResistance += branch.getBranchResistance();
+    }
 
+    public setMeshVoltage(branch: Branch): void {
+        this.meshVoltage += branch.getBranchVoltage();
+    }
+    public setMeshCurrent(current: number): void {
+        this.meshCurrent = current;
+    }
     public setBranches(branch: Branch): void {
         this.branches.push(branch);
         //this.meshResistance += branch.getBranchResistance();
@@ -56,16 +65,6 @@ export class Mesh {
         return this.branches;
     }
 
-    public setMeshResistance(res: number): void {
-        this.meshResistance += res;
-    }
-
-    public setMeshVoltage(res: number): void {
-        this.meshVoltage += res;
-    }
-    public setMeshCurrent(current: number): void {
-        this.meshCurrent = current;
-    }
     public getMesCurrent(): number {
         return this.meshCurrent;
     }

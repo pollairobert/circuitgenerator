@@ -14,7 +14,7 @@ export class Circuit {
     private numbOfResistance: number;
     private numbOfCurrentSource: number;
     private numbOfVoltageSource: number;
-    private numbOfCommonBranch: number;
+    private numbOfCommonBranch: number; // meg kerdeses, hogy kell-e
 
     constructor(meshnumb: number, res: number, cur: number, volt: number, comm: number) {
         this.numberOfMesh = meshnumb;
@@ -26,6 +26,9 @@ export class Circuit {
             this.setMeshes(new Mesh());
             //this.meshes.push(new Mesh(/*meshnumb, res, cur, volt, comm*/
         //}
+    }
+    public setMeshes(mesh: Mesh): void {
+        this.meshes.push(mesh);
     }
     public setThevRes(res: number): void {
         this.theveninResistance = res;
@@ -39,16 +42,19 @@ export class Circuit {
     public getThevVolt(): number {
         return this.theveninVoltage;
     }
-    public setMeshes(mesh: Mesh): void {
-        this.meshes.push(mesh);
-    }
-
     public getMeshes(): Mesh[] {
         return this.meshes;
     }
-    
     public getNumberOfMesh(): number {
         return this.numberOfMesh;
     }
-
+    public getNumbOfRes(): number{
+        return this.numbOfResistance;
+    }
+    public getNumbOfVoltSource(): number{
+        return this.numbOfVoltageSource;
+    }
+    public getNumbOfCurrSource(): number{
+        return this.numbOfCurrentSource;
+    }
 }

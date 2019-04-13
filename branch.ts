@@ -16,14 +16,36 @@ export class Branch {
     private branchResistance = 0;
     private branchVoltage = 0;
     private branchElements: CircuitElements[] = [];
+    private type: number; //4 tipus. 0: fel, 1: jobbra, 2: le, 3: fel
     private commBrancResistance: number;
 
-    constructor(orient: boolean, dir: boolean, meshNumber: number) {
+    constructor(type: number, meshNumber: number) {
         //this.setBranchElements(new Wire());
         //this.branchElements.push(new Wire());
+        this.type = type;
         this.meshNumber = meshNumber;
-        this.orientation = orient;
-        this.direction = dir;
+        switch (type) {
+            case 0: {
+                this.orientation = true;
+                this.direction = true;
+                break;
+            }
+            case 1: {
+                this.orientation = false;
+                this.direction = true;
+                break;
+            }
+            case 2: {
+                this.orientation = true;
+                this.direction = false;
+                break;
+            }
+            case 3: {
+                this.orientation = false;
+                this.direction = false;
+                break;
+            }
+        }
         this.branchNumber = branchCounter;
         branchCounter++;
     }
@@ -42,21 +64,27 @@ export class Branch {
         this.common = comm;
     }
 
-    public setBranchElements(element: CircuitElements, mesh: Mesh): void {
+    public setBranchElements(element: CircuitElements): void {
         this.branchElements.push(element);
         if (element.getId() === 'R') {
             this.branchResistance += element.getResistance();
-            mesh.setMeshResistance(element.getResistance());
+            //mesh.setMeshResistance(element.getResistance());
         }
         if (element.getId() === 'V') {
             if (element.getDirection() === true) {
+                this.branchVoltage += (element.getVoltage() * (-1));
+                //mesh.setMeshVoltage(element.getVoltage());
+            } else {
                 this.branchVoltage += element.getVoltage();
-                mesh.setMeshVoltage(element.getVoltage());
+                //mesh.setMeshVoltage(element.getVoltage() * (-1));
+            }
+        }
+        if (element.getId() === 'C') {
+            if (element.getDirection() === true) {
+                this.branchVoltage += element.getVoltage();
             } else {
                 this.branchVoltage += (element.getVoltage() * (-1));
-                mesh.setMeshVoltage(element.getVoltage() * (-1));
             }
-
         }
     }
 
@@ -87,15 +115,16 @@ export class Branch {
     public getBranchElements(): CircuitElements[] {
         return this.branchElements;
     }
-
     public getBranchResistance(): number {
         return this.branchResistance;
     }
-
     public getBranchVoltage(): number {
         return this.branchVoltage;
     }
     public getMeshNumber(): number {
         return this.meshNumber;
+    }
+    public getType(): number {
+        return this.type;
     }
 }
