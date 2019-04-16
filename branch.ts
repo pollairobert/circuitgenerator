@@ -16,7 +16,8 @@ export class Branch {
     private branchResistance = 0;
     private branchVoltage = 0;
     private branchElements: CircuitElements[] = [];
-    private type: number; //4 tipus. 0: fel, 1: jobbra, 2: le, 3: fel
+    private type: number; //4 tipus. 0: fel, 1: jobbra, 2: le, 3: balra
+    private thevenin2pole: boolean = false;
     private commBrancResistance: number;
 
     constructor(type: number, meshNumber: number) {
@@ -87,8 +88,10 @@ export class Branch {
             }
         }
     }
-
-    public deleteBranchElement(): void {
+    public setTh2Pole(pole: boolean):void{
+        this.thevenin2pole = pole;
+    }
+    public deleteLastBranchElement(): void {
         this.branchElements.pop();
     }
 
@@ -126,5 +129,8 @@ export class Branch {
     }
     public getType(): number {
         return this.type;
+    }
+    public getTh2Pole(): boolean{
+        return this.thevenin2pole;
     }
 }

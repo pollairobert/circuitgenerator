@@ -15,7 +15,7 @@ export class Circuit {
     private numbOfCurrentSource: number;
     private numbOfVoltageSource: number;
     private numbOfCommonBranch: number; // meg kerdeses, hogy kell-e
-
+    
     constructor(meshnumb: number, res: number, cur: number, volt: number, comm: number) {
         this.numberOfMesh = meshnumb;
         this.numbOfResistance = res;
@@ -56,5 +56,8 @@ export class Circuit {
     }
     public getNumbOfCurrSource(): number{
         return this.numbOfCurrentSource;
+    }
+    public getNumbOfCommonBranc(): number{
+        return this.numbOfCommonBranch;
     }
 }

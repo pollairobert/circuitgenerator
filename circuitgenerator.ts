@@ -12,15 +12,29 @@ export class CircuitGenerator {
     private circuitCurrentVector: number[];
 
 
-    public generateAndAnalyzeCircuit(mesh: number, res: number, cur: number, volt: number, comm: number): void {
-
-        this.circuit = new Circuit(mesh, res, cur, volt, comm);
-        for (var h = 0; h < mesh; h++) {
-            this.circuit.setMeshes(new Mesh());
-            for (var i = 0; i < 4; i++){
-                this.circuit.getMeshes()[h].setBranches(new Branch(i,h));
+    public generateAndAnalyzeCircuit(type: number/*mesh: number, res: number, cur: number, volt: number, comm: number*/): void {
+        switch (type) {
+            //Egyszeru feszultsegoszto
+            case 1: {
+                this.circuit = new Circuit(2, 2, 0, 1, 1);
+                for (var h = 0; h < this.circuit.getNumberOfMesh(); h++) {
+                    this.circuit.setMeshes(new Mesh());
+                    for (var i = 0; i < 4; i++){
+                        this.circuit.getMeshes()[h].setBranches(new Branch(i,h));
+                        
+                    }
+                }
+                break;
+            }
+            //Kettos feszultsegoszto
+            case 2: {
+                this.circuit = new Circuit(3, 4, 0, 1, 2);
+                break;
             }
         }
+
+        
+        
         /*switch (mesh) {
             case 1: {
                 if (cur > 1) {
