@@ -29,6 +29,13 @@ export class CircuitGenerator {
             //Kettos feszultsegoszto
             case 2: {
                 this.circuit = new Circuit(3, 4, 0, 1, 2);
+                for (var h = 0; h < this.circuit.getNumberOfMesh(); h++) {
+                    this.circuit.setMeshes(new Mesh());
+                    for (var i = 0; i < 4; i++){
+                        this.circuit.getMeshes()[h].setBranches(new Branch(i,h));
+                        
+                    }
+                }
                 break;
             }
         }
