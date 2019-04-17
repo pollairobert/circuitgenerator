@@ -22,10 +22,6 @@ export class Circuit {
         this.numbOfCurrentSource = cur;
         this.numbOfVoltageSource = volt;
         this.numbOfCommonBranch = comm;
-        /*for (var i = 0; i < meshnumb; i++) {
-            this.setMeshes(new Mesh());
-            //this.meshes.push(new Mesh(/*meshnumb, res, cur, volt, comm*/
-        //}
     }
     public setMeshes(mesh: Mesh): void {
         this.meshes.push(mesh);

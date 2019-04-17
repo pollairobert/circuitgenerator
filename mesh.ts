@@ -17,28 +17,6 @@ export class Mesh {
     constructor(/*maxmesh: number, res: number, cur: number, volt: number, comm: number*/) {
         //this.maxMeshNumb = maxmesh;
         this.meshNumber = meshCounter;
-        /*var count: number = 0;
-        for (var i = 0; i < 2; i++) {
-            for (var j = 0; j < 2; j++) {
-                //if (this.meshNumber == 0 && this.maxMeshNumb == 2) {
-                if (i == 0 && j == 0) {
-                    this.setBranches(new Branch(false, false, this.meshNumber));
-                }
-                if (i == 0 && j == 1) {
-                    this.setBranches(new Branch(false, true, this.meshNumber));
-                }
-                if (i == 1 && j == 0) {
-                    this.setBranches(new Branch(true, false, this.meshNumber));
-                    //this.branches[count].setCommon(this.meshNumber+1);
-                }
-                if (i == 1 && j == 1) {
-                    this.setBranches(new Branch(true, true, this.meshNumber));
-                }
-                count++;
-                
-            }
-
-        }*/
         meshCounter++;
     }
 
