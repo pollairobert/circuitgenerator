@@ -9,7 +9,6 @@ export var meshCounter: number = 0;
 export class Mesh {
     private meshNumber: number;
     private branches: Branch[] = [];
-    //private maxMeshNumb: number;
     private meshResistance: number = 0;
     private meshVoltage: number = 0;
     private meshCurrent: number = 0;
@@ -46,10 +45,7 @@ export class Mesh {
     public getMesCurrent(): number {
         return this.meshCurrent;
     }
-    /*public getMaxMesh(): number {
-        return this.maxMeshNumb;
-    }*/
-
+    
     public getMeshResistance(): number {
         return this.meshResistance;
     }

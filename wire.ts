@@ -2,7 +2,7 @@
 
 export class Wire implements CircuitElements {
     private id = 'W';
-    private resistance: number  = 0;
+    private resistance: number = 0;
     private current: number;
     private voltage: number = 0;
     /*constructor(){

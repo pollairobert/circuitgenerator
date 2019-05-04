@@ -4,6 +4,7 @@ import { Resistance } from "./resistance";
 import { CurrentSource } from "./currentsource";
 import { VoltageSource } from "./voltagesource";
 import { Mesh } from "./mesh";
+import * as math from 'mathjs';
 
 export var branchCounter: number = 0;
 export class Branch {
@@ -12,7 +13,10 @@ export class Branch {
     private orientation: boolean;
     private direction: boolean;
     private current: number = 0;
-    private common: number = 0;
+    
+    /*alapesetben a kozossegi ertek az agat tartalmazo hurok szama.
+    Ha tobb hurokhoz tartozik a hurkok akkor azok szamanak osszege*/
+    private common: number = 0; 
     private branchResistance = 0;
     private branchVoltage = 0;
     private branchElements: CircuitElements[] = [];
@@ -20,11 +24,15 @@ export class Branch {
     private thevenin2pole: boolean = false;
     private commBrancResistance: number;
 
+    /**
+     * Konstruktor, beallitasra kerul az orientacio es az irany
+     * @param type 4 tipus. 0: fel, 1: jobbra, 2: le, 3: balra
+     * @param meshNumber az ot tartalmazo hurok szama
+     */
     constructor(type: number, meshNumber: number) {
-        //this.setBranchElements(new Wire());
-        //this.branchElements.push(new Wire());
         this.type = type;
         this.meshNumber = meshNumber;
+        this.common = meshNumber;
         switch (type) {
             case 0: {
                 this.orientation = true;
@@ -51,20 +59,25 @@ export class Branch {
         branchCounter++;
     }
 
-    public setCurrent(currentVector: number[]) {
+    /**
+     * Agaram beallitasa az analizis soran meghatarozott aramvektor segitsegevel
+     * @param currentVector aramvektor
+     */
+    public setCurrent(currentVector: math.Matrix) {
         if (this.current === 0) {
-            if (this.common === 0) {
-                this.current = currentVector[this.meshNumber];
+            if (this.common === this.meshNumber) {
+                this.current = +currentVector.subset(math.index(this.meshNumber,0));
             } else {
-                this.current = currentVector[this.meshNumber] - currentVector[this.common - this.meshNumber];
+                this.current = +currentVector.subset(math.index(this.meshNumber,0)) - (+currentVector.subset(math.index(this.common-this.meshNumber,0)));
             }
         }
     }
-
-    public setCommon(comm: number): void {
-        this.common = comm;
-    }
-
+    
+    /**
+     * Az ag altal tarolt halozati elemek hozzaadasa.
+     * A kulonbozo tipustol fuggoen beallitja az ag halozatanilizishez szukseges ertekeit (feszultseg, ellenallas).
+     * @param element halozati elem
+     */
     public setBranchElements(element: CircuitElements): void {
         this.branchElements.push(element);
         if (element.getId() === 'R') {
@@ -88,8 +101,11 @@ export class Branch {
             }
         }
     }
-    public setTh2Pole(pole: boolean):void{
+    public setTh2Pole(pole: boolean): void {
         this.thevenin2pole = pole;
+    }
+    public setCommon(meshNum: number): void{
+        this.common += meshNum;
     }
     public deleteLastBranchElement(): void {
         this.branchElements.pop();
@@ -130,7 +146,7 @@ export class Branch {
     public getType(): number {
         return this.type;
     }
-    public getTh2Pole(): boolean{
+    public getTh2Pole(): boolean {
         return this.thevenin2pole;
     }
 }

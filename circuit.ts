@@ -16,6 +16,14 @@ export class Circuit {
     private numbOfVoltageSource: number;
     private numbOfCommonBranch: number; // meg kerdeses, hogy kell-e
     
+    /**
+     * Aramkor konstruktora, amely beallitja a szukseges ertkeit a prameterek alapjan
+     * @param meshnumb az aramkorben letrehozott hurkok szama (technikai okok miatt a kivezetest is horokkent tarolja)
+     * @param res aramkori ellanalasok darabszama
+     * @param cur aramgeneratorok szama
+     * @param volt feszultseggeneratorok szama
+     * @param comm hurkok kozos againak szama (ez meg kerdeses, hogy marad-e)
+     */
     constructor(meshnumb: number, res: number, cur: number, volt: number, comm: number) {
         this.numberOfMesh = meshnumb;
         this.numbOfResistance = res;

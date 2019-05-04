@@ -6,6 +6,10 @@ export class Resistance implements CircuitElements {
     private current: number;
     private voltage: number;
 
+    /**
+     * Konstruktor
+     * @param resistance ellenallas ertekenek beallitasahoz
+     */
     constructor(resistance: number) {
         this.resistance = resistance;
     }
@@ -14,6 +18,9 @@ export class Resistance implements CircuitElements {
         this.current = cur;
     }
 
+    /**
+     * Az ot tartalmazo ag aramanak ismereteben kiszamolj a rajta eso feszultseget.
+     */
     public setVoltage(): void {
         if ((this.resistance !== undefined) && (this.current !== undefined)) {
             this.voltage = this.current * this.resistance;

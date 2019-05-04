@@ -7,6 +7,11 @@ export class CurrentSource implements CircuitElements {
     private subsVoltage: number; //Helyettesito Feszgen feszultsege
     private direction: boolean; //A helyettesito feszgennek az iranya ellentetes ezzel.
 
+    /**
+     * Konstruktor
+     * @param current aramgenerator aramerteke
+     * @param dir aramgenerator altal letrehozott aram iranya
+     */
     constructor(current: number, dir: boolean) {
         this.current = current;
         this.direction = dir;
