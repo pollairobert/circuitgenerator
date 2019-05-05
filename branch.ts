@@ -31,8 +31,8 @@ export class Branch {
      */
     constructor(type: number, meshNumber: number) {
         this.type = type;
-        this.meshNumber = meshNumber;
-        this.common = meshNumber;
+        this.meshNumber = (meshNumber+1);
+        this.common = this.meshNumber;
         switch (type) {
             case 0: {
                 this.orientation = true;

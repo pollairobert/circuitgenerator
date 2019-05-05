@@ -11,8 +11,10 @@ import * as math from 'mathjs';
 export class CircuitGenerator {
     private circuit: Circuit;
     private circuitCurrentVector: math.Matrix;
-    private circuitVoltageVector: math.Matrix;
+    private circuitVoltageVector;
     private circuitResistanceMatrix: math.Matrix;
+    private circuitInverzResistanceMatrix: math.Matrix;
+    private commonBranches: Branch[] = [];
 
     /**
      * Aramkor generalasaert felelos. Meghivja a halozat analizalasahoz szukseges fuggvenyeket.
@@ -33,8 +35,8 @@ export class CircuitGenerator {
                 this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(0,15)));
                 this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(0,15)));
                 this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(10,50),this.randomBoolean()));
-                this.circuit.getMeshes()[0].getBranches()[2].setCommon(1);
-                this.circuit.getMeshes()[1].getBranches()[0].setCommon(0);
+                this.circuit.getMeshes()[0].getBranches()[2].setCommon(2);
+                this.circuit.getMeshes()[1].getBranches()[0].setCommon(1);
                 this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]);
                 this.circuit.getMeshes()[1].getBranches()[2].setTh2Pole(true);
                 for (var i = 0; i < this.circuit.getMeshes().length; i++){
@@ -58,20 +60,41 @@ export class CircuitGenerator {
                         
                     }
                 }
+                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(10,50),this.randomBoolean()));
+                this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(0,15)));
+                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(0,15)));
+                this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(0,15)));
+                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(0,15)));
+                this.circuit.getMeshes()[0].getBranches()[2].setCommon(2);
+                this.circuit.getMeshes()[1].getBranches()[0].setCommon(1);
+                this.circuit.getMeshes()[1].getBranches()[2].setCommon(3);
+                this.circuit.getMeshes()[2].getBranches()[0].setCommon(2);
+                this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]);
+                this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[0]);
+                //this.circuit.getMeshes()[1].getBranches()[2].setTh2Pole(true);
+                this.circuit.getMeshes()[2].getBranches()[2].setTh2Pole(true);
+                for (var i = 0; i < this.circuit.getMeshes().length; i++){
+                    for(var j = 0; j < this.circuit.getMeshes()[i].getBranches().length; j++){
+                        var mesh : Mesh =  this.circuit.getMeshes()[i]
+                        mesh.setMeshVoltage(mesh.getBranches()[j]);
+                        mesh.setMeshResistance(mesh.getBranches()[j]);
+                    }
+                }
+                this.setCircuitVoltageVector(this.circuit);
+                this.setCircuitResistanceMatrix(this.circuit);
                 break;
             }
         }
     }
 
-    /*public setCircuitCurrentVector(resistMatrix: math.Matrix, voltageVektor: math.Matrix): void{
-        this.circuitCurrentVector = math.matrix();
-        var res: Array<Number>;
-        res = math.multiply(math.inv(this.circuitResistanceMatrix),this.circuitVoltageVector);
-        this.circuitCurrentVector.resize([circuit.getNumberOfMesh(),1]);
-        for (var i = 0; i < circuit.getNumberOfMesh(); i++){
-            this.circuitCurrentVector.subset(math.index(i, 0),circuit.getMeshes()[i].getMesCurrent());
-        }
-    }*/
+    public setCircuitCurrentVector(resistMatrix: math.Matrix, voltageVektor: math.Matrix): void{
+        //this.circuitCurrentVector = math.matrix();
+        //var x = math.inv(resistMatrix);
+        var circuitCurrentVecto = math.multiply(math.inv(resistMatrix),voltageVektor);
+        this.circuitCurrentVector = circuitCurrentVecto;
+        //this.circuitInverzResistanceMatrix= math.multiply(resistMatrix,voltageVektor);
+        
+    }
     public setCircuitVoltageVector(circuit: Circuit): void{
         this.circuitVoltageVector = math.matrix();
         this.circuitVoltageVector.resize([circuit.getNumberOfMesh(),1]);
@@ -83,13 +106,25 @@ export class CircuitGenerator {
         this.circuitResistanceMatrix = math.matrix();
         this.circuitResistanceMatrix.resize([circuit.getNumberOfMesh(),circuit.getNumberOfMesh()]);
         for (var i = 0; i < circuit.getNumberOfMesh(); i++){
-            this.circuitResistanceMatrix.subset(math.index(i, i),circuit.getMeshes()[i].getMeshResistance());
-            this.circuitResistanceMatrix.subset(math.index(i, (circuit.getNumberOfMesh()-1)-i),(circuit.getMeshes()[i].getMeshResistance()*-1));
-            /*for (var j = 0; j < circuit.getNumberOfMesh(); j++){
-                this.circuitResistanceMatrix.subset(math.index(i, j),circuit.getMeshes()[j].getMeshResistance()*-1);
-               // this.circuitResistanceMatrix.subset(math.index(circuit.getMeshes().length-i, j),circuit.getMeshes()[i].getMeshResistance());
-            }*/
+            for (var j = i; j < circuit.getNumberOfMesh(); j++){
+                if (i === j){
+                    this.circuitResistanceMatrix.subset(math.index(i, j),circuit.getMeshes()[i].getMeshResistance());
+                } else {
+                    for (var k = 0; k < circuit.getMeshes()[j].getBranches().length; k++){
+                        if (circuit.getMeshes()[j].getBranches()[k].getCommon() > circuit.getMeshes()[j].getMeshNumber()){
+                            if ((circuit.getMeshes()[j].getBranches()[k].getCommon()-circuit.getMeshes()[j].getMeshNumber()) === circuit.getMeshes()[i].getMeshNumber()){
+                                this.circuitResistanceMatrix.subset(math.index(i, j),(circuit.getMeshes()[j].getBranches()[k].getBranchResistance()*-1));
+                            }
+                        }
+                    }   
+                    this.circuitResistanceMatrix.subset(math.index(j, i),this.circuitResistanceMatrix.subset(math.index(i, j)));
+                }
+            }
         }
+        
+    }
+    public setCommonBranches(commonBranch: Branch): void{
+        this.commonBranches.push(commonBranch);
     }
     public getCircuit(): Circuit {
         return this.circuit;
