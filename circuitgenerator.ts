@@ -11,7 +11,7 @@ import * as math from 'mathjs';
 export class CircuitGenerator {
     private circuit: Circuit;
     private circuitCurrentVector: math.Matrix;
-    private circuitVoltageVector;
+    private circuitVoltageVector: math.Matrix;
     private circuitResistanceMatrix: math.Matrix;
     private circuitInverzResistanceMatrix: math.Matrix;
     private commonBranches: Branch[] = [];
@@ -88,12 +88,8 @@ export class CircuitGenerator {
     }
 
     public setCircuitCurrentVector(resistMatrix: math.Matrix, voltageVektor: math.Matrix): void{
-        //this.circuitCurrentVector = math.matrix();
-        //var x = math.inv(resistMatrix);
-        var circuitCurrentVecto = math.multiply(math.inv(resistMatrix),voltageVektor);
-        this.circuitCurrentVector = circuitCurrentVecto;
-        //this.circuitInverzResistanceMatrix= math.multiply(resistMatrix,voltageVektor);
-        
+        this.circuitCurrentVector = math.matrix();
+        this.circuitCurrentVector = math.multiply(math.inv(resistMatrix),voltageVektor);
     }
     public setCircuitVoltageVector(circuit: Circuit): void{
         this.circuitVoltageVector = math.matrix();
@@ -121,6 +117,7 @@ export class CircuitGenerator {
                 }
             }
         }
+        //this.circuitInverzResistanceMatrix = math.inv(this.circuitResistanceMatrix);
         
     }
     public setCommonBranches(commonBranch: Branch): void{
