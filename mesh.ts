@@ -40,13 +40,13 @@ export class Mesh {
     private cloneMeshBranches(branch: Branch): void {
         this.branches.push(branch);
     }
-    private cloneMeshResistance(mshres: number): void {
+    public cloneMeshResistance(mshres: number): void {
         this.meshResistance = mshres;
     }
-    private cloneMeshVoltage(mshvolt: number): void {
-        this.meshVoltage =mshvolt;
+    public cloneMeshVoltage(mshvolt: number): void {
+        this.meshVoltage = mshvolt;
     }
-    private cloneMeshCurrent(mshcur: number): void {
+    public cloneMeshCurrent(mshcur: number): void {
         this.meshCurrent = mshcur;
     }
     public cloneMesh(msh: Mesh): Mesh {

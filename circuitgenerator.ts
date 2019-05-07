@@ -14,10 +14,9 @@ export class CircuitGenerator {
     private circuitVoltageVector: math.Matrix;
     private circuitResistanceMatrix: math.Matrix;
     private circuitInverzResistanceMatrix: math.MathType;
-    private circuitResultingResistance: number;
+    private circuitResultingResistance: number = 0;
     private commonBranches: Branch[] = [];
-    private tempMeshVoltage: number[];
-   
+    
     /**
      * Aramkor generalasaert felelos. Meghivja a halozat analizalasahoz szukseges fuggvenyeket.
      * Eredmenyul pedig megadja az altala generalt halozat thevenin helyettesiteset
@@ -53,6 +52,8 @@ export class CircuitGenerator {
                 this.setCircuitVoltageVector(this.circuit);
                 this.setCircuitResistanceMatrix(this.circuit);
                 this.setCircuitCurrentVector(this.circuit);
+                this.calculateResultingResistance(this.circuit);
+                this.finalCalculateOfTheveninSubstitues(this.circuit);
                 break;
             }
             //Kettos feszultsegoszto
@@ -91,7 +92,9 @@ export class CircuitGenerator {
                 this.setCircuitVoltageVector(this.circuit);
                 this.setCircuitResistanceMatrix(this.circuit);
                 this.setCircuitCurrentVector(this.circuit);
-                //this.calculateResultingResistance(this.circuit,this.circuitResistanceMatrix);
+                this.calculateResultingResistance(this.circuit);
+                this.finalCalculateOfTheveninSubstitues(this.circuit);
+               //this.calculateResultingResistance(this.circuit,this.circuitResistanceMatrix);
                 //console.log(this.circuit.getMeshes()[0].getBranches());
                 break;
             }
@@ -147,6 +150,9 @@ export class CircuitGenerator {
     public getCircuitResistanceMatrix(): math.Matrix{
         return this.circuitResistanceMatrix;
     }
+    public getCircuitResultingResistance(): number {
+        return this.circuitResultingResistance;
+    }
     public randomIntNumber(max: number, min: number): number {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
@@ -170,18 +176,41 @@ export class CircuitGenerator {
         }
         return circuitelement;
     }
-    public calculateResultingResistance(circuit: Circuit, resisMatrix: math.Matrix):void {
-        this.tempMeshVoltage = new Array();
-        for (var i = 0; i < circuit.getNumberOfMesh(); i++){
-            if (circuit.getMeshes()[i].getMeshVoltage() > 0 ){
-                //this.tempMeshVoltage[i] = circuit.getMeshes()[i].getMeshVoltage();
-                this.tempMeshVoltage.push(circuit.getMeshes()[i].getMeshVoltage());
-                console.log(this.tempMeshVoltage);
+    public calculateResultingResistance(circuit: Circuit):void {
+        var cloneCurrentVector : math.MathType = math.clone(this.circuitCurrentVector);
+        var cloneVoltageVector: math.Matrix = math.clone(this.circuitVoltageVector);
+        var cloneCircuit: Circuit = circuit.cloneCircuit(this.circuit);
+        for (var i = 0; i < cloneCircuit.getNumberOfMesh(); i++){
+            if (cloneCircuit.getMeshes()[i].getMeshVoltage() !== 0){
+                cloneCircuit.getMeshes()[i].cloneMeshVoltage(0);
             }
-            for (var j = i; j < circuit.getMeshes()[i].getBranches().length; j++){
-
+            for (var j = 0; j < cloneCircuit.getMeshes()[i].getBranches().length; j++){
+                if (cloneCircuit.getMeshes()[i].getBranches()[j].getTh2Pole()){
+                    cloneCircuit.getMeshes()[i].cloneMeshVoltage(10);
+                    this.setCircuitVoltageVector(cloneCircuit);
+                    this.setCircuitCurrentVector(cloneCircuit);
+                    var tempCircuitVector = this.circuitCurrentVector.valueOf();
+                    this.circuitResultingResistance = +this.circuitVoltageVector.subset(math.index(i,0))/tempCircuitVector[i];
+                    this.circuitVoltageVector = math.clone(cloneVoltageVector);
+                    this.circuitCurrentVector = math.clone(cloneCurrentVector);
+                }
             }
         }
+    }
+    public finalCalculateOfTheveninSubstitues(circuit: Circuit): void {
+        circuit.setThevRes(this.circuitResultingResistance);
+        //var cloneCircuit: Circuit = circuit.cloneCircuit(this.circuit);
+        for (var i = 0; i < circuit.getNumberOfMesh(); i++){
+            for (var j = 0; j < circuit.getMeshes()[i].getBranches().length; j++){
+                if (circuit.getMeshes()[i].getBranches()[j].getTh2Pole()){
+                    var tempCircuitVector = this.circuitCurrentVector.valueOf();
+                    console.log(tempCircuitVector.valueOf()[i]);
+                    console.log(circuit.getThevRes());
+                    circuit.setThevVolt(circuit.getThevRes()*tempCircuitVector.valueOf()[i]);
+                    console.log(circuit.getThevVolt());
+                }
+            }
 
+        }
     }
 }
