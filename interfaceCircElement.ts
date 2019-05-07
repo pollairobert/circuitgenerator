@@ -4,6 +4,7 @@
  */
 
 export interface CircuitElements {
+    setInverzDirection(): void;
     getId(): string;
     getResistance(): number;
     getCurrent(): number;

@@ -1,6 +1,7 @@
 ﻿import { CircuitElements } from "./interfaceCircElement";
 
 export class Resistance implements CircuitElements {
+    
     private id = 'R';
     private resistance: number;
     private current: number;
@@ -29,7 +30,9 @@ export class Resistance implements CircuitElements {
         }
 
     }
-
+    setInverzDirection(): void {
+        throw new Error("Method not implemented.");
+    }
     public getId() {
         return this.id;
     }

@@ -16,7 +16,9 @@ export class VoltageSource implements CircuitElements {
     public setCurrent(cur: number): void {
         this.current = cur;
     }
-
+    public setInverzDirection(): void {
+        this.direction = !this.direction;
+    }
     public getId() {
         return this.id;
     }

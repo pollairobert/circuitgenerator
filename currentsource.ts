@@ -1,6 +1,7 @@
 ﻿import { CircuitElements } from "./interfaceCircElement";
 
 export class CurrentSource implements CircuitElements {
+   
     private id = 'C';
     private resistance: number;
     private current: number;
@@ -21,7 +22,9 @@ export class CurrentSource implements CircuitElements {
     public setSubsVoltage(subsvol: number): void {
         this.subsVoltage = subsvol;
     }
-
+    setInverzDirection(): void {
+        throw new Error("Method not implemented.");
+    }
     public getId() {
         return this.id;
     }

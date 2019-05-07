@@ -101,6 +101,10 @@ export class Branch {
             }
         }
     }
+    /**
+     * Beallitja az agat a keresett ket polusnak, amely felol helyettesitjuk a halozatot
+     * @param pole true az ertek ha ez az ag lesz az
+     */
     public setTh2Pole(pole: boolean): void {
         this.thevenin2pole = pole;
     }

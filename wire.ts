@@ -1,6 +1,7 @@
 ﻿import { CircuitElements } from "./interfaceCircElement";
 
 export class Wire implements CircuitElements {
+    
     private id = 'W';
     private resistance: number = 0;
     private current: number;
@@ -8,6 +9,9 @@ export class Wire implements CircuitElements {
     /*constructor(){
         wireCounter += 1;
     }*/
+    setInverzDirection(): void {
+        throw new Error("Method not implemented.");
+    }
     public getId() {
         return this.id;
     }

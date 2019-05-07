@@ -64,4 +64,5 @@ export class Circuit {
     public getNumbOfCommonBranc(): number{
         return this.numbOfCommonBranch;
     }
+    
 }
