@@ -40,6 +40,44 @@ export class Circuit {
     public setThevVolt(volt: number): void {
         this.theveninVoltage = volt;
     }
+    private cloneCircuitMeshes(msh: Mesh): void {
+        this.meshes.push(msh);
+    }
+    private cloneNumbOfMesh(num: number): void {
+        this.numberOfMesh = num;
+    }
+    private cloneTheveninResistance(res: number): void {
+        this.theveninResistance = res;
+    }
+    private cloneTheveninVoltage(volt: number): void {
+        this.theveninVoltage = volt;
+    } 
+    private cloneNumbOfRes(num: number): void {
+        this.numbOfResistance = num;
+    }
+    private cloneNumbOfCurrentSource(num: number): void {
+        this.numbOfCurrentSource = num;
+    }
+    private cloneNumbOfVoltageSource(num: number): void {
+        this.numbOfVoltageSource = num;
+    }
+    private cloneNumbOfCommonBranch(num: number): void {
+        this.numbOfCommonBranch = num;
+    }
+    public cloneCircuit(circ: Circuit): Circuit {
+        var circuitClone: Circuit = new Circuit(circ.getNumberOfMesh(),circ.getNumbOfRes(),circ.getNumbOfCurrSource(),circ.getNumbOfVoltSource(),circ.getNumbOfCommonBranc());
+        for(var i = 0; i < circ.getMeshes().length; i++){
+            circuitClone.cloneCircuitMeshes(circ.getMeshes()[i].cloneMesh(circ.getMeshes()[i]));
+        }
+        circuitClone.cloneNumbOfMesh(circ.getNumberOfMesh());
+        circuitClone.cloneTheveninResistance(circ.getThevRes());
+        circuitClone.cloneTheveninVoltage(circ.getThevVolt());
+        circuitClone.cloneNumbOfRes(circ.getNumbOfRes());
+        circuitClone.cloneNumbOfCurrentSource(circ.getNumbOfCurrSource());
+        circuitClone.cloneNumbOfVoltageSource(circ.getNumbOfVoltSource());
+        circuitClone.cloneNumbOfCommonBranch(circ.getNumbOfCommonBranc());
+        return circuitClone;
+    }
     public getThevRes(): number {
         return this.theveninResistance;
     }

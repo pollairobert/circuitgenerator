@@ -1,7 +1,6 @@
 ﻿import { CircuitElements } from "./interfaceCircElement";
 
 export class CurrentSource implements CircuitElements {
-   
     private id = 'C';
     private resistance: number;
     private current: number;
@@ -19,11 +18,22 @@ export class CurrentSource implements CircuitElements {
         this.resistance = Infinity;
     }
 
-    public setSubsVoltage(subsvol: number): void {
-        this.subsVoltage = subsvol;
+    public setVoltage(vol: number): void {
+        this.subsVoltage = vol;
     }
-    setInverzDirection(): void {
+    public setInverzDirection(): void {
         throw new Error("Method not implemented.");
+    }
+    public cloneElements(element: CircuitElements): CircuitElements {
+        var currentSourceClone: CircuitElements = new CurrentSource(element.getCurrent(),element.getDirection());
+        currentSourceClone.setVoltage(element.getVoltage());
+        return currentSourceClone;
+    }
+    public setResistance(res: number): void {
+        this.resistance = res;
+    }
+    public setCurrent(cur: number): void {
+        this.current = cur;
     }
     public getId() {
         return this.id;

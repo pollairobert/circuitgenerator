@@ -1,7 +1,6 @@
 ﻿import { CircuitElements } from "./interfaceCircElement";
 
 export class Resistance implements CircuitElements {
-    
     private id = 'R';
     private resistance: number;
     private current: number;
@@ -18,19 +17,28 @@ export class Resistance implements CircuitElements {
     public setCurrent(cur: number): void {
         this.current = cur;
     }
-
+    public setResistance(res: number): void {
+        this.resistance = res;
+    }
     /**
      * Az ot tartalmazo ag aramanak ismereteben kiszamolj a rajta eso feszultseget.
      */
-    public setVoltage(): void {
+    public setVoltage(_vol: number): void {
         if ((this.resistance !== undefined) && (this.current !== undefined)) {
             this.voltage = this.current * this.resistance;
         } else {
-            console.log('Hianyzo ertek');
+            this.voltage = 0;
+            //console.log('Hianyzo ertek');
         }
 
     }
-    setInverzDirection(): void {
+    public cloneElements(element: CircuitElements): CircuitElements {
+        var resistanceClone: CircuitElements = new Resistance(element.getResistance());
+        resistanceClone.setCurrent(element.getCurrent());
+        resistanceClone.setVoltage(0);
+        return resistanceClone;
+    }
+    public setInverzDirection(): void {
         throw new Error("Method not implemented.");
     }
     public getId() {

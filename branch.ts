@@ -72,7 +72,6 @@ export class Branch {
             }
         }
     }
-    
     /**
      * Az ag altal tarolt halozati elemek hozzaadasa.
      * A kulonbozo tipustol fuggoen beallitja az ag halozatanilizishez szukseges ertekeit (feszultseg, ellenallas).
@@ -111,10 +110,48 @@ export class Branch {
     public setCommon(meshNum: number): void{
         this.common += meshNum;
     }
+    private cloneSetCommon(com: number): void{
+        this.common = com;
+    }
+    private cloneSetCurrent(curr: number): void{
+        this.current = curr;
+    }
+    private cloneSetBranchResistant(res: number): void{
+        this.branchResistance = res;
+    }
+    private cloneSetBranchVoltage(volt: number): void{
+        this.branchVoltage = volt;
+    }
+    private cloneSetThev2Pole(pole: boolean): void{
+        this.thevenin2pole = pole;
+    }
+    private cloneSetBrancElements(element: CircuitElements): void{
+        this.branchElements.push(element);
+    }
+    private cloneSetBranchNumber(brnumb: number): void{
+        this.branchNumber = brnumb;
+    }
+    private cloneMeshNumber(num: number): void {
+        this.meshNumber = num;
+    }
     public deleteLastBranchElement(): void {
         this.branchElements.pop();
     }
-
+    public cloneBranch(branch: Branch): Branch{
+        var branchClone: Branch = new Branch(branch.getType(),(branch.getMeshNumber()-1));   
+        branchClone.cloneMeshNumber(branch.getMeshNumber());
+        branchClone.cloneSetBranchNumber(branch.getBranchNumber()); 
+        branchClone.cloneSetCurrent(branch.getCurrent());
+        branchClone.cloneSetCommon(branch.getCommon());
+        branchClone.cloneSetBranchResistant(branch.getBranchResistance());
+        branchClone.cloneSetBranchVoltage(branch.getBranchVoltage());
+        branchClone.cloneSetThev2Pole(branch.getTh2Pole())
+        for(var i = 0; i < branch.getBranchElements().length; i++){
+            branchClone.cloneSetBrancElements(branch.getBranchElements()[i].cloneElements(branch.getBranchElements()[i]));
+            //branchClone.setBranchElements(branch.getBranchElements()[i].cloneElements(branch.getBranchElements()[i]));
+        }
+        return branchClone;
+    }
     public getBranchNumber(): number {
         return this.branchNumber;
     }

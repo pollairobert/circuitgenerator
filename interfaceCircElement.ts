@@ -10,4 +10,8 @@ export interface CircuitElements {
     getCurrent(): number;
     getVoltage(): number;
     getDirection(): boolean;
+    cloneElements(element: CircuitElements): CircuitElements;
+    setCurrent(cur: number): void;
+    setResistance(res: number): void;
+    setVoltage(vol: number): void;
 }

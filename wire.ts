@@ -1,7 +1,6 @@
 ﻿import { CircuitElements } from "./interfaceCircElement";
 
 export class Wire implements CircuitElements {
-    
     private id = 'W';
     private resistance: number = 0;
     private current: number;
@@ -9,8 +8,20 @@ export class Wire implements CircuitElements {
     /*constructor(){
         wireCounter += 1;
     }*/
-    setInverzDirection(): void {
+    public setInverzDirection(): void {
         throw new Error("Method not implemented.");
+    }
+    public cloneElements(element: CircuitElements): CircuitElements {
+        throw new Error("Method not implemented.");
+    }
+    public setVoltage(vol: number): void {
+        this.voltage = vol;
+    }
+    public setResistance(res: number): void {
+        this.resistance = res;
+    }
+    public setCurrent(cur: number): void {
+        this.current = cur;
     }
     public getId() {
         return this.id;
@@ -18,10 +29,6 @@ export class Wire implements CircuitElements {
 
     public getResistance() {
         return this.resistance;
-    }
-
-    public setCurrent(cur: number): void {
-        this.current = cur;
     }
 
     public getCurrent(): number {

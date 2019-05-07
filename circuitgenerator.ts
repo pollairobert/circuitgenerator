@@ -17,7 +17,7 @@ export class CircuitGenerator {
     private circuitResultingResistance: number;
     private commonBranches: Branch[] = [];
     private tempMeshVoltage: number[];
-
+   
     /**
      * Aramkor generalasaert felelos. Meghivja a halozat analizalasahoz szukseges fuggvenyeket.
      * Eredmenyul pedig megadja az altala generalt halozat thevenin helyettesiteset
@@ -92,6 +92,7 @@ export class CircuitGenerator {
                 this.setCircuitResistanceMatrix(this.circuit);
                 this.setCircuitCurrentVector(this.circuit);
                 //this.calculateResultingResistance(this.circuit,this.circuitResistanceMatrix);
+                //console.log(this.circuit.getMeshes()[0].getBranches());
                 break;
             }
         }
