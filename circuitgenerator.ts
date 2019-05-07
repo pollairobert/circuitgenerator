@@ -94,8 +94,6 @@ export class CircuitGenerator {
                 this.setCircuitCurrentVector(this.circuit);
                 this.calculateResultingResistance(this.circuit);
                 this.finalCalculateOfTheveninSubstitues(this.circuit);
-               //this.calculateResultingResistance(this.circuit,this.circuitResistanceMatrix);
-                //console.log(this.circuit.getMeshes()[0].getBranches());
                 break;
             }
         }
@@ -109,7 +107,6 @@ export class CircuitGenerator {
     public setCircuitVoltageVector(circuit: Circuit): void{
         this.circuitVoltageVector = math.matrix();
         this.circuitVoltageVector.resize([circuit.getNumberOfMesh(),1]);
-        //console.log(this.circuitVoltageVector);
         for (var i = 0; i < circuit.getNumberOfMesh(); i++){
             this.circuitVoltageVector.subset(math.index(i, 0),circuit.getMeshes()[i].getMeshVoltage());
         }
@@ -117,7 +114,6 @@ export class CircuitGenerator {
     public setCircuitResistanceMatrix(circuit: Circuit): void {
         this.circuitResistanceMatrix = math.matrix();
         this.circuitResistanceMatrix.resize([circuit.getNumberOfMesh(),circuit.getNumberOfMesh()]);
-        //console.log(this.circuitResistanceMatrix);
         for (var i = 0; i < circuit.getNumberOfMesh(); i++){
             for (var j = i; j < circuit.getNumberOfMesh(); j++){
                 if (i === j){
@@ -199,7 +195,6 @@ export class CircuitGenerator {
     }
     public finalCalculateOfTheveninSubstitues(circuit: Circuit): void {
         circuit.setThevRes(this.circuitResultingResistance);
-        //var cloneCircuit: Circuit = circuit.cloneCircuit(this.circuit);
         for (var i = 0; i < circuit.getNumberOfMesh(); i++){
             for (var j = 0; j < circuit.getMeshes()[i].getBranches().length; j++){
                 if (circuit.getMeshes()[i].getBranches()[j].getTh2Pole()){
