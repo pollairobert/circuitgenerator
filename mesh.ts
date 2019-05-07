@@ -5,11 +5,10 @@ import { CurrentSource } from "./currentsource";
 import { VoltageSource } from "./voltagesource";
 import { Branch, branchCounter } from "./branch";
 
-export var meshCounter: number = 0;
+export var meshCounter: number = 1;
 export class Mesh {
     private meshNumber: number;
     private branches: Branch[] = [];
-    //private maxMeshNumb: number;
     private meshResistance: number = 0;
     private meshVoltage: number = 0;
     private meshCurrent: number = 0;
@@ -17,28 +16,6 @@ export class Mesh {
     constructor(/*maxmesh: number, res: number, cur: number, volt: number, comm: number*/) {
         //this.maxMeshNumb = maxmesh;
         this.meshNumber = meshCounter;
-        /*var count: number = 0;
-        for (var i = 0; i < 2; i++) {
-            for (var j = 0; j < 2; j++) {
-                //if (this.meshNumber == 0 && this.maxMeshNumb == 2) {
-                if (i == 0 && j == 0) {
-                    this.setBranches(new Branch(false, false, this.meshNumber));
-                }
-                if (i == 0 && j == 1) {
-                    this.setBranches(new Branch(false, true, this.meshNumber));
-                }
-                if (i == 1 && j == 0) {
-                    this.setBranches(new Branch(true, false, this.meshNumber));
-                    //this.branches[count].setCommon(this.meshNumber+1);
-                }
-                if (i == 1 && j == 1) {
-                    this.setBranches(new Branch(true, true, this.meshNumber));
-                }
-                count++;
-                
-            }
-
-        }*/
         meshCounter++;
     }
 
@@ -57,6 +34,32 @@ export class Mesh {
         //this.meshResistance += branch.getBranchResistance();
         //this.meshVoltage += branch.getBranchVoltage();
     }
+    private cloneMeshNumber(mshnumb: number): void {
+        this.meshNumber = mshnumb;
+    }
+    private cloneMeshBranches(branch: Branch): void {
+        this.branches.push(branch);
+    }
+    public cloneMeshResistance(mshres: number): void {
+        this.meshResistance = mshres;
+    }
+    public cloneMeshVoltage(mshvolt: number): void {
+        this.meshVoltage = mshvolt;
+    }
+    public cloneMeshCurrent(mshcur: number): void {
+        this.meshCurrent = mshcur;
+    }
+    public cloneMesh(msh: Mesh): Mesh {
+        var meshClone: Mesh = new Mesh();
+        meshClone.cloneMeshNumber(msh.getMeshNumber());
+        for (var i = 0; i < msh.getBranches().length; i++){
+            meshClone.cloneMeshBranches(msh.getBranches()[i].cloneBranch(msh.getBranches()[i]));
+        }
+        meshClone.cloneMeshResistance(msh.getMeshResistance());
+        meshClone.cloneMeshVoltage(msh.getMeshVoltage());
+        meshClone.cloneMeshCurrent(msh.getMesCurrent());
+        return meshClone;
+    }
     public getMeshNumber(): number {
         return this.meshNumber;
     }
@@ -68,10 +71,7 @@ export class Mesh {
     public getMesCurrent(): number {
         return this.meshCurrent;
     }
-    /*public getMaxMesh(): number {
-        return this.maxMeshNumb;
-    }*/
-
+    
     public getMeshResistance(): number {
         return this.meshResistance;
     }

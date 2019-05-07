@@ -4,9 +4,13 @@
   "description": "Online circuit generator for Thevenin",
   "main": "main.js",
   "dependencies": {
-    "math": "0.0.3"
+    "math": "0.0.3",
+    "mathjs": "^5.9.0",
+    "node-matrix": "^1.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/mathjs": "^5.0.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
