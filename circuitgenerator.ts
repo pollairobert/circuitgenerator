@@ -72,7 +72,7 @@ export class CircuitGenerator {
                 this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
-                //this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));//2. feszgen
+                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));//2. feszgen
                 //this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));//3. feszgen
                 //this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 //this.circuit.getMeshes()[2].getBranches()[2].setBranchElements(new Resistance(3));
@@ -81,7 +81,7 @@ export class CircuitGenerator {
                 this.circuit.getMeshes()[1].getBranches()[2].setCommon(3);
                 this.circuit.getMeshes()[2].getBranches()[0].setCommon(2);
                 this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]));
-                //this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[1]));//2.feszgen
+                this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[1]));//2.feszgen
                 this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[0]));
                 //this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[1]));//3.feszgen
                 this.circuit.getMeshes()[2].getBranches()[2].setTh2Pole(true);
@@ -162,6 +162,10 @@ export class CircuitGenerator {
             return true;
         }
     }
+    /**
+     * 
+     * @param element 
+     */
     public copyCommonElement(element: CircuitElements): CircuitElements{
         var circuitelement: CircuitElements;
         if (element.getId() === 'R') {
@@ -175,6 +179,10 @@ export class CircuitGenerator {
         }
         return circuitelement;
     }
+    /**
+     * 
+     * @param circuit 
+     */
     public calculateResultingResistance(circuit: Circuit):void {
         var cloneCurrentVector : math.MathType = math.clone(this.circuitCurrentVector);
         var cloneVoltageVector: math.Matrix = math.clone(this.circuitVoltageVector);
@@ -196,6 +204,10 @@ export class CircuitGenerator {
             }
         }
     }
+    /**
+     * 
+     * @param circuit 
+     */
     public finalCalculateOfTheveninSubstitues(circuit: Circuit): void {
         circuit.setThevRes(this.circuitResultingResistance);
         for (var i = 0; i < circuit.getNumberOfMesh(); i++){
