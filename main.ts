@@ -11,7 +11,7 @@ import * as math from 'mathjs';
 
 
 var c: CircuitGenerator = new CircuitGenerator();
-c.generateCircuit(2);
+c.generateCircuit(1);
 if (c.getCircuit().getNumberOfMesh() === 2){
     console.log('V01 = '+c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getVoltage()+ ' V');
     console.log('R01 = '+c.getCircuit().getMeshes()[0].getBranches()[1].getBranchElements()[0].getResistance()+ ' Ohm');
@@ -117,7 +117,7 @@ if (c.getCircuit().getNumberOfMesh() === 3){
         if (c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection() && !c.getCircuit().getMeshes()[2].getBranches()[0].getBranchElements()[1].getDirection()){
             console.log(' -               -               +');
             console.log('V01             V02             V03');
-            console.log(' +               +               +');
+            console.log(' +               +               -');
         }
         if (c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && !c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection() && c.getCircuit().getMeshes()[2].getBranches()[0].getBranchElements()[1].getDirection()){
             console.log(' -               +               -');
@@ -151,6 +151,22 @@ if (c.getCircuit().getNumberOfMesh() === 3){
         }
         console.log(' |               |               |');
         console.log(' ----------------------------------------B');
+    }
+}
+let voltegeCount: number = 0;
+let resistCount: number = 0;
+for (let i = 0; i < c.getCircuit().getNumberOfMesh(); i++){
+    for (let j = 0; j < c.getCircuit().getMeshes()[i].getBranches().length; j++){
+        for (let k = 0; k < c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
+            if (c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'V'){
+                voltegeCount++;
+                console.log('V0'+voltegeCount+'= '+c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage()+ ' V, irany: '+c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getDirection());
+            }
+            if (c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'R'){
+                resistCount++;
+                console.log('R0'+resistCount+'= '+c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getResistance()+ ' Ohm');
+            }
+        }
     }
 }
 console.log();

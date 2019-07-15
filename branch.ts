@@ -63,7 +63,7 @@ export class Branch {
      * Agaram beallitasa az analizis soran meghatarozott aramvektor segitsegevel
      * @param currentVector aramvektor
      */
-    public setCurrent(currentVector: math.Matrix) {
+    public setCurrent(currentVector: math.Matrix): void {
         if (this.current === 0) {
             if (this.common === this.meshNumber) {
                 this.current = +currentVector.subset(math.index(this.meshNumber,0));
@@ -93,6 +93,7 @@ export class Branch {
             }
         }
         if (element.getId() === 'C') {
+        
             if (element.getDirection() === true) {
                 this.branchVoltage += element.getVoltage();
             } else {
