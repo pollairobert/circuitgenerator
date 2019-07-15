@@ -220,6 +220,7 @@ export class CircuitGenerator {
                 }
             }
         }
+        //console.log(resistanceMatrix);
         return resistanceMatrix;
     }
     
@@ -296,32 +297,37 @@ export class CircuitGenerator {
             cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setBranchElements(new VoltageSource(10,false));
             let mesh : Mesh =  cloneCircuit.getMeshes()[th2PoleMeshNumber-1];
             mesh.setMeshVoltage(mesh.getBranches()[th2PoleNumberOfBranch]);
-        } /*else {
+        } else {
             //if (th2PoleBranchType === 2 || th2PoleBranchType === 0){
                 cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getBranches().splice(th2PoleNumberOfBranch,1,new Branch(th2PoleBranchType,th2PoleMeshNumber-1));
                 cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setBranchElements(new VoltageSource(10,false));
                 let mesh : Mesh =  cloneCircuit.getMeshes()[th2PoleMeshNumber-1];
                 mesh.setMeshVoltage(mesh.getBranches()[th2PoleNumberOfBranch]);
-                console.log(commonAndTh2Pole);
-                console.log(th2PoleMeshNumber);
-                
-                let x = (commonAndTh2Pole-th2PoleMeshNumber)-1;
-                console.log(x);
                 for (let i = 0; i < cloneCircuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1].getBranches().length; i++){
                     if (cloneCircuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1].getBranches()[i].getCommon() === commonAndTh2Pole) {
                         cloneCircuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1].getBranches()[i].setBranchElements(this.copyCommonElement(cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].getBranchElements()[0]));
+                        let mesh : Mesh =  cloneCircuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1];
+                        mesh.setMeshVoltage(mesh.getBranches()[i]);
                     }
                 }
             //}
             //if (th2PoleBranchType === 1 || th2PoleBranchType === 3){
 
             //}
-        }*/
-        //console.log(cloneCircuit);
+        }
+        console.log(cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getMeshVoltage());
+        console.log(cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getBranches());
+        console.log(cloneCircuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1].getMeshVoltage());
+        console.log(cloneCircuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1].getBranches());
         //let tempCircuitVector = this.calculateCurrentVector(cloneCircuit).valueOf();
         //resultingResistance = +this.calculateVoltageVector(cloneCircuit).subset(math.index(th2PoleMeshNumber,0))/this.calculateCurrentVector(cloneCircuit).valueOf()[th2PoleMeshNumber];
         //return resultingResistance;
-        return this.calculateResultingResistance(+this.calculateVoltageVector(cloneCircuit).subset(math.index(th2PoleMeshNumber-1,0)),this.calculateCurrentVector(cloneCircuit).valueOf()[th2PoleMeshNumber-1]);
+        console.log('Volatage vektor: '+this.calculateVoltageVector(cloneCircuit));
+        console.log('Current vektor eredo ellenallashoz: '+this.calculateCurrentVector(cloneCircuit));
+        console.log('Eredo ellenallas: '+this.calculateResultingResistance(10,(this.calculateCurrentVector(cloneCircuit).valueOf()[th2PoleMeshNumber-1]-this.calculateCurrentVector(cloneCircuit).valueOf()[th2PoleMeshNumber])));
+        //return this.calculateResultingResistance(+this.calculateVoltageVector(cloneCircuit).subset(math.index(th2PoleMeshNumber-1,0)),this.calculateCurrentVector(cloneCircuit).valueOf()[th2PoleMeshNumber-1]);
+        return this.calculateResultingResistance(10,(this.calculateCurrentVector(cloneCircuit).valueOf()[th2PoleMeshNumber-1]-this.calculateCurrentVector(cloneCircuit).valueOf()[th2PoleMeshNumber]));
+        
         //return 0;
     }
     /**
@@ -343,7 +349,7 @@ export class CircuitGenerator {
                 }
             }
         }
-        
+        console.log('Current vektor vegso szamitasnal: '+this.calculateCurrentVector(circuit));
         circuit.setThevVolt(circuit.getThevRes()*this.calculateCurrentVector(circuit).valueOf()[th2PoleMeshNumber]);
     }
     /**
