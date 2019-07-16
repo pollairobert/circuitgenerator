@@ -63,12 +63,15 @@ export class Branch {
      * Agaram beallitasa az analizis soran meghatarozott aramvektor segitsegevel
      * @param currentVector aramvektor
      */
-    public setCurrent(currentVector: math.Matrix): void {
+    public setCurrent(currentVector: math.MathType): void {
+        let curVect: Object = currentVector.valueOf(); 
         if (this.current === 0) {
             if (this.common === this.meshNumber) {
-                this.current = +currentVector.subset(math.index(this.meshNumber,0));
+                this.current = curVect[this.meshNumber-1];
+                //this.current = +currentVector.subset(math.index(this.meshNumber,0));
             } else {
-                this.current = +currentVector.subset(math.index(this.meshNumber,0)) - (+currentVector.subset(math.index(this.common-this.meshNumber,0)));
+                this.current = curVect[this.meshNumber-1] - curVect[(this.common-this.meshNumber)-1]
+                //this.current = +currentVector.subset(math.index(this.meshNumber,0)) - (+currentVector.subset(math.index(this.common-this.meshNumber,0)));
             }
         }
     }

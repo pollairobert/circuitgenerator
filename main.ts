@@ -11,8 +11,8 @@ import * as math from 'mathjs';
 
 
 var c: CircuitGenerator = new CircuitGenerator();
-c.generateCircuit(3);
-/*if (c.getCircuit().getNumberOfMesh() === 2){
+c.generateCircuit(1);
+if (c.getCircuit().getNumberOfMesh() === 2){
     console.log('V01 = '+c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getVoltage()+ ' V');
     console.log('R01 = '+c.getCircuit().getMeshes()[0].getBranches()[1].getBranchElements()[0].getResistance()+ ' Ohm');
     console.log('R02 = '+c.getCircuit().getMeshes()[0].getBranches()[2].getBranchElements()[0].getResistance()+ ' Ohm');
@@ -152,7 +152,7 @@ if (c.getCircuit().getNumberOfMesh() === 3){
         console.log(' |               |               |');
         console.log(' ----------------------------------------B');
     }
-}*/
+}
 let voltegeCount: number = 0;
 let resistCount: number = 0;
 for (let i = 0; i < c.getCircuit().getNumberOfMesh(); i++){
