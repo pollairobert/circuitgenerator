@@ -143,23 +143,102 @@ export class CircuitGenerator {
                 //this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(5,true));
                 this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 //this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(13));
-                this.circuit.getMeshes()[0].getBranches()[2].setTh2Pole(true);
+                //this.circuit.getMeshes()[0].getBranches()[2].setTh2Pole(true);
                 this.circuit.getMeshes()[0].getBranches()[2].setCommon(2);
                 this.circuit.getMeshes()[1].getBranches()[0].setCommon(1);
                 
                 //this.circuit.getMeshes()[1].getBranches()[0].setTh2Pole(true);
                 this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 //this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(5));
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
+                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 //this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(34));
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
+                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
                 //this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(23,true));
+                this.circuit.getMeshes()[1].getBranches()[2].setTh2Pole(true);
                 this.circuit.getMeshes()[1].getBranches()[2].setCommon(3);
                 this.circuit.getMeshes()[2].getBranches()[0].setCommon(2);
-                this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[0]));
-                this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[1]));
+                this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]));
+                this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[1]));
                 //this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(12));
+                for (let i = 0; i < this.circuit.getMeshes().length; i++){
+                    for(let j = 0; j < this.circuit.getMeshes()[i].getBranches().length; j++){
+                        let mesh : Mesh =  this.circuit.getMeshes()[i];
+                        mesh.setMeshVoltage(mesh.getBranches()[j]);
+                        mesh.setMeshResistance(mesh.getBranches()[j]);
+                        //console.log(mesh.getBranches()[j]);
+                    }
+                }
+                this.finalCalculateOfTheveninSubstitutes(this.circuit);
+                break;
+
+            }
+            /*Teszt tipus, 4 hurkos rendszerhdez, ahol 1 huroknak 2 masikkal is van kozos aga:
+            -------------- A
+            |  3 |    |
+            ------  2 |  4
+            | 1  |    |
+            -------------- B
+            */
+            case 5: {
+                this.circuit = new Circuit(4, 5, 0, 2, 4);
+                for (let h = 0; h < this.circuit.getNumberOfMesh(); h++) {
+                    this.circuit.setMeshes(new Mesh());
+                    for (let i = 0; i < 4; i++){
+                        this.circuit.getMeshes()[h].setBranches(new Branch(i,h));
+                        
+                    }
+                }
+                //A 2-es hurokhoz hozza kell egy plusz felfele mutato branchat adni
+                this.circuit.getMeshes()[1].setBranches(new Branch(0,1));
+
+                //1-es hurok elemei
+                //this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
+                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(5,true));
+                //this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
+                this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(13));
+                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(5));
+
+                //1-es hurok kozos againak beallitasa
+                this.circuit.getMeshes()[0].getBranches()[1].setCommon(3);
+                this.circuit.getMeshes()[0].getBranches()[2].setCommon(2);
+
+                //2-es hurok elemei, 
+                //1-es hurokkal kozos agaba clonozzuk az 1-esben szereplo ellenallast
+                this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]));
+                //3-as hurokkal kozos agban letrehozzunk egy ellenallast. TOLODNI FOG A BRANCH INDEX, mert nem csak 4 elemu lesz!!!!
+                this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(15));
+                //tovabbi ellenallasok a 2-es hurokban
+                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(7));
+                this.circuit.getMeshes()[1].getBranches()[3].setBranchElements(new Resistance(27));
+                this.circuit.getMeshes()[1].getBranches()[3].setBranchElements(new VoltageSource(30,true));
+
+                //2-es hurok kozos againak beallitasa
+                this.circuit.getMeshes()[1].getBranches()[0].setCommon(1);
+                this.circuit.getMeshes()[1].getBranches()[1].setCommon(3);
+                this.circuit.getMeshes()[1].getBranches()[3].setCommon(4);
+
+                //3-as hurok elemei
+                this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(3));
+                //1-es hurokkal kozos agba klonozzuk az 1-esben szereplo ellenallast
+                this.circuit.getMeshes()[2].getBranches()[3].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[1].getBranchElements()[0]));
+                //2-es hurokkal kozos agba klonozzuk az 2-esben szereplo ellenallast
+                this.circuit.getMeshes()[2].getBranches()[2].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[1].getBranchElements()[0]));
+
+                //3-as hurok kozos againak beallitasa
+                this.circuit.getMeshes()[2].getBranches()[2].setCommon(2);
+                this.circuit.getMeshes()[2].getBranches()[3].setCommon(1);
+
+                //4-es hurok elemei, ezeket a 2-as hurok kozos agabol klonozzuk
+                this.circuit.getMeshes()[3].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[3].getBranchElements()[0]));
+                this.circuit.getMeshes()[3].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[3].getBranchElements()[1]));
+
+                //4-es hurok kozos aganak beallitasa
+                this.circuit.getMeshes()[3].getBranches()[0].setCommon(2);
+
+                //thevenin 2 polus a 4-es hurok vegen lesz
+                this.circuit.getMeshes()[3].getBranches()[2].setTh2Pole(true);
+                    
                 for (let i = 0; i < this.circuit.getMeshes().length; i++){
                     for(let j = 0; j < this.circuit.getMeshes()[i].getBranches().length; j++){
                         let mesh : Mesh =  this.circuit.getMeshes()[i];

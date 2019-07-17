@@ -12,7 +12,7 @@ import * as math from 'mathjs';
 
 var c: CircuitGenerator = new CircuitGenerator();
 
-let type = 4;
+let type = 5;
 c.generateCircuit(type);
 if (type === 1 || type === 2){
 
