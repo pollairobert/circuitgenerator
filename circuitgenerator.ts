@@ -151,15 +151,16 @@ export class CircuitGenerator {
                 //this.circuit.getMeshes()[1].getBranches()[0].setTh2Pole(true);
                 this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 //this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(5));
-                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
+                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 //this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(34));
-                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
+                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
                 //this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(23,true));
-                this.circuit.getMeshes()[1].getBranches()[2].setTh2Pole(true);
+                this.circuit.getMeshes()[1].getBranches()[0].setTh2Pole(true);
                 this.circuit.getMeshes()[1].getBranches()[2].setCommon(3);
                 this.circuit.getMeshes()[2].getBranches()[0].setCommon(2);
-                this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]));
-                this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[1]));
+                this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[0]));
+                this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[1]));
+                this.circuit.getMeshes()[2].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 //this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(12));
                 for (let i = 0; i < this.circuit.getMeshes().length; i++){
@@ -493,7 +494,7 @@ export class CircuitGenerator {
             currentVector = this.calculateCurrentVector(circuit);
         }else {
             circuit.getMeshes()[th2PoleMeshNumber-1].getBranches().splice(th2PoleNumberOfBranch,1,new Branch(th2PoleBranchType,th2PoleMeshNumber-1));
-            circuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setCommon(6);
+            circuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setCommon((commonAndTh2Pole - th2PoleMeshNumber));
             circuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setBranchElements(new VoltageSource(10,false));
             circuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setTh2Pole(true);
             let mesh : Mesh =  circuit.getMeshes()[th2PoleMeshNumber-1];
