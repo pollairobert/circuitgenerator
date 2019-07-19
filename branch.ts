@@ -116,6 +116,9 @@ export class Branch {
     public setCommon(meshNum: number): void{
         this.common += meshNum;
     }
+    public clearBranchResistance(): void{
+        this.branchResistance = 0;
+    }
     private cloneSetCommon(com: number): void{
         this.common = com;
     }

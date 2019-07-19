@@ -12,9 +12,9 @@ import * as math from 'mathjs';
 
 var c: CircuitGenerator = new CircuitGenerator();
 
-let type = 5;
+let type = 1;
 c.generateCircuit(type);
-if (type === 1 || type === 2){
+if (type === 10 || type === 2){
 
 if (c.getCircuit().getNumberOfMesh() === 2){
     console.log('V01 = '+c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getVoltage()+ ' V');
@@ -177,4 +177,6 @@ for (let i = 0; i < c.getCircuit().getNumberOfMesh(); i++){
 console.log();
 console.log('Az aramkor Thevenin ellenalasa: '+c.getCircuit().getThevRes().toFixed(4)+ ' Ohm');
 console.log('Az aramkor Thevenin helyettesito feszultsege: '+c.getCircuit().getThevVolt().toFixed(4)+ ' V');
-
+console.log('A keresett ellenallas arama: '+c.getQuestionResCurrent()+ ' A');
+console.log('A keresett ellenallas feszultsege: '+c.getQuestionResVoltage()+ ' V');
+//console.log(c.randomE6Resistance());
