@@ -11,8 +11,8 @@ import * as math from 'mathjs';
 
 
 var c: CircuitGenerator = new CircuitGenerator();
-
-let type = 1;
+c.setQuestionOrVoltmeterResistance(1000);
+let type = 5;
 c.generateCircuit(type);
 if (type === 10 || type === 2){
 
@@ -177,6 +177,9 @@ for (let i = 0; i < c.getCircuit().getNumberOfMesh(); i++){
 console.log();
 console.log('Az aramkor Thevenin ellenalasa: '+c.getCircuit().getThevRes().toFixed(4)+ ' Ohm');
 console.log('Az aramkor Thevenin helyettesito feszultsege: '+c.getCircuit().getThevVolt().toFixed(4)+ ' V');
-console.log('A keresett ellenallas arama: '+c.getQuestionResCurrent()+ ' A');
-console.log('A keresett ellenallas feszultsege: '+c.getQuestionResVoltage()+ ' V');
+//console.log('A keresett ellenallas arama: '+c.getQuestionResCurrent().toFixed(4)+ ' A');
+if (c.getQuestionRes() !== undefined){
+    console.log('A mert feszultseg: '+c.getQuestionResVoltage().toFixed(4)+ ' V');
+}
+//console.log(c.randomCurrentSourceValue());
 //console.log(c.randomE6Resistance());

@@ -23,7 +23,7 @@ export class Resistance implements CircuitElements {
     /**
      * Az ot tartalmazo ag aramanak ismereteben kiszamolj a rajta eso feszultseget.
      */
-    public setVoltage(_vol: number): void {
+    public setVoltage(vol: number): void {
         if ((this.resistance !== undefined) && (this.current !== undefined)) {
             this.voltage = this.current * this.resistance;
         } else {

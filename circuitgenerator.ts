@@ -13,13 +13,16 @@ export class CircuitGenerator {
     private circuitCurrentVector: math.MathType;
     private circuitVoltageVector: math.Matrix;
     private circuitResistanceMatrix: math.Matrix;
-    private circuitInverzResistanceMatrix: math.MathType;
+    //private circuitInverzResistanceMatrix: math.MathType;
     private circuitResultingResistance: number = 0;
     private commonBranches: Branch[] = [];
     private args: number[] = [];
-    private questionResistance: number = 1000000;
-    private questionResistanceCurrent: number;
-    private questionResistanceVoltage: number;
+    private questionOrVoltmeterResistance: number ;
+    private questionOrVoltmeterResistanceCurrent: number;
+    private questionOrVoltmeterResistanceVoltage: number;
+
+    private connectedVoltagesourceValue: number;
+    private connectedVoltagesourceInsideResistance: number;
 
     /*private th2PoleMeshNumber: number;
     private th2PoleBranchType: number;
@@ -131,6 +134,8 @@ export class CircuitGenerator {
                 //this.circuit.getMeshes()[1].getBranches()[0].setTh2Pole(true);
                 this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
+                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
+
                 for (let i = 0; i < this.circuit.getMeshes().length; i++){
                     for(let j = 0; j < this.circuit.getMeshes()[i].getBranches().length; j++){
                         let mesh : Mesh =  this.circuit.getMeshes()[i];
@@ -152,7 +157,7 @@ export class CircuitGenerator {
                         
                     }
                 }
-                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
+                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
                 //this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(5,true));
                 this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 //this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(13));
@@ -165,7 +170,7 @@ export class CircuitGenerator {
                 //this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(5));
                 this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 //this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(34));
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
+                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
                 //this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(23,true));
                 this.circuit.getMeshes()[1].getBranches()[0].setTh2Pole(true);
                 this.circuit.getMeshes()[1].getBranches()[2].setCommon(3);
@@ -174,7 +179,7 @@ export class CircuitGenerator {
                 this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[1]));
                 this.circuit.getMeshes()[2].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 //this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(12));
+                //this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(12));
                 for (let i = 0; i < this.circuit.getMeshes().length; i++){
                     for(let j = 0; j < this.circuit.getMeshes()[i].getBranches().length; j++){
                         let mesh : Mesh =  this.circuit.getMeshes()[i];
@@ -440,7 +445,7 @@ export class CircuitGenerator {
                     }
                     for (let k = 0; k < cloneCircuit.getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
                         if (cloneCircuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'R'){
-                            this.questionResistance = cloneCircuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getResistance();
+                            this.questionOrVoltmeterResistance = cloneCircuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getResistance();
                         }
                     }
                     
@@ -453,7 +458,7 @@ export class CircuitGenerator {
                 }
             }
         }
-        return this.calculateResultingResistance(10,this.calculateTh2PoleBranchCurrent(cloneCircuit,commonAndTh2Pole,th2PoleBranchType,th2PoleNumberOfBranch,th2PoleMeshNumber,this.questionResistance));
+        return this.calculateResultingResistance(10,this.calculateTh2PoleBranchCurrent(cloneCircuit,commonAndTh2Pole,th2PoleBranchType,th2PoleNumberOfBranch,th2PoleMeshNumber,this.questionOrVoltmeterResistance));
         /*if (commonAndTh2Pole === undefined){
             console.log('**** NINCS KOZOS AGBAN A 2 POLUS ****');
             cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getBranches().splice(th2PoleNumberOfBranch,1,new Branch(th2PoleBranchType,th2PoleMeshNumber-1));
@@ -521,8 +526,8 @@ export class CircuitGenerator {
         //circuit.setThevVolt(circuit.getThevRes()*this.calculateCurrentVector(circuit).valueOf()[th2PoleMeshNumber]);
         //circuit.setThevVolt(circuit.getThevRes()*th2PoleCurrent);
         circuit.setThevVolt(circuit.getThevRes()*this.calculateTh2PoleBranchCurrent(circuit));
-        if (this.questionResistance !== undefined){
-            this.calculateQuestionResistancCurrentAndVoltage(circuit.getThevRes(),circuit.getThevVolt(),this.questionResistance);
+        if (this.questionOrVoltmeterResistance !== undefined){
+            this.calculateQuestionResistancCurrentAndVoltage(circuit.getThevRes(),circuit.getThevVolt(),this.questionOrVoltmeterResistance);
         }
     }
     /**
@@ -607,6 +612,15 @@ export class CircuitGenerator {
                     console.log('EZ A 2 POLUS BRNCH: '+ circuit.getMeshes()[i].getBranches()[j].getCurrent());
                 }
                 console.log('Branch type: '+ circuit.getMeshes()[i].getBranches()[j].getType()+' Arama: '+circuit.getMeshes()[i].getBranches()[j].getCurrent()+ 'Branch number: ' +circuit.getMeshes()[i].getBranches()[j].getBranchNumber());
+                for (let k = 0; k < circuit.getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
+                    if (circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'R'){
+                        circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].setCurrent(circuit.getMeshes()[i].getBranches()[j].getCurrent());
+                        circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].setVoltage(0);
+                        console.log('  Ellenallas arama: '+ circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getCurrent());
+                        console.log('  Ellenallas feszultsege: '+ circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage());
+                    }
+                }
+                
                 //console.log('   Branch common: '+ circuit.getMeshes()[i].getBranches()[j].getCommon());
                 //console.log('   Branch common: '+ circuit.getMeshes()[i].getBranches()[j].getCommon());
             }
@@ -616,9 +630,10 @@ export class CircuitGenerator {
     }
 
     public calculateQuestionResistancCurrentAndVoltage(thRes: number, thVoltage: number, questRes: number): void {
-        this.questionResistanceVoltage = thVoltage * (questRes/(questRes+thRes));
-        this.questionResistanceCurrent = this.questionResistanceVoltage / questRes;
+        this.questionOrVoltmeterResistanceVoltage = thVoltage * (questRes/(questRes+thRes));
+        this.questionOrVoltmeterResistanceCurrent = this.questionOrVoltmeterResistanceVoltage / questRes;
     }
+    
      /**
      * A kozos agakban szereplo aramkori elemek masolasat vegzi.
      * A generatoroknal forditja az iranyt, mivel a ket szomszedos hurokban maskepp hatnak.
@@ -640,12 +655,21 @@ export class CircuitGenerator {
     public randomIntNumber(max: number, min: number): number {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
+    public randomFloatNumber(max: number, min: number): number {
+        return +(Math.random() * (max - min) + min).toFixed(2);
+    }
     public randomBoolean(): boolean {
         if ((Math.floor(Math.random() * 2) + 1) === 1) {
             return false;
         } else {
             return true;
         }
+    }
+    public randomVoltageSourceValue(): number {
+        return this.randomIntNumber(24, 1);
+    }
+    public randomCurrentSourceValue(): number {
+        return this.randomFloatNumber(1.40,0.01);
     }
     /**
      * Az E6-os ellenallas sorhoz tartozo ellenallas ertekek random generalasa,
@@ -658,6 +682,21 @@ export class CircuitGenerator {
     }
     public setCommonBranches(commonBranch: Branch): void{
         this.commonBranches.push(commonBranch);
+    }
+    public setQuestionOrVoltmeterResistance(value: number): void{
+        this.questionOrVoltmeterResistance = value;
+    }
+    public setConnectedVoltagesourceValue(value: number): void {
+        this.connectedVoltagesourceValue = value;
+    }
+    public setConnectedVoltagesourceResistance(value: number): void {
+        this.connectedVoltagesourceInsideResistance = value;
+    }
+    public getConnectedVoltagesourceValue(): number {
+        return this.connectedVoltagesourceValue;
+    }
+    public getConnectedVoltagesourceResistance(): number {
+        return this.connectedVoltagesourceInsideResistance;
     }
     public getCircuit(): Circuit {
         return this.circuit;
@@ -675,12 +714,12 @@ export class CircuitGenerator {
         return this.circuitResultingResistance;
     }
     public getQuestionResVoltage(): number {
-        return this.questionResistanceVoltage;
+        return this.questionOrVoltmeterResistanceVoltage;
     }
     public getQuestionRes(): number {
-        return this.questionResistance;
+        return this.questionOrVoltmeterResistance;
     }
     public getQuestionResCurrent(): number {
-        return this.questionResistanceCurrent;
+        return this.questionOrVoltmeterResistanceCurrent;
     }
 }
