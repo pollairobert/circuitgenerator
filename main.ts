@@ -12,7 +12,9 @@ import * as math from 'mathjs';
 
 var c: CircuitGenerator = new CircuitGenerator();
 c.setQuestionOrVoltmeterResistance(1000);
-let type = 5;
+c.setConnectedVoltagesourceValue(12);
+c.setConnectedVoltagesourceResistance(10);
+let type = 2;
 c.generateCircuit(type);
 if (type === 10 || type === 2){
 
@@ -180,6 +182,10 @@ console.log('Az aramkor Thevenin helyettesito feszultsege: '+c.getCircuit().getT
 //console.log('A keresett ellenallas arama: '+c.getQuestionResCurrent().toFixed(4)+ ' A');
 if (c.getQuestionRes() !== undefined){
     console.log('A mert feszultseg: '+c.getQuestionResVoltage().toFixed(4)+ ' V');
+}
+if (c.getOutputVoltageWithConnectedVoltageSource() !== undefined){
+    console.log('A '+ c.getConnectedVoltagesourceValue()+ ' V-os es ' +c.getConnectedVoltagesourceResistance()+ ' Ohm belso ellenallasu feszgen csatlakoztatasa eseten:');
+    console.log('A halozat kapocsfeszultseges a keresett pontok kozott: ' +c.getOutputVoltageWithConnectedVoltageSource());
 }
 //console.log(c.randomCurrentSourceValue());
 //console.log(c.randomE6Resistance());
