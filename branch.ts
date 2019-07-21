@@ -6,7 +6,7 @@ import { VoltageSource } from "./voltagesource";
 import { Mesh } from "./mesh";
 import * as math from 'mathjs';
 
-export var branchCounter: number = 0;
+export var branchCounter: number = 1;
 export class Branch {
     private meshNumber: number; //az ot tartalmazo hurok sorszama
     private branchNumber: number;
@@ -66,13 +66,13 @@ export class Branch {
     public setCurrent(currentVector: math.MathType): void {
         let curVect: Object = currentVector.valueOf(); 
         if (this.current === 0) {
-            console.log('COMMON: '+this.common);
+            //console.log('COMMON: '+this.common);
             if (this.common === this.meshNumber) {
                 this.current = curVect[this.meshNumber-1];
                 //this.current = +currentVector.subset(math.index(this.meshNumber,0));
             } else {
                 this.current = curVect[this.meshNumber-1] - curVect[(this.common-this.meshNumber)-1]
-                console.log('KOZOS AGAK ARAMA: '+this.current);
+                //console.log('KOZOS AGAK ARAMA: '+this.current);
                 //this.current = +currentVector.subset(math.index(this.meshNumber,0)) - (+currentVector.subset(math.index(this.common-this.meshNumber,0)));
             }
         }

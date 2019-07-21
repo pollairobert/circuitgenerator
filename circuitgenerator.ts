@@ -41,28 +41,28 @@ export class CircuitGenerator {
                 this.circuit = new Circuit(2, 2, 0, 1, 1);
                 for (let h = 0; h < this.circuit.getNumberOfMesh(); h++) {
                     this.circuit.setMeshes(new Mesh());
-
+                    
                     //A 4 iranynak megfelelo branch-ek letrehozasa a mesh-en belul
                     for (let i = 0; i < 4; i++){
                         this.circuit.getMeshes()[h].setBranches(new Branch(i,h));
                     }
                 }
-                //this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomE6Resistance()));
-                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new Resistance(2));
-                this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(3));
+                this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomE6Resistance()));
+                //this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new Resistance(2));
+                //this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(3));
                 //this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(8));
                 //this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
                 //this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(18));
-                //this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));
-                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(120,false));
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(5));
-                this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new VoltageSource(90,true));
+                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));
+                //this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(120,false));
+                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
+                //this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new VoltageSource(90,true));
                 //this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
                 this.circuit.getMeshes()[0].getBranches()[2].setCommon(2);
                 this.circuit.getMeshes()[1].getBranches()[0].setCommon(1);
-                //this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]));
+                this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]));
                 //this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[1]));
-                this.circuit.getMeshes()[0].getBranches()[2].setTh2Pole(true);
+                this.circuit.getMeshes()[1].getBranches()[2].setTh2Pole(true);
                 for (let i = 0; i < this.circuit.getMeshes().length; i++){
                     for(let j = 0; j < this.circuit.getMeshes()[i].getBranches().length; j++){
                         let mesh : Mesh =  this.circuit.getMeshes()[i];
@@ -72,9 +72,9 @@ export class CircuitGenerator {
                 }
                 this.finalCalculateOfTheveninSubstitutes(this.circuit);
                 //let cloneCircuit: Circuit = this.circuit.cloneCircuit(this.circuit);
-                //console.log(cloneCircuit);
+                ////console.log(cloneCircuit);
                 //cloneCircuit.getMeshes().splice(1,1);
-                console.log(this.counter);
+                //console.log(this.counter);
                 break;
             }
             //Kettos feszultsegoszto
@@ -88,13 +88,13 @@ export class CircuitGenerator {
                     }
                 }
                 
-                this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(19));
-                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(19));
-                this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(12));
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(11));
-                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(15,false));
-                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new VoltageSource(44,true));//2. feszgen
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(8,true));//3. feszgen
+                this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomE6Resistance()));
+                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
+                this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(this.randomE6Resistance()));
+                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
+                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));
+                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));//2. feszgen
+                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));//3. feszgen
                 //this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
                 //this.circuit.getMeshes()[2].getBranches()[2].setBranchElements(new Resistance(3));
                 this.circuit.getMeshes()[0].getBranches()[2].setCommon(2);
@@ -185,7 +185,7 @@ export class CircuitGenerator {
                         let mesh : Mesh =  this.circuit.getMeshes()[i];
                         mesh.setMeshVoltage(mesh.getBranches()[j]);
                         mesh.setMeshResistance(mesh.getBranches()[j]);
-                        //console.log(mesh.getBranches()[j]);
+                        //////console.log(mesh.getBranches()[j]);
                     }
                 }
                 this.finalCalculateOfTheveninSubstitutes(this.circuit);
@@ -200,7 +200,7 @@ export class CircuitGenerator {
             -------------- B
             */
             case 5: {
-                console.log('**** generateCircuit meghivva a MAIN-bol ****');
+                ////console.log('**** generateCircuit meghivva a MAIN-bol ****');
                 this.circuit = new Circuit(6, 8, 0, 3, 9);
                 for (let h = 0; h < this.circuit.getNumberOfMesh(); h++) {
                     this.circuit.setMeshes(new Mesh());
@@ -277,18 +277,22 @@ export class CircuitGenerator {
 
                 //TESZT jelleggel 6-os hurok letrehozasa
                 //Hozza kell adni 2 db 2-es tipusu branchet
-                this.circuit.getMeshes()[5].getBranches().splice(2,0,new Branch(2,5),new Branch(2,5));
+                this.circuit.getMeshes()[5].getBranches().splice(2,0,new Branch(2,5),new Branch(2,5),new Branch(2,5));
+                this.circuit.getMeshes()[5].getBranches()[2].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[4].getBranches()[1].getBranchElements()[0]));
+                this.circuit.getMeshes()[5].getBranches()[2].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[4].getBranches()[1].getBranchElements()[1]));
                 this.circuit.getMeshes()[5].getBranches()[1].setBranchElements(new VoltageSource(50,true));
                 this.circuit.getMeshes()[5].getBranches()[1].setBranchElements(new Resistance(19));
                 this.circuit.getMeshes()[5].getBranches()[4].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[0].getBranchElements()[0]));
 
                 //Kozos agak
                 this.circuit.getMeshes()[5].getBranches()[2].setCommon(5);
-                this.circuit.getMeshes()[5].getBranches()[3].setCommon(3);
-                this.circuit.getMeshes()[5].getBranches()[4].setCommon(1);
+                this.circuit.getMeshes()[5].getBranches()[3].setCommon(5);
+                this.circuit.getMeshes()[5].getBranches()[4].setCommon(3);
+                this.circuit.getMeshes()[5].getBranches()[5].setCommon(1);
                 this.circuit.getMeshes()[0].getBranches()[0].setCommon(6);
                 this.circuit.getMeshes()[2].getBranches()[0].setCommon(6);
                 this.circuit.getMeshes()[4].getBranches()[0].setCommon(6);
+                this.circuit.getMeshes()[4].getBranches()[1].setCommon(6);
 
                 //thevenin 2 polus a 4-es hurok vegen lesz
                 //this.circuit.getMeshes()[4].getBranches()[2].setTh2Pole(true);
@@ -297,7 +301,7 @@ export class CircuitGenerator {
                 this.circuit.getMeshes()[1].getBranches()[4].setTh2Pole(true);
                     
                 for (let i = 0; i < this.circuit.getMeshes().length; i++){
-                    //console.log(this.circuit.getMeshes()[i]);
+                    //////console.log(this.circuit.getMeshes()[i]);
                     for(let j = 0; j < this.circuit.getMeshes()[i].getBranches().length; j++){
                         let mesh : Mesh =  this.circuit.getMeshes()[i];
                         mesh.setMeshVoltage(mesh.getBranches()[j]);
@@ -305,7 +309,7 @@ export class CircuitGenerator {
                         
                     }
                 }
-                //console.log(this.circuit);
+                //////console.log(this.circuit);
                 this.finalCalculateOfTheveninSubstitutes(this.circuit);
                 break;
 
@@ -354,7 +358,7 @@ export class CircuitGenerator {
                         let mesh : Mesh =  this.circuit.getMeshes()[i];
                         mesh.setMeshVoltage(mesh.getBranches()[j]);
                         mesh.setMeshResistance(mesh.getBranches()[j]);
-                        //console.log(mesh.getBranches()[j]);
+                        //////console.log(mesh.getBranches()[j]);
                     }
                 }
                 this.finalCalculateOfTheveninSubstitutes(this.circuit);
@@ -366,23 +370,23 @@ export class CircuitGenerator {
     
     public calculateCurrentVector(circuit: Circuit): math.MathType{
         //this.counter++;
-        console.log('**** calculateCurrentVector meghivva a calculateCircuitResultingResistance-bol ****');
+        ////console.log('**** calculateCurrentVector meghivva a calculateCircuitResultingResistance-bol ****');
         let currentVector: math.MathType = math.matrix();
         currentVector.resize([circuit.getNumberOfMesh(),1]);
         currentVector = math.multiply(math.inv(this.calculateResistanceMatrix(circuit)),this.calculateVoltageVector(circuit));
         //currentVector.valueOf
-        console.log(currentVector);
+        ////console.log(currentVector);
         return currentVector;
     }
     public calculateVoltageVector(circuit: Circuit): math.Matrix {
-        console.log('**** calculateVoltageVector meghivva a calculateCurrentVector-bol ****');
+        ////console.log('**** calculateVoltageVector meghivva a calculateCurrentVector-bol ****');
 
         let voltageVector = math.matrix();
         voltageVector.resize([circuit.getNumberOfMesh(),1]);
         for (let i = 0; i < circuit.getNumberOfMesh(); i++){
             voltageVector.subset(math.index(i, 0),circuit.getMeshes()[i].getMeshVoltage());
         }
-        console.log(voltageVector);
+        ////console.log(voltageVector);
         return voltageVector;
     }
 
@@ -392,7 +396,7 @@ export class CircuitGenerator {
      * @param circuit aramkor objektumot var
      */
     public calculateResistanceMatrix(circuit: Circuit): math.Matrix {
-        console.log('**** calculateResistanceMatrix meghivva a calculateCurrentVector-bol ****');
+        ////console.log('**** calculateResistanceMatrix meghivva a calculateCurrentVector-bol ****');
         let resistanceMatrix: math.Matrix = math.matrix();
         resistanceMatrix.resize([circuit.getNumberOfMesh(),circuit.getNumberOfMesh()]);
         for (let i = 0; i < circuit.getNumberOfMesh(); i++){
@@ -411,7 +415,7 @@ export class CircuitGenerator {
                 }
             }
         }
-        console.log(resistanceMatrix);
+        //console.log(resistanceMatrix);
         return resistanceMatrix;
     }
     
@@ -422,7 +426,7 @@ export class CircuitGenerator {
      * @param circuit aramkor objektumot var
      */
     public calculateCircuitResultingResistance(circuit: Circuit): number {
-        console.log('**** calculateCircuitResultingResistance meghivva a finalCalculateOfTheveninSubstitutes ****');
+        //console.log('**** calculateCircuitResultingResistance meghivva a finalCalculateOfTheveninSubstitutes ****');
         let th2PoleMeshNumber: number;
         let th2PoleBranchType: number;
         let th2PoleNumberOfBranch: number;
@@ -437,11 +441,11 @@ export class CircuitGenerator {
             }
             for (let j = 0; j < cloneCircuit.getMeshes()[i].getBranches().length; j++){
                 if (cloneCircuit.getMeshes()[i].getBranches()[j].getTh2Pole()){
-                    //console.log('van 2polusa a klonnak');
+                    ////console.log('van 2polusa a klonnak');
                     if (cloneCircuit.getMeshes()[i].getBranches()[j].getCommon() !== cloneCircuit.getMeshes()[i].getMeshNumber()){
                         commonAndTh2Pole = cloneCircuit.getMeshes()[i].getBranches()[j].getCommon();
                         //this.commonAndTh2Pole = cloneCircuit.getMeshes()[i].getBranches()[j].getCommon();
-                        //console.log('Kozos ag a 2 polus');
+                        ////console.log('Kozos ag a 2 polus');
                     }
                     for (let k = 0; k < cloneCircuit.getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
                         if (cloneCircuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'R'){
@@ -461,44 +465,6 @@ export class CircuitGenerator {
             }
         }
         return this.calculateResultingResistance(10,this.calculateTh2PoleBranchCurrent(cloneCircuit,commonAndTh2Pole,th2PoleBranchType,th2PoleNumberOfBranch,th2PoleMeshNumber,this.questionOrVoltmeterResistance));
-        /*if (commonAndTh2Pole === undefined){
-            console.log('**** NINCS KOZOS AGBAN A 2 POLUS ****');
-            cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getBranches().splice(th2PoleNumberOfBranch,1,new Branch(th2PoleBranchType,th2PoleMeshNumber-1));
-            //cloneCircuit.getMeshes()[i].setBranches(new Branch(th2PoleBranchType,i));
-            cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setBranchElements(new VoltageSource(10,false));
-            cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setTh2Pole(true);
-            let mesh : Mesh =  cloneCircuit.getMeshes()[th2PoleMeshNumber-1];
-            mesh.setMeshVoltage(mesh.getBranches()[th2PoleNumberOfBranch]);
-            //return this.calculateResultingResistance(10,this.calculateCurrentVector(cloneCircuit).valueOf()[th2PoleMeshNumber-1]);
-            //console.log('nem kozos a 2 polus');
-            return this.calculateResultingResistance(10,this.calculateTh2PoleBranchCurrent(cloneCircuit));
-        } else {
-            console.log('**** KOZOS AGBAN A 2 POLUS ****');
-            //console.log(commonAndTh2Pole);
-            //console.log(th2PoleMeshNumber);
-            //console.log(cloneCircuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1].getBranches().length);
-            cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getBranches().splice(th2PoleNumberOfBranch,1,new Branch(th2PoleBranchType,th2PoleMeshNumber-1));
-            cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setBranchElements(new VoltageSource(10,false));
-            cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setTh2Pole(true);
-            let mesh : Mesh =  cloneCircuit.getMeshes()[th2PoleMeshNumber-1];
-            mesh.setMeshVoltage(mesh.getBranches()[th2PoleNumberOfBranch]);
-            for (let i = 0; i < cloneCircuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1].getBranches().length; i++){
-                if (cloneCircuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1].getBranches()[i].getCommon() === commonAndTh2Pole) {
-                    cloneCircuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1].getBranches()[i].setBranchElements(this.copyCommonElement(cloneCircuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].getBranchElements()[0]));
-                    let mesh : Mesh =  cloneCircuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1];
-                    mesh.setMeshVoltage(mesh.getBranches()[i]);
-                }
-            }
-            console.log('2 polust tartalmazo hurak arama: '+this.calculateCurrentVector(cloneCircuit).valueOf()[th2PoleMeshNumber-1]);
-            console.log('2 polussal kozos agat tartalmazo hurak arama: '+this.calculateCurrentVector(cloneCircuit).valueOf()[(commonAndTh2Pole - th2PoleMeshNumber)-1]);
-            return this.calculateResultingResistance(10,(this.calculateCurrentVector(cloneCircuit).valueOf()[th2PoleMeshNumber-1]-this.calculateCurrentVector(cloneCircuit).valueOf()[(commonAndTh2Pole - th2PoleMeshNumber)-1]));
-            console.log(this.calculateTh2PoleBranchCurrent(cloneCircuit));
-            //return this.calculateResultingResistance(10,this.calculateTh2PoleBranchCurrent(cloneCircuit));
-
-        }*/
-        
-        //Ez a megoldas CSAK 2 hurokra es azok kozos agan kijelolt ket polusra mukodik!!!!!
-        //return this.calculateResultingResistance(10,(this.calculateCurrentVector(cloneCircuit).valueOf()[th2PoleMeshNumber-1]-this.calculateCurrentVector(cloneCircuit).valueOf()[th2PoleMeshNumber]));
         
     }
     /**
@@ -508,33 +474,16 @@ export class CircuitGenerator {
      * @param circuit aramkor objektumot var
      */
     public finalCalculateOfTheveninSubstitutes(circuit: Circuit): void {
-        console.log('**** finalCalculateOfTheveninSubstitutes meghivva a generateCircuit-bol ****');
+        //console.log('**** finalCalculateOfTheveninSubstitutes meghivva a generateCircuit-bol ****');
         //circuit.setThevRes(this.circuitResultingResistance);
         let tempRes: number;
         circuit.setThevRes(this.calculateCircuitResultingResistance(circuit));
-        console.log('**** Thevenin ellenallas kiszamolva: '+circuit.getThevRes()+' ****');
-        /*for (let i = 0; i < circuit.getNumberOfMesh(); i++){
-            for (let j = 0; j < circuit.getMeshes()[i].getBranches().length; j++){
-                //circuit.getMeshes()[i].getBranches()[j].setCurrent(this.calculateCurrentVector(circuit));
-                if (circuit.getMeshes()[i].getBranches()[j].getTh2Pole()){
-                    th2PoleCurrent = circuit.getMeshes()[i].getBranches()[j].getCurrent();
-                }
-
-                console.log('Branch type: '+ circuit.getMeshes()[i].getBranches()[j].getType()+' Arama: '+circuit.getMeshes()[i].getBranches()[j].getCurrent());
-            }
-        }*/
-        //console.log(this.calculateCurrentVector(circuit));
-        //console.log(this.calculateCurrentVector(circuit));
-        //circuit.setThevVolt(circuit.getThevRes()*this.calculateCurrentVector(circuit).valueOf()[th2PoleMeshNumber]);
-        //circuit.setThevVolt(circuit.getThevRes()*th2PoleCurrent);
         circuit.setThevVolt(circuit.getThevRes()*this.calculateTh2PoleBranchCurrent(circuit));
         
         if (this.questionOrVoltmeterResistance !== undefined){
             this.calculateQuestionResistancCurrentAndVoltage(circuit.getThevRes(),circuit.getThevVolt(),this.questionOrVoltmeterResistance);
         }
         if (this.connectedVoltagesourceInsideResistance !== undefined && this.connectedVoltagesourceValue !== undefined){
-            //this.connectedVoltagesourceInsideResistance = undefined;
-            //this.connectedVoltagesourceValue = undefined;
             this.outpuVoltageWithconnectedVoltagesource = this.calculateConectedVoltagsourceAndInsideResistance(circuit.getThevVolt(),circuit.getThevRes(),this.connectedVoltagesourceValue,this.connectedVoltagesourceInsideResistance);
         }
     }
@@ -544,27 +493,11 @@ export class CircuitGenerator {
      * @param current 
      */
     public calculateResultingResistance(voltage: number, current: number):number{
-        console.log('**** calculateResultingResistance meghivva a calculateCircuitResultingResistance-bol****');
-        console.log(voltage/current);
+        //console.log('**** calculateResultingResistance meghivva a calculateCircuitResultingResistance-bol****');
+        //console.log(voltage/current);
         return voltage/current;
     }
-    /*public calculateTh2PoleBranchCurrent(circuit: Circuit): number {
-        let currentVector: math.MathType = this.calculateCurrentVector(circuit);
-        let th2PoleCurrent: number;
-        for (let i = 0; i < circuit.getNumberOfMesh(); i++){
-            for (let j = 0; j < circuit.getMeshes()[i].getBranches().length; j++){
-                circuit.getMeshes()[i].getBranches()[j].setCurrent(currentVector);
-                if (circuit.getMeshes()[i].getBranches()[j].getTh2Pole()){
-                    th2PoleCurrent = circuit.getMeshes()[i].getBranches()[j].getCurrent();
-                }
-                console.log('Branch type: '+ circuit.getMeshes()[i].getBranches()[j].getType()+' Arama: '+circuit.getMeshes()[i].getBranches()[j].getCurrent()+ 'Branch number: ' +circuit.getMeshes()[i].getBranches()[j].getBranchNumber());
-                //console.log('   Branch common: '+ circuit.getMeshes()[i].getBranches()[j].getCommon());
-                //console.log('   Branch common: '+ circuit.getMeshes()[i].getBranches()[j].getCommon());
-            }
-        }
-        //console.log(th2PoleCurrent);
-        return th2PoleCurrent;
-    }*/
+    
     /**
      * Kotelezo parametere a circuit, ami egy halozat objektum.A tobbi parametertol fuggoen tudja a metodus, hogy pl. belso 2 polus van-e 
      * Ennek a halozatnak a megadott ket polusa kozotti rovidzarasi aramot adja vissza.
@@ -576,15 +509,15 @@ export class CircuitGenerator {
      * @param th2PoleMeshNumber 2 polsut tartalmazo branch ebben a szamu mesh-ben van
      */
     public calculateTh2PoleBranchCurrent(circuit: Circuit, commonAndTh2Pole?: number, th2PoleBranchType?:number, th2PoleNumberOfBranch?: number, th2PoleMeshNumber?: number, quesRes?:number): number {
-        console.log('commonAndTh2Pole: '+commonAndTh2Pole);
-        console.log('th2PoleBranchType: '+th2PoleBranchType);
-        console.log('th2PoleNumberOfBranch: '+th2PoleNumberOfBranch);
-        console.log('th2PoleMeshNumber: '+th2PoleMeshNumber);
+        //console.log('commonAndTh2Pole: '+commonAndTh2Pole);
+        //console.log('th2PoleBranchType: '+th2PoleBranchType);
+        //console.log('th2PoleNumberOfBranch: '+th2PoleNumberOfBranch);
+        //console.log('th2PoleMeshNumber: '+th2PoleMeshNumber);
         let th2PoleCurrent: number;
         let currentVector: math.MathType;
-        console.log(commonAndTh2Pole);
+        //console.log(commonAndTh2Pole);
         if (commonAndTh2Pole === undefined && th2PoleBranchType !== undefined && th2PoleNumberOfBranch !== undefined && th2PoleMeshNumber !== undefined){
-            console.log('COMMON AND 2 POLE UNDEFINED');
+            //console.log('COMMON AND 2 POLE UNDEFINED');
             circuit.getMeshes()[th2PoleMeshNumber-1].getBranches().splice(th2PoleNumberOfBranch,1,new Branch(th2PoleBranchType,th2PoleMeshNumber-1));
             //cloneCircuit.getMeshes()[i].setBranches(new Branch(th2PoleBranchType,i));
             circuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setBranchElements(new VoltageSource(10,false));
@@ -612,7 +545,7 @@ export class CircuitGenerator {
                 }
             }
             currentVector = this.calculateCurrentVector(circuit);
-            console.log('CURRENT VEKTOR: '+currentVector);
+            //console.log('CURRENT VEKTOR: '+currentVector);
         }
         //let currentVector: math.MathType = this.calculateCurrentVector(circuit);
         
@@ -621,23 +554,23 @@ export class CircuitGenerator {
                 circuit.getMeshes()[i].getBranches()[j].setCurrent(currentVector);
                 if (circuit.getMeshes()[i].getBranches()[j].getTh2Pole()){
                     th2PoleCurrent = circuit.getMeshes()[i].getBranches()[j].getCurrent();
-                    console.log('EZ A 2 POLUS BRNCH: '+ circuit.getMeshes()[i].getBranches()[j].getCurrent());
+                    //console.log('EZ A 2 POLUS BRANCH ARAMA: '+ circuit.getMeshes()[i].getBranches()[j].getCurrent());
                 }
-                console.log('Branch type: '+ circuit.getMeshes()[i].getBranches()[j].getType()+' Arama: '+circuit.getMeshes()[i].getBranches()[j].getCurrent()+ 'Branch number: ' +circuit.getMeshes()[i].getBranches()[j].getBranchNumber());
+                //console.log('Branch type: '+ circuit.getMeshes()[i].getBranches()[j].getType()+' Arama: '+circuit.getMeshes()[i].getBranches()[j].getCurrent()+ 'Branch number: ' +circuit.getMeshes()[i].getBranches()[j].getBranchNumber());
                 for (let k = 0; k < circuit.getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
                     if (circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'R'){
                         circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].setCurrent(circuit.getMeshes()[i].getBranches()[j].getCurrent());
                         circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].setVoltage(0);
-                        console.log('  Ellenallas arama: '+ circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getCurrent());
-                        console.log('  Ellenallas feszultsege: '+ circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage());
+                        //console.log('  Ellenallas arama: '+ circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getCurrent());
+                        //console.log('  Ellenallas feszultsege: '+ circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage());
                     }
                 }
                 
-                //console.log('   Branch common: '+ circuit.getMeshes()[i].getBranches()[j].getCommon());
-                //console.log('   Branch common: '+ circuit.getMeshes()[i].getBranches()[j].getCommon());
+                ////console.log('   Branch common: '+ circuit.getMeshes()[i].getBranches()[j].getCommon());
+                ////console.log('   Branch common: '+ circuit.getMeshes()[i].getBranches()[j].getCommon());
             }
         }
-        console.log('2 POLE CURRENT: '+th2PoleCurrent);
+        //console.log('2 POLE CURRENT: '+th2PoleCurrent);
         return th2PoleCurrent;
     }
 
@@ -672,12 +605,12 @@ export class CircuitGenerator {
                 let mesh : Mesh =  connectedCircuit.getMeshes()[i];
                 mesh.setMeshVoltage(mesh.getBranches()[j]);
                 mesh.setMeshResistance(mesh.getBranches()[j]);
-                //console.log(mesh.getBranches()[j]);
+                ////console.log(mesh.getBranches()[j]);
             }
         }
-        console.log(connectedCircuit);
+        //console.log(connectedCircuit);
         connectedCircuit.setThevRes(this.calculateCircuitResultingResistance(connectedCircuit));
-        console.log('CONNECTED EREDO: ' +connectedCircuit.getThevRes());
+        //console.log('CONNECTED EREDO: ' +connectedCircuit.getThevRes());
         connectedCircuit.setThevVolt(connectedCircuit.getThevRes()*this.calculateTh2PoleBranchCurrent(connectedCircuit));
         //this.finalCalculateOfTheveninSubstitutes(connectedCircuit);
         return connectedCircuit.getThevVolt();

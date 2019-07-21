@@ -14,168 +14,121 @@ var c: CircuitGenerator = new CircuitGenerator();
 c.setQuestionOrVoltmeterResistance(1000);
 c.setConnectedVoltagesourceValue(12);
 c.setConnectedVoltagesourceResistance(10);
-let type = 2;
+let type = 5;
 c.generateCircuit(type);
-if (type === 10 || type === 2){
+console.log();
+for (let i = 0; i < c.getCircuit().getMeshes().length; i++){
+    console.log('A(z) '+c.getCircuit().getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
+    console.log('   Mesh ellenallasa (matrixhoz, a benne levo ellenallasok osszege): '+c.getCircuit().getMeshes()[i].getMeshResistance());
+    console.log('   Mesh feszultsege (vektorhoz, generator ertekek elojelhelyes osszege): '+c.getCircuit().getMeshes()[i].getMeshVoltage());
+    console.log('   Mesh-ben levo Branch-ek: ');
+    console.log();
 
-if (c.getCircuit().getNumberOfMesh() === 2){
-    console.log('V01 = '+c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getVoltage()+ ' V');
-    console.log('R01 = '+c.getCircuit().getMeshes()[0].getBranches()[1].getBranchElements()[0].getResistance()+ ' Ohm');
-    console.log('R02 = '+c.getCircuit().getMeshes()[0].getBranches()[2].getBranchElements()[0].getResistance()+ ' Ohm');
-    console.log(' --------R01--------------------A');
-    console.log(' |               |  ');
-    if (c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection()){
-        console.log(' -               |  ');
-        console.log('V01             R02  ');
-        console.log(' +               |  ');
-    } else {
-        console.log(' +               |  ');
-        console.log('V01             R02  ');
-        console.log(' -               |  ');
-    }
-    console.log(' |               |  ');
-    console.log(' -------------------------------B');
-}
-if (c.getCircuit().getNumberOfMesh() === 3){
-    var vscount: number = 0;
-    for (var i = 0; i < 3; i++){
-        for (var j =0; j < c.getCircuit().getMeshes()[i].getBranches().length; j++){
-            for (var k =0; k < c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
-                if (c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'V'){
-                    vscount++;
-                }
-            }
-        }
-    }
-    if (vscount === 1){
-        console.log('V01 = '+c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getVoltage()+ ' V');
-        console.log('R01 = '+c.getCircuit().getMeshes()[0].getBranches()[1].getBranchElements()[0].getResistance()+ ' Ohm');
-        console.log('R02 = '+c.getCircuit().getMeshes()[0].getBranches()[2].getBranchElements()[0].getResistance()+ ' Ohm');
-        console.log('R03 = '+c.getCircuit().getMeshes()[1].getBranches()[1].getBranchElements()[0].getResistance()+ ' Ohm');
-        console.log('R04 = '+c.getCircuit().getMeshes()[1].getBranches()[2].getBranchElements()[0].getResistance()+ ' Ohm');
-        console.log(' -------R01-------------R03--------------A');
-        console.log(' |               |               |');
-        if (c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection()){
-            console.log(' -               |               |');
-            console.log('V01             R02             R04');
-            console.log(' +               |               |');
-        } else {
-            console.log(' +               |               |');
-            console.log('V01             R02             R04');
-            console.log(' -               |               |');
-        }
-        console.log(' |               |               |');
-        console.log(' ----------------------------------------B');
-    }
-    if (vscount === 3){
-        console.log('V01 = '+c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getVoltage()+ ' V');
-        console.log('V02 = '+c.getCircuit().getMeshes()[0].getBranches()[2].getBranchElements()[1].getVoltage()+ ' V');
-        console.log('R01 = '+c.getCircuit().getMeshes()[0].getBranches()[1].getBranchElements()[0].getResistance()+ ' Ohm');
-        console.log('R02 = '+c.getCircuit().getMeshes()[0].getBranches()[2].getBranchElements()[0].getResistance()+ ' Ohm');
-        console.log('R03 = '+c.getCircuit().getMeshes()[1].getBranches()[1].getBranchElements()[0].getResistance()+ ' Ohm');
-        console.log('R04 = '+c.getCircuit().getMeshes()[1].getBranches()[2].getBranchElements()[0].getResistance()+ ' Ohm');
-        console.log(' -------R01-------------R03--------------A');
-        console.log(' |               |               |');
-        console.log(' |               |               |');
-        console.log(' |              R02             R04');
-        console.log(' |               |               |');
-        if (c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection()){
-            console.log(' -               -               |');
-            console.log('V01             V02              |');
-            console.log(' +               +               |');
-        } 
-        if (!c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection()){
-            console.log(' +               -               |');
-            console.log('V01             V02              |');
-            console.log(' -               +               |');
-        }
-        if (c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && !c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection()){
-            console.log(' -               +               |');
-            console.log('V01             V02              |');
-            console.log(' +               -               |');
-        }
-        if (!c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && !c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection()){
-            console.log(' -               -               |');
-            console.log('V01             V02              |');
-            console.log(' +               +               |');
-        }
-        console.log(' |               |               |');
-        console.log(' ----------------------------------------B');
-    }
-    if (vscount === 5){
-        console.log('V01 = '+c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getVoltage()+ ' V');
-        console.log('V02 = '+c.getCircuit().getMeshes()[0].getBranches()[2].getBranchElements()[1].getVoltage()+ ' V');
-        console.log('V03 = '+c.getCircuit().getMeshes()[2].getBranches()[0].getBranchElements()[1].getVoltage()+ ' V');
-        console.log('R01 = '+c.getCircuit().getMeshes()[0].getBranches()[1].getBranchElements()[0].getResistance()+ ' Ohm');
-        console.log('R02 = '+c.getCircuit().getMeshes()[0].getBranches()[2].getBranchElements()[0].getResistance()+ ' Ohm');
-        console.log('R03 = '+c.getCircuit().getMeshes()[1].getBranches()[1].getBranchElements()[0].getResistance()+ ' Ohm');
-        console.log('R04 = '+c.getCircuit().getMeshes()[1].getBranches()[2].getBranchElements()[0].getResistance()+ ' Ohm');
-        console.log(' -------R01-------------R03--------------A');
-        console.log(' |               |               |');
-        console.log(' |               |               |');
-        console.log(' |              R02             R04');
-        console.log(' |               |               |');
-        if (c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection() && c.getCircuit().getMeshes()[2].getBranches()[0].getBranchElements()[1].getDirection()){
-            console.log(' -               -               -');
-            console.log('V01             V02             V03');
-            console.log(' +               +               +');
-        } 
-        if (c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection() && !c.getCircuit().getMeshes()[2].getBranches()[0].getBranchElements()[1].getDirection()){
-            console.log(' -               -               +');
-            console.log('V01             V02             V03');
-            console.log(' +               +               -');
-        }
-        if (c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && !c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection() && c.getCircuit().getMeshes()[2].getBranches()[0].getBranchElements()[1].getDirection()){
-            console.log(' -               +               -');
-            console.log('V01             V02             V03');
-            console.log(' +               -               +');
-        }
-        if (c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && !c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection() && !c.getCircuit().getMeshes()[2].getBranches()[0].getBranchElements()[1].getDirection()){
-            console.log(' -               +               +');
-            console.log('V01             V02             V03');
-            console.log(' +               -               -');
-        }
-        if (!c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection() && c.getCircuit().getMeshes()[2].getBranches()[0].getBranchElements()[1].getDirection()){
-            console.log(' +               -               -');
-            console.log('V01             V02             V03');
-            console.log(' -               +               +');
-        }
-        if (!c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection() && !c.getCircuit().getMeshes()[2].getBranches()[0].getBranchElements()[1].getDirection()){
-            console.log(' +               -               +');
-            console.log('V01             V02             V03');
-            console.log(' -               +               -');
-        }
-        if (!c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && !c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection() && c.getCircuit().getMeshes()[2].getBranches()[0].getBranchElements()[1].getDirection()){
-            console.log(' +               +               -');
-            console.log('V01             V02             V03');
-            console.log(' -               -               +');
-        }
-        if (!c.getCircuit().getMeshes()[0].getBranches()[0].getBranchElements()[0].getDirection() && !c.getCircuit().getMeshes()[1].getBranches()[0].getBranchElements()[1].getDirection() && !c.getCircuit().getMeshes()[2].getBranches()[0].getBranchElements()[1].getDirection()){
-            console.log(' +               +               +');
-            console.log('V01             V02             V03');
-            console.log(' -               -               -');
-        }
-        console.log(' |               |               |');
-        console.log(' ----------------------------------------B');
-    }
-}
-}
-let voltegeCount: number = 0;
-let resistCount: number = 0;
-for (let i = 0; i < c.getCircuit().getNumberOfMesh(); i++){
     for (let j = 0; j < c.getCircuit().getMeshes()[i].getBranches().length; j++){
-        for (let k = 0; k < c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
-            if (c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'V'){
-                voltegeCount++;
-                console.log('V0'+voltegeCount+'= '+c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage()+ ' V, irany: '+c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getDirection());
+        let type;
+        switch (c.getCircuit().getMeshes()[i].getBranches()[j].getType()){
+            case 0:{
+                type='↑';
+                break;
             }
-            if (c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'R'){
-                resistCount++;
-                console.log('R0'+resistCount+'= '+c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getResistance()+ ' Ohm');
+            case 1:{
+                type='→';
+                break;
+            }
+            case 2:{
+                type='↓';
+                break;
+            }
+            case 3:{
+                type='←';
+                break;
             }
         }
+        console.log('       '+j+'.(branches tomb indexe) Branch iranya (ez a felvett hurokarammal egyezik): '+type);
+        if (c.getCircuit().getMeshes()[i].getBranches()[j].getTh2Pole()){
+            console.log('           *****************************************');
+            console.log('           *ENNEK A BRANCH-NEK A KET VEGE A 2 POLUS*');
+            console.log('           *****************************************');
+        }
+        console.log('           Arama: '+c.getCircuit().getMeshes()[i].getBranches()[j].getCurrent());
+        console.log('           Common (kozossegi) erteke: '+c.getCircuit().getMeshes()[i].getBranches()[j].getCommon());
+        if (c.getCircuit().getMeshes()[i].getBranches()[j].getCommon() > c.getCircuit().getMeshes()[i].getMeshNumber()){
+            let commMesh = c.getCircuit().getMeshes()[i].getBranches()[j].getCommon()-c.getCircuit().getMeshes()[i].getMeshNumber();
+            console.log('           A(z) '+commMesh+ '. hurokkal kozos Branch.');
+        }
+        if (c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[0] !== undefined){
+            console.log('           Szama: '+c.getCircuit().getMeshes()[i].getBranches()[j].getBranchNumber());
+            console.log('           Ellenallasa (benne levo ellenallasok osszege): '+c.getCircuit().getMeshes()[i].getBranches()[j].getBranchResistance());
+            console.log('           Feszultsege (generator ertekek elojelhelyes osszege): '+c.getCircuit().getMeshes()[i].getBranches()[j].getBranchVoltage());
+            console.log('           Aramkori elemei: ');
+            console.log();
+            for (let k = 0; k < c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
+                if (c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'R'){
+                    console.log('               Ellenallas: '+c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getResistance()+ ' Ohm');
+                    console.log('                   Arama: '+c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getCurrent());
+                    console.log('                   Feszultesege: '+c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage());
+                }
+                if (c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'V'){
+                    let direction;
+                    if (c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getDirection()){
+                        switch (c.getCircuit().getMeshes()[i].getBranches()[j].getType()){
+                            case 0:{
+                                direction='↑';
+                                break;
+                            }
+                            case 1:{
+                                direction='→';
+                                break;
+                            }
+                            case 2:{
+                                direction='↓';
+                                break;
+                            }
+                            case 3:{
+                                direction='←';
+                                break;
+                            }
+                        }
+                    } else {
+                        switch (c.getCircuit().getMeshes()[i].getBranches()[j].getType()){
+                            case 0:{
+                                direction = '↓';
+                                break;
+                            }
+                            case 1:{
+                                direction='←';
+                                break;
+                            }
+                            case 2:{
+                                direction='↑';
+                                break;
+                            }
+                            case 3:{
+                                direction='→';
+                                break;
+                            }
+                        }
+                    }
+
+                    console.log('               Feszultseggenerator: '+math.abs(c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage())+ ' V, '+direction);
+                    console.log('                   Arama: '+c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getCurrent());
+                }
+                if (c.getCircuit().getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'C'){
+                    
+                }
+                
+            }
+        }
+        
+        
+        
+        console.log();
     }
+    console.log();
 }
+
+
+
 console.log();
 console.log('Az aramkor Thevenin ellenalasa: '+c.getCircuit().getThevRes().toFixed(4)+ ' Ohm');
 console.log('Az aramkor Thevenin helyettesito feszultsege: '+c.getCircuit().getThevVolt().toFixed(4)+ ' V');
