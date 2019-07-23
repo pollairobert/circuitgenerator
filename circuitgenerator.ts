@@ -35,10 +35,13 @@ export class CircuitGenerator {
      * @param type aramkor tipusa adott struktura alapjan 
      */
     public generateCircuit(type: number/*mesh: number, res: number, cur: number, volt: number, comm: number*/): void {
-        switch (type) {
+        //let parameters: number[] = this.circuitParameterLimits(type);
+        this.circuit = this.buildFinalCircuit(new Circuit(this.circuitParameterLimits(type)),type);
+        /*switch (type) {
             //Egyszeru feszultsegoszto
             case 1: {
-                this.circuit = new Circuit(2, 2, 0, 1, 1);
+                //this.circuit = new Circuit(2, 2, 0, 1, 1);
+                this.circuit = new Circuit(this.circuitParameterLimits(type));
                 for (let h = 0; h < this.circuit.getNumberOfMesh(); h++) {
                     this.circuit.setMeshes(new Mesh());
                     
@@ -77,297 +80,263 @@ export class CircuitGenerator {
                 //console.log(this.counter);
                 break;
             }
-            //Kettos feszultsegoszto
+            
+        }*/
+        this.finalCalculateOfTheveninSubstitutes(this.circuit);
+    }
+    /**
+     * A parameternek megfeleloen megad egy olyan tombot, ami a halozat generalasahoz
+     * szukseges hurkok, elemek, kozos agak darabszamat tartalmazza.
+     * parameters = [[hurkok maximalis szama],
+     *               [ellenallasok maximalis szama],
+     *               [aramgeneratorok maximalis szama],
+     *               [feszultseggeneratorok maximalis szama],
+     *               [kozos agak maximalis szama]]
+     * @param type ez a parameter reprezentalja a halozat 'nehezsegi' szintjet
+     */
+    public circuitParameterLimits(type: number): number[]{
+        //let parameters = new Array(5);
+        let parameters: number[] = [];
+        switch (type){
+            //Egyszeru feszoszto, csak feszgennel
+            case 1: {
+                parameters = [this.randomIntNumber(2,2),
+                              this.randomIntNumber(6,2),
+                              this.randomIntNumber(0,0),
+                              this.randomIntNumber(1,1),
+                              this.randomIntNumber(2,2)]
+                break;
+            }
+            //Egyszeru 2 hurkos halozat, 1-nel tobb generatorral
             case 2: {
-                this.circuit = new Circuit(3, 4, 0, 1, 2);
-                for (let h = 0; h < this.circuit.getNumberOfMesh(); h++) {
-                    this.circuit.setMeshes(new Mesh());
-                    for (let i = 0; i < 4; i++){
-                        this.circuit.getMeshes()[h].setBranches(new Branch(i,h));
-                        
-                    }
-                }
-                
-                this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomE6Resistance()));
-                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
-                this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(this.randomE6Resistance()));
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
-                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));
-                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));//2. feszgen
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));//3. feszgen
-                //this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                //this.circuit.getMeshes()[2].getBranches()[2].setBranchElements(new Resistance(3));
-                this.circuit.getMeshes()[0].getBranches()[2].setCommon(2);
-                this.circuit.getMeshes()[1].getBranches()[0].setCommon(1);
-                this.circuit.getMeshes()[1].getBranches()[2].setCommon(3);
-                this.circuit.getMeshes()[2].getBranches()[0].setCommon(2);
-                this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]));
-                this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[1]));//2.feszgen
-                this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[0]));
-                this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[1]));//3.feszgen
-                this.circuit.getMeshes()[2].getBranches()[2].setTh2Pole(true);
-                for (let i = 0; i < this.circuit.getMeshes().length; i++){
-                    for(let j = 0; j < this.circuit.getMeshes()[i].getBranches().length; j++){
-                        let mesh : Mesh =  this.circuit.getMeshes()[i];
-                        mesh.setMeshVoltage(mesh.getBranches()[j]);
-                        mesh.setMeshResistance(mesh.getBranches()[j]);
-                    }
-                }
-                this.finalCalculateOfTheveninSubstitutes(this.circuit);
+                parameters = [this.randomIntNumber(2,2),
+                              this.randomIntNumber(6,2),
+                              this.randomIntNumber(0,0),
+                              this.randomIntNumber(2,2),
+                              this.randomIntNumber(1,1)]
                 break;
             }
-            //Teszt tipus, egyszeru 2 hurkos, a hurkok kozos agaban a kijelolt 2 polus.
             case 3: {
-                this.circuit = new Circuit(2, 3, 0, 1, 1);
-                for (let h = 0; h < this.circuit.getNumberOfMesh(); h++) {
-                    this.circuit.setMeshes(new Mesh());
-                    for (let i = 0; i < 4; i++){
-                        this.circuit.getMeshes()[h].setBranches(new Branch(i,h));
-                        
-                    }
-                }
-                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
-                this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                this.circuit.getMeshes()[0].getBranches()[2].setCommon(2);
-                this.circuit.getMeshes()[1].getBranches()[0].setCommon(1);
-                this.circuit.getMeshes()[0].getBranches()[2].setTh2Pole(true);
-                //this.circuit.getMeshes()[1].getBranches()[0].setTh2Pole(true);
-                this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
-
-                for (let i = 0; i < this.circuit.getMeshes().length; i++){
-                    for(let j = 0; j < this.circuit.getMeshes()[i].getBranches().length; j++){
-                        let mesh : Mesh =  this.circuit.getMeshes()[i];
-                        mesh.setMeshVoltage(mesh.getBranches()[j]);
-                        mesh.setMeshResistance(mesh.getBranches()[j]);
-                    }
-                }
-                this.finalCalculateOfTheveninSubstitutes(this.circuit);
                 break;
-
             }
-            //Teszt tipus, 3 hurkos rendszerhdez, belso thevenin 2 polussal.
             case 4: {
-                this.circuit = new Circuit(3, 4, 0, 2, 2);
-                for (let h = 0; h < this.circuit.getNumberOfMesh(); h++) {
-                    this.circuit.setMeshes(new Mesh());
-                    for (let i = 0; i < 4; i++){
-                        this.circuit.getMeshes()[h].setBranches(new Branch(i,h));
-                        
-                    }
-                }
-                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
-                //this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(5,true));
-                this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                //this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(13));
-                //this.circuit.getMeshes()[0].getBranches()[2].setTh2Pole(true);
-                this.circuit.getMeshes()[0].getBranches()[2].setCommon(2);
-                this.circuit.getMeshes()[1].getBranches()[0].setCommon(1);
-                
-                //this.circuit.getMeshes()[1].getBranches()[0].setTh2Pole(true);
-                this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                //this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(5));
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                //this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(34));
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
-                //this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(23,true));
-                this.circuit.getMeshes()[1].getBranches()[0].setTh2Pole(true);
-                this.circuit.getMeshes()[1].getBranches()[2].setCommon(3);
-                this.circuit.getMeshes()[2].getBranches()[0].setCommon(2);
-                this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[0]));
-                this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[1]));
-                this.circuit.getMeshes()[2].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                //this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                //this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(12));
-                for (let i = 0; i < this.circuit.getMeshes().length; i++){
-                    for(let j = 0; j < this.circuit.getMeshes()[i].getBranches().length; j++){
-                        let mesh : Mesh =  this.circuit.getMeshes()[i];
-                        mesh.setMeshVoltage(mesh.getBranches()[j]);
-                        mesh.setMeshResistance(mesh.getBranches()[j]);
-                        //////console.log(mesh.getBranches()[j]);
-                    }
-                }
-                this.finalCalculateOfTheveninSubstitutes(this.circuit);
                 break;
-
             }
-            /*Teszt tipus, 4 hurkos rendszerhdez, ahol 1 huroknak 2 masikkal is van kozos aga:
-            -------------- A
-            |  3 |    |
-            ------  2 |  4
-            | 1  |    |
-            -------------- B
-            */
             case 5: {
-                ////console.log('**** generateCircuit meghivva a MAIN-bol ****');
-                this.circuit = new Circuit(6, 8, 0, 3, 9);
-                for (let h = 0; h < this.circuit.getNumberOfMesh(); h++) {
-                    this.circuit.setMeshes(new Mesh());
-                    for (let i = 0; i < 4; i++){
-                        this.circuit.getMeshes()[h].setBranches(new Branch(i,h));
-                        
-                    }
-                }
-                //A 2-es hurokhoz hozza kell egy plusz felfele mutato branchat adni
-                //this.circuit.getMeshes()[1].setBranches(new Branch(0,1));
-                this.circuit.getMeshes()[1].getBranches().splice(1,0,new Branch(0,1))
-                //1-es hurok elemei
-                //this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
-                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(5,false));
-                //this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(13));
-                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(5));
-
-                //1-es hurok kozos againak beallitasa
-                this.circuit.getMeshes()[0].getBranches()[1].setCommon(3);
-                this.circuit.getMeshes()[0].getBranches()[2].setCommon(2);
-
-                //2-es hurok elemei, 
-                //1-es hurokkal kozos agaba clonozzuk az 1-esben szereplo ellenallast
-                this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]));
-                //3-as hurokkal kozos agban letrehozzunk egy ellenallast. TOLODNI FOG A BRANCH INDEX, mert nem csak 4 elemu lesz!!!!
-                this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(15));
-                //tovabbi ellenallasok a 2-es hurokban
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(7));
-                this.circuit.getMeshes()[1].getBranches()[3].setBranchElements(new Resistance(27));
-                this.circuit.getMeshes()[1].getBranches()[3].setBranchElements(new VoltageSource(30,false));
-
-                //2-es hurok kozos againak beallitasa
-                this.circuit.getMeshes()[1].getBranches()[0].setCommon(1);
-                this.circuit.getMeshes()[1].getBranches()[1].setCommon(3);
-                this.circuit.getMeshes()[1].getBranches()[3].setCommon(4);
-
-                //3-as hurok elemei
-                this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(3));
-                //1-es hurokkal kozos agba klonozzuk az 1-esben szereplo ellenallast
-                this.circuit.getMeshes()[2].getBranches()[3].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[1].getBranchElements()[0]));
-                //2-es hurokkal kozos agba klonozzuk az 2-esben szereplo ellenallast
-                this.circuit.getMeshes()[2].getBranches()[2].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[1].getBranchElements()[0]));
-
-                //3-as hurok kozos againak beallitasa
-                this.circuit.getMeshes()[2].getBranches()[2].setCommon(2);
-                this.circuit.getMeshes()[2].getBranches()[3].setCommon(1);
-
-                //4-es hurok elemei, ezeket a 2-as hurok kozos agabol klonozzuk
-                this.circuit.getMeshes()[3].getBranches()[2].setBranchElements(new Resistance(15)); //belso 2 polushoz kell
-                this.circuit.getMeshes()[3].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[3].getBranchElements()[0]));
-                this.circuit.getMeshes()[3].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[3].getBranchElements()[1]));
-
-                //4-es hurok kozos aganak beallitasa
-                this.circuit.getMeshes()[3].getBranches()[0].setCommon(2);
-
-                //TESZT jelleggel 5-os hurok letrehozasa
-                //Hozza kell adni meg egy 3-as tipusu branchet 
-                //this.circuit.getMeshes()[4].setBranches(new Branch(3,4));
-                this.circuit.getMeshes()[4].getBranches().splice(4,0,new Branch(3,4));
-                this.circuit.getMeshes()[4].getBranches()[1].setBranchElements(new VoltageSource(23,true));
-                this.circuit.getMeshes()[4].getBranches()[1].setBranchElements(new Resistance(33));
-
-                //5-os hurok kozos agaiba klonozni az elemeket
-                this.circuit.getMeshes()[4].getBranches()[3].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[0]));
-                this.circuit.getMeshes()[4].getBranches()[4].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[2].getBranches()[1].getBranchElements()[0]));
-
-                //5-os kozos branchek
-                this.circuit.getMeshes()[4].getBranches()[3].setCommon(2);
-                this.circuit.getMeshes()[4].getBranches()[4].setCommon(3); 
-
-                this.circuit.getMeshes()[1].getBranches()[2].setCommon(5);
-                this.circuit.getMeshes()[2].getBranches()[1].setCommon(5);
-
-                //TESZT jelleggel 6-os hurok letrehozasa
-                //Hozza kell adni 2 db 2-es tipusu branchet
-                this.circuit.getMeshes()[5].getBranches().splice(2,0,new Branch(2,5),new Branch(2,5),new Branch(2,5));
-                this.circuit.getMeshes()[5].getBranches()[2].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[4].getBranches()[1].getBranchElements()[0]));
-                this.circuit.getMeshes()[5].getBranches()[2].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[4].getBranches()[1].getBranchElements()[1]));
-                this.circuit.getMeshes()[5].getBranches()[1].setBranchElements(new VoltageSource(50,true));
-                this.circuit.getMeshes()[5].getBranches()[1].setBranchElements(new Resistance(19));
-                this.circuit.getMeshes()[5].getBranches()[4].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[0].getBranchElements()[0]));
-
-                //Kozos agak
-                this.circuit.getMeshes()[5].getBranches()[2].setCommon(5);
-                this.circuit.getMeshes()[5].getBranches()[3].setCommon(5);
-                this.circuit.getMeshes()[5].getBranches()[4].setCommon(3);
-                this.circuit.getMeshes()[5].getBranches()[5].setCommon(1);
-                this.circuit.getMeshes()[0].getBranches()[0].setCommon(6);
-                this.circuit.getMeshes()[2].getBranches()[0].setCommon(6);
-                this.circuit.getMeshes()[4].getBranches()[0].setCommon(6);
-                this.circuit.getMeshes()[4].getBranches()[1].setCommon(6);
-
-                //thevenin 2 polus a 4-es hurok vegen lesz
-                //this.circuit.getMeshes()[4].getBranches()[2].setTh2Pole(true);
-
-                // Belso 2 polus valasztas a 5-os huroknal
-                this.circuit.getMeshes()[1].getBranches()[4].setTh2Pole(true);
-                    
-                for (let i = 0; i < this.circuit.getMeshes().length; i++){
-                    //////console.log(this.circuit.getMeshes()[i]);
-                    for(let j = 0; j < this.circuit.getMeshes()[i].getBranches().length; j++){
-                        let mesh : Mesh =  this.circuit.getMeshes()[i];
-                        mesh.setMeshVoltage(mesh.getBranches()[j]);
-                        mesh.setMeshResistance(mesh.getBranches()[j]);
-                        
-                    }
-                }
-                //////console.log(this.circuit);
-                this.finalCalculateOfTheveninSubstitutes(this.circuit);
                 break;
-
             }
-            //Feladattipusokbol a 4 ellenallas kozos ponton es 2 fesz generator
             case 6: {
-                this.circuit = new Circuit(3, 4, 0, 2, 2);
-                for (let h = 0; h < this.circuit.getNumberOfMesh(); h++) {
-                    this.circuit.setMeshes(new Mesh());
-                    for (let i = 0; i < 4; i++){
-                        this.circuit.getMeshes()[h].setBranches(new Branch(i,h));
-                        
-                    }
-                }
-                this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));
-                //this.circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(5,true));
-                this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1000,100000)));
-                this.circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1000,100000)));
-                //this.circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(13));
-                //this.circuit.getMeshes()[0].getBranches()[2].setTh2Pole(true);
-                this.circuit.getMeshes()[0].getBranches()[2].setCommon(2);
-                this.circuit.getMeshes()[1].getBranches()[0].setCommon(1);
-                
-                //this.circuit.getMeshes()[1].getBranches()[0].setTh2Pole(true);
-                this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]));
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));
-                this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1000,100000)));
-                //this.circuit.getMeshes()[1].getBranches()[0].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                //this.circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(5));
-                //this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                //this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new Resistance(34));
-                //this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(5,50),this.randomBoolean()));
-                //this.circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(23,true));
-                this.circuit.getMeshes()[2].getBranches()[2].setTh2Pole(true);
-                this.circuit.getMeshes()[1].getBranches()[2].setCommon(3);
-                this.circuit.getMeshes()[2].getBranches()[0].setCommon(2);
-                this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1000,100000)));
-
-                this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[0]));
-                this.circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(this.circuit.getMeshes()[1].getBranches()[2].getBranchElements()[1]));
-                //this.circuit.getMeshes()[2].getBranches()[2].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                //this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-                //this.circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(12));
-                for (let i = 0; i < this.circuit.getMeshes().length; i++){
-                    for(let j = 0; j < this.circuit.getMeshes()[i].getBranches().length; j++){
-                        let mesh : Mesh =  this.circuit.getMeshes()[i];
-                        mesh.setMeshVoltage(mesh.getBranches()[j]);
-                        mesh.setMeshResistance(mesh.getBranches()[j]);
-                        //////console.log(mesh.getBranches()[j]);
-                    }
-                }
-                this.finalCalculateOfTheveninSubstitutes(this.circuit);
                 break;
-
+            }
+            case 7: {
+                break;
             }
         }
+        return parameters;
     }
-    
+    public buildFinalCircuit(circuit: Circuit, type: number): Circuit{
+        //let circuit: Circuit;
+        let circParam: Object = circuit.getParameters();
+        let maxMesh: number = 1;
+        let commonMeshesAndBranchTypes: number[][] = [];
+        console.log('Kozos branch szamlalo: '+circParam[4]);
+        for (let h = 0; h < maxMesh; h++) {
+            circuit.setMeshes(new Mesh());
+            let actualMeshCommonBranch: number;
+            let multiplyCommonMesh: boolean = this.randomBoolean();
+            let multiplyCommonBranch: boolean = this.randomBoolean();  
+            console.log('Tobb kozos ag egy hurokban: '+multiplyCommonMesh);
+            console.log('Agon belul tobb kozos ag: '+multiplyCommonBranch);
+            let maxBranch: number = 4;
+            if (multiplyCommonBranch && multiplyCommonMesh){
+                maxBranch = this.randomIntNumber((circParam[4] > 0 ? 4+circParam[4]-1 : 4),4);
+            }
+            console.log('MAXBRANCH: '+maxBranch);
+            let otherEqBranchType: number;
+            let otherMeshCounter: number;
+            console.log(circuit.getMeshes()[h]);
+            //console.log(commonMeshesAndBranchTypes[0]);
+            if (commonMeshesAndBranchTypes[0] !== undefined){
+                otherMeshCounter = commonMeshesAndBranchTypes.pop()[0];
+            } else {
+                otherMeshCounter = circuit.getMeshes()[h].getMeshNumber();
+
+            }
+            
+            //console.log(otherMeshCounter);
+
+            //A 4 iranynak megfelelo branch-ek letrehozasa a mesh-en belul
+            for (let i = 0; i < maxBranch; i++){
+                if (i > 3){
+                    //otherEqBranchType = (i < 4 ? i : this.randomIntNumber(3,0));
+                    //otherEqBranchType = this.randomIntNumber(3,0);
+                    /*if (otherEqBranchType === actualMeshCommonBranch){
+                        otherEqBranchType = (i < 4 ? i : this.randomIntNumber(3,0));
+                    }*/
+                    circuit.getMeshes()[h].setBranches(new Branch(this.randomIntNumber(3,0),h));
+                } else {
+                    circuit.getMeshes()[h].setBranches(new Branch(i,h));
+                }
+                
+            }
+            if (commonMeshesAndBranchTypes[0] !== undefined){
+                console.log('EZ MAR TUTI A 2 kor');
+                for (let i = 0; i < commonMeshesAndBranchTypes.length; i++){
+                    if (commonMeshesAndBranchTypes[i][0] === circuit.getMeshes()[h].getMeshNumber()){
+                        switch (commonMeshesAndBranchTypes[i][1]){
+                            case 0: {
+                                actualMeshCommonBranch = 2;
+                                break;
+                            }
+                            case 1: {
+                                actualMeshCommonBranch = 3;
+                                break;
+                            }
+                            case 2: {
+                                actualMeshCommonBranch = 0;
+                                break;
+                            }
+                            case 3: {
+                                actualMeshCommonBranch = 1;
+                                break;
+                            }
+                        }
+                        for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                            if (circuit.getMeshes()[h].getBranches()[j].getType() === actualMeshCommonBranch) {
+                                circuit.getMeshes()[h].getBranches()[commonMeshesAndBranchTypes[i][2]].setCommon(commonMeshesAndBranchTypes[i][3]);
+                            }
+                        }
+                    }
+                }
+            } 
+            if (circParam[4] > 0) {
+                //if (otherEqBranchType !== undefined){
+                if (circuit.getMeshes()[h].getBranches().length > 4){
+                    let trueCount: number = 0;
+                    let meshAndBranchType: number[];
+                    for (let i = 0; i < circuit.getMeshes()[h].getBranches().length; i++){
+                        //if (otherEqBranchType === circuit.getMeshes()[h].getBranches()[i].getType()){
+                        if (this.randomBoolean()){
+                            console.log('TRUE');
+                            trueCount++;
+                            otherMeshCounter++;
+                            meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
+                            
+                            if (circParam[4] > 0){
+                                //console.log(meshAndBranchType);
+                                circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
+                                commonMeshesAndBranchTypes.push(meshAndBranchType);
+                                circParam[4]--;
+                                maxMesh++;
+                            }
+                            
+                            console.log('Kozos branch szamlalo: '+circParam[4]);
+                            //console.log(commonMeshesAndBranchTypes.pop());
+                        }
+                    }
+                    if (trueCount === 0){
+                        otherMeshCounter++;
+                        let randomBranch: number = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
+                        meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[randomBranch].getType(),randomBranch,h+1]
+                        circuit.getMeshes()[h].getBranches()[randomBranch].setCommon(otherMeshCounter);
+                        commonMeshesAndBranchTypes.push(meshAndBranchType);
+                        circParam[4]--;
+                        console.log('Kozos branch szamlalo: '+circParam[4]);
+                        maxMesh++;
+                    }
+                    
+                    //console.log(commonMeshesAndBranchTypes);
+
+                    //console.log(otherMeshCounter);
+                } else {
+                    if (multiplyCommonMesh){
+                        let meshAndBranchType: number[];
+                        let trueCount: number = 0;
+                        for (let i =0; i < circuit.getMeshes()[h].getBranches().length; i++){
+                            if (this.randomBoolean()){
+                                trueCount++;
+                                otherMeshCounter++;
+                                meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
+                                
+                                
+                                if (circParam[4] > 0){
+                                    circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
+                                    commonMeshesAndBranchTypes.push(meshAndBranchType);
+                                    circParam[4]--;
+                                    maxMesh++;
+
+                                }
+                                
+                                console.log('Kozos branch szamlalo: '+circParam[4]);
+                            }
+                        }
+                        if (trueCount === 0){
+                            otherMeshCounter++;
+                            let randomBranch: number = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
+                            meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[randomBranch].getType(),randomBranch,h+1]
+                            circuit.getMeshes()[h].getBranches()[randomBranch].setCommon(otherMeshCounter);
+                            commonMeshesAndBranchTypes.push(meshAndBranchType);
+                            circParam[4]--;
+                            console.log('Kozos branch szamlalo: '+circParam[4]);
+                            maxMesh++;
+                        }
+                    } else {
+                        otherMeshCounter++;
+                        let randomBranch: number = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
+                        let meshAndBranchType: number[] = [otherMeshCounter,randomBranch,randomBranch,h+1];
+                        //console.log(randomBranch);
+                        commonMeshesAndBranchTypes.push(meshAndBranchType);
+                        //console.log(circuit.getMeshes()[h].getBranches()[randomBranch]);
+                        circuit.getMeshes()[h].getBranches()[randomBranch].setCommon(otherMeshCounter);
+                        circParam[4]--;
+                        console.log('Kozos branch szamlalo: '+circParam[4]);
+                        maxMesh++;
+                        //console.log(commonMeshesAndBranchTypes);
+                    }
+                }
+            console.log(commonMeshesAndBranchTypes);
+
+            } else {
+                console.log('ELFOGYOTT A KOZOS BRANCH');
+            }
+            //CSAK A TESZTELESHEZ A KIIRATAS MIATT
+            for (let i = 0; i < maxBranch; i++){
+                console.log(circuit.getMeshes()[h].getBranches()[i]);
+            }
+        }
+        
+        //console.log(circuit);
+        /*for (let h = 0; h < circuit.getNumberOfMesh(); h++) {
+            circuit.setMeshes(new Mesh());
+            
+            //A 4 iranynak megfelelo branch-ek letrehozasa a mesh-en belul
+            for (let i = 0; i < 4; i++){
+                circuit.getMeshes()[h].setBranches(new Branch(i,h));
+            }
+        }
+        circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomE6Resistance()));
+        circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));
+        circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
+        circuit.getMeshes()[0].getBranches()[2].setCommon(2);
+        circuit.getMeshes()[1].getBranches()[0].setCommon(1);
+        circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]));
+        circuit.getMeshes()[1].getBranches()[2].setTh2Pole(true);
+        for (let i = 0; i < circuit.getMeshes().length; i++){
+            for(let j = 0; j < circuit.getMeshes()[i].getBranches().length; j++){
+                let mesh : Mesh =  circuit.getMeshes()[i];
+                mesh.setMeshVoltage(mesh.getBranches()[j]);
+                mesh.setMeshResistance(mesh.getBranches()[j]);
+            }
+        }*/
+        return circuit;
+    }
+    public meshGenerator(circui: Circuit): Mesh{
+        return;
+    }
+    /**
+     * Ellenallas matrix modszerevel kiszamolja a halozat aramvektorat, azaz a hurokaramokat.
+     * @param circuit aramkor objektum
+     */
     public calculateCurrentVector(circuit: Circuit): math.MathType{
         //this.counter++;
         ////console.log('**** calculateCurrentVector meghivva a calculateCircuitResultingResistance-bol ****');
@@ -378,6 +347,10 @@ export class CircuitGenerator {
         ////console.log(currentVector);
         return currentVector;
     }
+    /**
+     * Letrehozza az ellenallas matrix modszerhez szukseges feszultsegvektoret a hurokhoz tartozo feszultsegertekekbol.
+     * @param circuit aramkor objektum
+     */
     public calculateVoltageVector(circuit: Circuit): math.Matrix {
         ////console.log('**** calculateVoltageVector meghivva a calculateCurrentVector-bol ****');
 
@@ -573,15 +546,27 @@ export class CircuitGenerator {
         //console.log('2 POLE CURRENT: '+th2PoleCurrent);
         return th2PoleCurrent;
     }
-
+    /**
+     * 
+     * @param thRes 
+     * @param thVoltage 
+     * @param questRes 
+     */
     public calculateQuestionResistancCurrentAndVoltage(thRes: number, thVoltage: number, questRes: number): void {
         this.questionOrVoltmeterResistanceVoltage = thVoltage * (questRes/(questRes+thRes));
         this.questionOrVoltmeterResistanceCurrent = this.questionOrVoltmeterResistanceVoltage / questRes;
     }
-
+    /**
+     * 
+     * @param theveninvoltage 
+     * @param theveninresistance 
+     * @param connvoltage 
+     * @param connresistance 
+     */
     public calculateConectedVoltagsourceAndInsideResistance(theveninvoltage: number, theveninresistance: number, connvoltage: number, connresistance: number): number {
         //let outputVoltage: number;
-        let connectedCircuit: Circuit = new Circuit(2,2,0,2,1);
+        //let connectedCircuit: Circuit = new Circuit(2,2,0,2,1);
+        let connectedCircuit: Circuit = new Circuit(this.circuitParameterLimits(1));
         for (let h = 0; h < connectedCircuit.getNumberOfMesh(); h++) {
             connectedCircuit.setMeshes(new Mesh());
 
@@ -633,12 +618,25 @@ export class CircuitGenerator {
         }
         return circuitelement;
     }
+    /**
+     * 
+     * @param max 
+     * @param min 
+     */
     public randomIntNumber(max: number, min: number): number {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
+    /**
+     * 
+     * @param max 
+     * @param min 
+     */
     public randomFloatNumber(max: number, min: number): number {
         return +(Math.random() * (max - min) + min).toFixed(2);
     }
+    /**
+     * 
+     */
     public randomBoolean(): boolean {
         if ((Math.floor(Math.random() * 2) + 1) === 1) {
             return false;
@@ -646,9 +644,15 @@ export class CircuitGenerator {
             return true;
         }
     }
+    /**
+     * 
+     */
     public randomVoltageSourceValue(): number {
         return this.randomIntNumber(24, 1);
     }
+    /**
+     * 
+     */
     public randomCurrentSourceValue(): number {
         return this.randomFloatNumber(1.40,0.01);
     }

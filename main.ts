@@ -11,10 +11,10 @@ import * as math from 'mathjs';
 
 
 var c: CircuitGenerator = new CircuitGenerator();
-c.setQuestionOrVoltmeterResistance(1000);
+c.setQuestionOrVoltmeterResistance(1000000);
 c.setConnectedVoltagesourceValue(12);
 c.setConnectedVoltagesourceResistance(10);
-let type = 5;
+let type = 1;
 c.generateCircuit(type);
 console.log();
 for (let i = 0; i < c.getCircuit().getMeshes().length; i++){
@@ -140,5 +140,17 @@ if (c.getOutputVoltageWithConnectedVoltageSource() !== undefined){
     console.log('A '+ c.getConnectedVoltagesourceValue()+ ' V-os es ' +c.getConnectedVoltagesourceResistance()+ ' Ohm belso ellenallasu feszgen csatlakoztatasa eseten:');
     console.log('A halozat kapocsfeszultseges a keresett pontok kozott: ' +c.getOutputVoltageWithConnectedVoltageSource());
 }
+/*console.log(c.getCircuit().getNumberOfMesh());
+console.log(c.getCircuit().getNumbOfRes());
+console.log(c.getCircuit().getNumbOfCurrSource());
+console.log(c.getCircuit().getNumbOfVoltSource());
+console.log(c.getCircuit().getNumbOfCommonBranc());*/
+console.log(c.getCircuit().getParameters());
+let randomFor: number = 1;
+for (let i = 0; i < randomFor; i++){
+    randomFor = c.randomIntNumber(10,i);
+    console.log(i);
+}
+
 //console.log(c.randomCurrentSourceValue());
 //console.log(c.randomE6Resistance());
