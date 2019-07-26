@@ -9,13 +9,13 @@ import { Circuit } from "./circuit";
 import { CircuitGenerator } from './circuitgenerator'
 import * as math from 'mathjs';
 
-
 var c: CircuitGenerator = new CircuitGenerator();
 c.setQuestionOrVoltmeterResistance(1000000);
 c.setConnectedVoltagesourceValue(12);
 c.setConnectedVoltagesourceResistance(10);
 let type = 1;
 c.generateCircuit(type);
+//c.generateCircuit2(type);
 console.log();
 for (let i = 0; i < c.getCircuit().getMeshes().length; i++){
     console.log('A(z) '+c.getCircuit().getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
@@ -146,11 +146,10 @@ console.log(c.getCircuit().getNumbOfCurrSource());
 console.log(c.getCircuit().getNumbOfVoltSource());
 console.log(c.getCircuit().getNumbOfCommonBranc());*/
 console.log(c.getCircuit().getParameters());
-let randomFor: number = 1;
-for (let i = 0; i < randomFor; i++){
+/*for (let i = 0; i < randomFor; i++){
     randomFor = c.randomIntNumber(10,i);
     console.log(i);
-}
+}*/
 
 //console.log(c.randomCurrentSourceValue());
 //console.log(c.randomE6Resistance());
