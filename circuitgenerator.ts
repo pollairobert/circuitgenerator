@@ -84,6 +84,12 @@ export class CircuitGenerator {
         }*/
         this.finalCalculateOfTheveninSubstitutes(this.circuit);
     }
+    //TESZTHEZ KELL CSAK EZ A METODUS
+    public generateCircuit2(type: number){
+        let parameters: number[] = [3,2,0,1,1];
+        this.circuit = this.buildFinalCircuit2(new Circuit(parameters),type);
+        this.finalCalculateOfTheveninSubstitutes(this.circuit);
+    }
     /**
      * A parameternek megfeleloen megad egy olyan tombot, ami a halozat generalasahoz
      * szukseges hurkok, elemek, kozos agak darabszamat tartalmazza.
@@ -104,7 +110,7 @@ export class CircuitGenerator {
                               this.randomIntNumber(6,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(1,1),
-                              this.randomIntNumber(2,2)]
+                              this.randomIntNumber(2,2)];
                 break;
             }
             //Egyszeru 2 hurkos halozat, 1-nel tobb generatorral
@@ -113,7 +119,7 @@ export class CircuitGenerator {
                               this.randomIntNumber(6,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(2,2),
-                              this.randomIntNumber(1,1)]
+                              this.randomIntNumber(2,2)];
                 break;
             }
             case 3: {
@@ -136,20 +142,30 @@ export class CircuitGenerator {
     }
     public buildFinalCircuit(circuit: Circuit, type: number): Circuit{
         //let circuit: Circuit;
+        
         let circParam: Object = circuit.getParameters();
         let maxMesh: number = 1;
         let commonMeshesAndBranchTypes: number[][] = [];
         console.log('Kozos branch szamlalo: '+circParam[4]);
+        //let validBranchIndexes: number[] = [];
         for (let h = 0; h < maxMesh; h++) {
             circuit.setMeshes(new Mesh());
             let actualMeshCommonBranch: number;
-            let multiplyCommonMesh: boolean = this.randomBoolean();
+            //let copiedCommonBranches: number[] = [];
+            let multiplyCommonMesh: boolean = true;//this.randomBoolean();
             let multiplyCommonBranch: boolean = this.randomBoolean();  
             console.log('Tobb kozos ag egy hurokban: '+multiplyCommonMesh);
             console.log('Agon belul tobb kozos ag: '+multiplyCommonBranch);
             let maxBranch: number = 4;
-            if (multiplyCommonBranch && multiplyCommonMesh){
-                maxBranch = this.randomIntNumber((circParam[4] > 0 ? 4+circParam[4]-1 : 4),4);
+            if (multiplyCommonBranch && multiplyCommonMesh && circParam[4] > 1){
+                console.log('IF - 1');
+                //teljesen random a max branch, ami csak a kozos agak erteketol fugg, akar az osszes kozos ag is lehet az elso hurokban.
+                //maxBranch = this.randomIntNumber((circParam[4] > 0 ? 4+circParam[4]-1 : 4),4); 
+                //kontrolalva van, hogy max mennyi branch objektum lehet egy meshben
+                do {
+                    maxBranch = this.randomIntNumber((circParam[4] > 0 ? 4+circParam[4]-1 : 4),4); 
+                    console.log('maxBranch: '+maxBranch);
+                } while (maxBranch > 6);
             }
             console.log('MAXBRANCH: '+maxBranch);
             let otherEqBranchType: number;
@@ -157,32 +173,45 @@ export class CircuitGenerator {
             console.log(circuit.getMeshes()[h]);
             //console.log(commonMeshesAndBranchTypes[0]);
             if (commonMeshesAndBranchTypes[0] !== undefined){
-                otherMeshCounter = commonMeshesAndBranchTypes.pop()[0];
+                otherMeshCounter = commonMeshesAndBranchTypes[commonMeshesAndBranchTypes.length-1][0];
+                console.log('IF - 2');
             } else {
                 otherMeshCounter = circuit.getMeshes()[h].getMeshNumber();
+                console.log('IF - 3');
 
             }
             
             //console.log(otherMeshCounter);
-
-            //A 4 iranynak megfelelo branch-ek letrehozasa a mesh-en belul
+            let equalDirectionBranches: number[] = [];
+            //Elso meshnel kell csak
+            let copiedCommonBranches: number[] = [];
+            
             for (let i = 0; i < maxBranch; i++){
+                let randomBranch: number;
                 if (i > 3){
+                    console.log('IF - 4');
                     //otherEqBranchType = (i < 4 ? i : this.randomIntNumber(3,0));
                     //otherEqBranchType = this.randomIntNumber(3,0);
                     /*if (otherEqBranchType === actualMeshCommonBranch){
                         otherEqBranchType = (i < 4 ? i : this.randomIntNumber(3,0));
                     }*/
-                    circuit.getMeshes()[h].setBranches(new Branch(this.randomIntNumber(3,0),h));
+                    randomBranch = this.randomIntNumber(3,0);
+                    circuit.getMeshes()[h].getBranches().splice(randomBranch+1,0,new Branch(randomBranch,h));
+                    equalDirectionBranches.push(randomBranch);
+                    //circuit.getMeshes()[h].setBranches(new Branch(this.randomIntNumber(3,0),h));
                 } else {
+                    console.log('IF - 5');
                     circuit.getMeshes()[h].setBranches(new Branch(i,h));
                 }
                 
             }
+            console.log('equalDirectionBranches: '+equalDirectionBranches);
             if (commonMeshesAndBranchTypes[0] !== undefined){
+                console.log('IF - 6');
                 console.log('EZ MAR TUTI A 2 kor');
                 for (let i = 0; i < commonMeshesAndBranchTypes.length; i++){
                     if (commonMeshesAndBranchTypes[i][0] === circuit.getMeshes()[h].getMeshNumber()){
+                        console.log('IF - 7');
                         switch (commonMeshesAndBranchTypes[i][1]){
                             case 0: {
                                 actualMeshCommonBranch = 2;
@@ -203,100 +232,403 @@ export class CircuitGenerator {
                         }
                         for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
                             if (circuit.getMeshes()[h].getBranches()[j].getType() === actualMeshCommonBranch) {
-                                circuit.getMeshes()[h].getBranches()[commonMeshesAndBranchTypes[i][2]].setCommon(commonMeshesAndBranchTypes[i][3]);
+                                console.log('IF - 8');
+                                console.log('actualMeshCommonBranch: '+actualMeshCommonBranch);
+                                copiedCommonBranches.push(j);
+                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i][3]);
                             }
                         }
+                        console.log('Masolt Kozos brancek indexei: '+copiedCommonBranches);
+                        if (commonMeshesAndBranchTypes[i+1] === undefined) {
+                            commonMeshesAndBranchTypes.splice(i,1);
+                        }
+                        //commonMeshesAndBranchTypes.splice(i,1);
                     }
+                    console.log('commonMeshesAndBranchTypes-1: '+commonMeshesAndBranchTypes);
+                    if (commonMeshesAndBranchTypes[i+1] !== undefined) {
+                        console.log('IF - 8.1');
+                        let commonMeshes: number[] = [];
+                        for (let i = 0; i < commonMeshesAndBranchTypes.length; i++){
+                            if (i !== commonMeshesAndBranchTypes.length-1){
+                                if (commonMeshesAndBranchTypes[i+1][0]-commonMeshesAndBranchTypes[i][0] === 1 && commonMeshesAndBranchTypes[i][1] === commonMeshesAndBranchTypes[i+1][1]){
+                                    commonMeshes.push(commonMeshesAndBranchTypes[i][0]);
+                                }
+                            }else {
+                                if (commonMeshesAndBranchTypes[i][0] - commonMeshes[commonMeshes.length-1] === 1) {
+                                    commonMeshes.push(commonMeshesAndBranchTypes[i][0]);
+                                } 
+                            }
+                            
+                        }
+                        console.log('commonMeshes: '+commonMeshes);
+                        if (commonMeshesAndBranchTypes[i+1][0]-commonMeshesAndBranchTypes[i][0] === 1){
+                            console.log('IF - 8.2');
+                            if (commonMeshesAndBranchTypes[i][1] === commonMeshesAndBranchTypes[i+1][1]){
+                                console.log('IF - 8.3');
+                                if (commonMeshesAndBranchTypes[i][1] === 0){
+                                    console.log('IF - 8.4');
+                                    for (let j = 0; j < circuit.getMeshes()[h-1].getBranches().length; j++){
+
+                                    }
+                                }
+                                if (commonMeshesAndBranchTypes[i][1] === 1){
+                                    console.log('IF - 8.7');
+                                    for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 1 && j%2 === 0) {
+                                            console.log('IF - 8.8');
+                                            copiedCommonBranches.push(j);
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);
+                                        }
+                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 3 && j%2 !== 0) {
+                                            console.log('IF - 8.9');
+                                            copiedCommonBranches.push(j);
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i][0]);
+                                        }
+                                    }
+                                }
+                                if (commonMeshesAndBranchTypes[i][1] === 2){
+                                    console.log('IF - 8.10');
+                                    for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 3 && j%2 === 0) {
+                                            console.log('IF - 8.11');
+                                            copiedCommonBranches.push(j);
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);
+                                        }
+                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 1 && j%2 !== 0) {
+                                            console.log('IF - 8.12');
+                                            copiedCommonBranches.push(j);
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i][0]);
+                                        }
+                                    }
+                                }
+                                if (commonMeshesAndBranchTypes[i][1] === 3){
+                                    console.log('IF - 8.13');
+                                    for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 0 && j%2 === 0) {
+                                            console.log('IF - 8.14');
+                                            copiedCommonBranches.push(j);
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);
+                                        }
+                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 2 && j%2 !== 0) {
+                                            console.log('IF - 8.15');
+                                            copiedCommonBranches.push(j);
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i][0]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        //commonMeshesAndBranchTypes.splice(i,1);
+                    }
+                    
                 }
             } 
+            console.log('copiedCommonBranches a mesh elejen');
+            console.log(copiedCommonBranches);
             if (circParam[4] > 0) {
                 //if (otherEqBranchType !== undefined){
-                if (circuit.getMeshes()[h].getBranches().length > 4){
-                    let trueCount: number = 0;
-                    let meshAndBranchType: number[];
-                    for (let i = 0; i < circuit.getMeshes()[h].getBranches().length; i++){
-                        //if (otherEqBranchType === circuit.getMeshes()[h].getBranches()[i].getType()){
-                        if (this.randomBoolean()){
-                            console.log('TRUE');
-                            trueCount++;
-                            otherMeshCounter++;
-                            meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
-                            
-                            if (circParam[4] > 0){
-                                //console.log(meshAndBranchType);
-                                circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
-                                commonMeshesAndBranchTypes.push(meshAndBranchType);
-                                circParam[4]--;
-                                maxMesh++;
+                /*let validBranchIndexes: number[] = [];
+                if (h > 0) {
+                    for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                        for (let k = 0; k < copiedCommonBranches.length; k++){
+                            if (copiedCommonBranches[k] !== j){
+                                validBranchIndexes.push(j);
                             }
-                            
-                            console.log('Kozos branch szamlalo: '+circParam[4]);
-                            //console.log(commonMeshesAndBranchTypes.pop());
                         }
                     }
-                    if (trueCount === 0){
-                        otherMeshCounter++;
-                        let randomBranch: number = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
+                }*/
+                console.log('IF - 9');
+                if (circuit.getMeshes()[h].getBranches().length > 4){
+                    console.log('IF - 10');
+                    let trueCount: number = 0;
+                    let meshAndBranchType: number[];
+                    let validBranchIndexes: number[] = [];
+                    let randomBranch: number;
+                    for (let i = 0; i < circuit.getMeshes()[h].getBranches().length; i++){
+                        //if (otherEqBranchType === circuit.getMeshes()[h].getBranches()[i].getType()){
+                        //if (equalDirectionBranches[0] !== undefined){ //Ez mindig igaz, ha 4-nel nagyobb a Branches tomb, tehat felesleges
+                        if (h === 0 && circParam[4] > 0){
+                            console.log('IF - 11');
+                            for (let j = 0; j < equalDirectionBranches.length; j++){
+                                if (circuit.getMeshes()[h].getBranches()[i].getType() === equalDirectionBranches[j] && circParam[4] > 0){
+                                    console.log('IF - 12');
+                                    otherMeshCounter++;
+                                    circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
+                                    meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
+                                    commonMeshesAndBranchTypes.push(meshAndBranchType);
+                                    circParam[4]--;
+                                    maxMesh++;
+                                }
+                            }
+                        } else if (circParam[4] > 0){
+                            console.log('IF - 13');
+                            otherMeshCounter++;
+                            for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                for (let k = 0; k < copiedCommonBranches.length; k++){
+                                    if (copiedCommonBranches[k] !== j){
+                                        console.log('IF - 14');
+                                        validBranchIndexes.push(j);
+                                    }
+                                }
+                            }
+                            randomBranch = validBranchIndexes[Math.floor(Math.random() * validBranchIndexes.length)];
+                            meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[randomBranch].getType(),randomBranch,h+1];
+                            circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
+                            commonMeshesAndBranchTypes.push(meshAndBranchType);
+                            circParam[4]--;
+                            maxMesh++;
+                        }
+                        //} 
+                        /*else {
+                            if (this.randomBoolean()){
+                                console.log('TRUE');
+                                trueCount++;
+                                //otherMeshCounter++;
+                                if (h > 0){
+                                    
+                                    for (let j = 0; j < copiedCommonBranches.length; j++){
+                                        if (circParam[4] > 0 && copiedCommonBranches[j] !== i ){
+                                            //console.log(meshAndBranchType);
+                                            otherMeshCounter++;
+                                            meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
+                                            circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
+                                            commonMeshesAndBranchTypes.push(meshAndBranchType);
+                                            circParam[4]--;
+                                            maxMesh++;
+                                        }
+                                    }   
+                                } else {
+                                    if (circParam[4] > 0){
+                                        otherMeshCounter++;
+                                        meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
+                                        circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
+                                        commonMeshesAndBranchTypes.push(meshAndBranchType);
+                                        circParam[4]--;
+                                        maxMesh++;
+                                    }
+                                }
+                                console.log('Kozos branch szamlalo: '+circParam[4]);
+                            }
+                        }*/
+                    }
+                    console.log('KOZOS TOMB, HA A BRANCH HOSSZABB 4-NEL ES VOLT TRUE A CIKLUSBAN: '+commonMeshesAndBranchTypes);
+
+                    //if (trueCount === 0 || meshAndBranchType === undefined){
+                    otherMeshCounter++;
+                    //let randomBranch: number;
+                    let noBranchMatch: boolean = false;
+                    
+                    if (h > 0 && circParam[4] > 0){
+                        console.log('IF - 15');
+                        for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                            for (let k = 0; k < copiedCommonBranches.length; k++){
+                                if (copiedCommonBranches[k] !== j){
+                                    console.log('IF - 16');
+                                    validBranchIndexes.push(j);
+                                }
+                            }
+                        }
+                        randomBranch = validBranchIndexes[Math.floor(Math.random() * validBranchIndexes.length)];
+                        console.log('randomBranch-1: '+randomBranch);
+                        console.log('validBranchIndexes-1: '+validBranchIndexes);
+                        console.log(validBranchIndexes);
+                        console.log('copiedCommonBranches-1: '+copiedCommonBranches);
+                        console.log(copiedCommonBranches);
+                        /*do {
+                            randomBranch = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
+                            console.log('randombranch1: '+randomBranch);
+                            if (h > 0){
+                                for (let j = 0; j < copiedCommonBranches.length; j++){
+                                    if (copiedCommonBranches[j] === randomBranch){
+                                        noBranchMatch = true;
+                                        break;
+                                    }
+                                }
+                            } 
+                        
+                        } while (noBranchMatch);*/
+                    } else {
+                        console.log('IF - 17');
+                        for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                if (circuit.getMeshes()[h].getBranches()[j].getCommon() === circuit.getMeshes()[h].getMeshNumber()){
+                                    console.log('IF - 17.4');
+                                    validBranchIndexes.push(j);
+                                }
+                            
+                        }
+                        randomBranch = validBranchIndexes[Math.floor(Math.random() * validBranchIndexes.length)];
+                        console.log('randomBranch-1.5: '+randomBranch);
+                    }
+                    if (circParam[4] > 0){
+                        console.log('IF - 17.5');
+
+                        //let randomBranch: number = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
                         meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[randomBranch].getType(),randomBranch,h+1]
                         circuit.getMeshes()[h].getBranches()[randomBranch].setCommon(otherMeshCounter);
                         commonMeshesAndBranchTypes.push(meshAndBranchType);
                         circParam[4]--;
                         console.log('Kozos branch szamlalo: '+circParam[4]);
                         maxMesh++;
+                        console.log('KOZOS TOMB, HA A BRANCH HOSSZABB 4-NEL ES NEM VOLT TRUE A CIKLUSBAN: '+commonMeshesAndBranchTypes);
                     }
+                    
+                    //}
                     
                     //console.log(commonMeshesAndBranchTypes);
 
                     //console.log(otherMeshCounter);
                 } else {
+                    console.log('IF - 18');
                     if (multiplyCommonMesh){
+                        console.log('IF - 19');
                         let meshAndBranchType: number[];
                         let trueCount: number = 0;
+                        let validBranchIndexes: number[] = [];
                         for (let i =0; i < circuit.getMeshes()[h].getBranches().length; i++){
                             if (this.randomBoolean()){
+                                console.log('IF - 20');
                                 trueCount++;
-                                otherMeshCounter++;
-                                meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
-                                
-                                
-                                if (circParam[4] > 0){
-                                    circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
-                                    commonMeshesAndBranchTypes.push(meshAndBranchType);
-                                    circParam[4]--;
-                                    maxMesh++;
+                                //otherMeshCounter++;
+                                if (h > 0){
+                                    console.log('IF - 21');
+                                    for (let j = 0; j < copiedCommonBranches.length; j++){
+                                        if (circParam[4] > 0 && copiedCommonBranches[j] !== i ){
+                                            console.log('IF - 22');
+                                            otherMeshCounter++;
+                                            meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
+                                            circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
+                                            commonMeshesAndBranchTypes.push(meshAndBranchType);
+                                            circParam[4]--;
+                                            maxMesh++;
 
+                                        }
+                                    }
+                                } else {
+                                    console.log('IF - 23');
+                                    if (circParam[4] > 0){
+                                        console.log('IF - 24');
+                                        otherMeshCounter++;
+                                        meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
+                                        circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
+                                        commonMeshesAndBranchTypes.push(meshAndBranchType);
+                                        circParam[4]--;
+                                        maxMesh++;
+
+                                    }
                                 }
-                                
                                 console.log('Kozos branch szamlalo: '+circParam[4]);
+                                console.log('KOZOS TOMB, HA A BRANCH 4 ES VOLT TRUE A CIKLUSBAN: '+commonMeshesAndBranchTypes);
                             }
                         }
-                        if (trueCount === 0){
+                        if (trueCount === 0 || meshAndBranchType === undefined){
+                            console.log('IF - 25');
                             otherMeshCounter++;
-                            let randomBranch: number = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
+                            let randomBranch: number;
+                            let noBranchMatch: boolean = false;
+                            if (h > 0){
+                                console.log('IF - 26');
+                                
+                                for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                    for (let k = 0; k < copiedCommonBranches.length; k++){
+                                        if (copiedCommonBranches[k] !== j){
+                                            console.log('IF - 27');
+                                            validBranchIndexes.push(j);
+                                        }
+                                    }
+                                }
+                                randomBranch = validBranchIndexes[Math.floor(Math.random() * validBranchIndexes.length)];
+                                console.log('randomBranch-2: '+randomBranch);
+                                console.log('validBranchIndexes-2: '+validBranchIndexes);
+                                console.log(validBranchIndexes);
+                                console.log('copiedCommonBranches-2: '+copiedCommonBranches);
+                                console.log(copiedCommonBranches);
+                                /*do {
+                                    randomBranch = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
+                                    console.log('randombranch2: '+randomBranch);
+                                    if (h > 0){
+                                        for (let j = 0; j < copiedCommonBranches.length; j++){
+                                            if (copiedCommonBranches[j] === randomBranch){
+                                                noBranchMatch = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } while (noBranchMatch);*/
+                            } else {
+                                console.log('IF - 28');
+                                randomBranch = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
+                            }
+                            //let randomBranch: number = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
                             meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[randomBranch].getType(),randomBranch,h+1]
                             circuit.getMeshes()[h].getBranches()[randomBranch].setCommon(otherMeshCounter);
                             commonMeshesAndBranchTypes.push(meshAndBranchType);
                             circParam[4]--;
                             console.log('Kozos branch szamlalo: '+circParam[4]);
                             maxMesh++;
+                            console.log('KOZOS TOMB, HA A BRANCH 4 ES nem VOLT TRUE A CIKLUSBAN: '+commonMeshesAndBranchTypes);
                         }
                     } else {
+                        console.log('IF - 29');
                         otherMeshCounter++;
-                        let randomBranch: number = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
-                        let meshAndBranchType: number[] = [otherMeshCounter,randomBranch,randomBranch,h+1];
+                        let meshAndBranchType: number[];
+                        let randomBranch: number;
+                        let noBranchMatch: boolean = false;
+                        let validBranchIndexes: number[] = [];
+                        if (h > 0){
+                            console.log('IF - 30');
+                            for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                for (let k = 0; k < copiedCommonBranches.length; k++){
+                                    if (copiedCommonBranches[k] !== j){
+                                        console.log('IF - 31');
+                                        validBranchIndexes.push(j);
+                                    }
+                                }
+                            }
+                            randomBranch = validBranchIndexes[Math.floor(Math.random() * validBranchIndexes.length)];
+                            console.log('randomBranch-3: '+randomBranch);
+                            console.log('validBranchIndexes-3: ');
+                            console.log(validBranchIndexes);
+                            console.log('copiedCommonBranches-3: '+copiedCommonBranches);
+                            console.log(copiedCommonBranches);
+                            /*do {
+                                randomBranch = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
+                                console.log('randombranch(do-while): '+randomBranch);
+                                if (h > 0){
+                                    for (let j = 0; j < copiedCommonBranches.length; j++){
+                                        if (copiedCommonBranches[j] === randomBranch){
+                                            //console.log('randombranch(do-while): '+randomBranch);
+                                            console.log('copiedCommonBranches[j]: '+copiedCommonBranches[j]);
+
+                                            noBranchMatch = true;
+                                            break;
+                                        } 
+                                    }
+                                }
+                            } while (noBranchMatch);*/
+                        } else {
+                            console.log('IF - 32');
+                            randomBranch = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
+                            console.log('randombranch(do-while utan): '+randomBranch);
+
+                        }
+                        //let randomBranch: number = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
+                        meshAndBranchType = [otherMeshCounter,randomBranch,randomBranch,h+1];
                         //console.log(randomBranch);
-                        commonMeshesAndBranchTypes.push(meshAndBranchType);
+                        
                         //console.log(circuit.getMeshes()[h].getBranches()[randomBranch]);
                         circuit.getMeshes()[h].getBranches()[randomBranch].setCommon(otherMeshCounter);
+                        commonMeshesAndBranchTypes.push(meshAndBranchType);
                         circParam[4]--;
                         console.log('Kozos branch szamlalo: '+circParam[4]);
                         maxMesh++;
+                        console.log('KOZOS TOMB, HA NEM VOLT TOBBSZOROS KOZOS BRANCH A MESHBEN: '+commonMeshesAndBranchTypes);
                         //console.log(commonMeshesAndBranchTypes);
                     }
                 }
-            console.log(commonMeshesAndBranchTypes);
+            //console.log(commonMeshesAndBranchTypes);
 
             } else {
+                console.log('IF - 33');
                 console.log('ELFOGYOTT A KOZOS BRANCH');
             }
             //CSAK A TESZTELESHEZ A KIIRATAS MIATT
@@ -328,6 +660,44 @@ export class CircuitGenerator {
                 mesh.setMeshResistance(mesh.getBranches()[j]);
             }
         }*/
+        console.log(commonMeshesAndBranchTypes);
+        return circuit;
+    }
+    //TESZTHEZ!!!!!!
+    public buildFinalCircuit2(circuit: Circuit, type: number): Circuit{
+        for (let h = 0; h < circuit.getNumberOfMesh(); h++) {
+            circuit.setMeshes(new Mesh());
+            
+            //A 4 iranynak megfelelo branch-ek letrehozasa a mesh-en belul
+            for (let i = 0; i < 4; i++){
+                circuit.getMeshes()[h].setBranches(new Branch(i,h));
+            }
+        }
+        circuit.getMeshes()[0].getBranches().splice(3,0,new Branch(2,0));
+        circuit.getMeshes()[0].getBranches()[0].setBranchElements(new Resistance(this.randomE6Resistance()));
+        circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));
+        circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
+        //circuit.getMeshes()[0].getBranches()[3].setBranchElements(new Resistance(this.randomE6Resistance()));
+        circuit.getMeshes()[0].getBranches()[4].setBranchElements(new Resistance(this.randomE6Resistance()));
+        circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));
+        circuit.getMeshes()[1].getBranches()[3].setBranchElements(new Resistance(this.randomE6Resistance()));//2. feszgen
+        //circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
+        //circuit.getMeshes()[2].getBranches()[2].setBranchElements(new Resistance(3));
+        circuit.getMeshes()[0].getBranches()[2].setCommon(2);
+        circuit.getMeshes()[1].getBranches()[0].setCommon(1);
+        circuit.getMeshes()[0].getBranches()[4].setCommon(3);
+        circuit.getMeshes()[2].getBranches()[1].setCommon(1);
+        circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]));
+        circuit.getMeshes()[2].getBranches()[1].setBranchElements(this.copyCommonElement(circuit.getMeshes()[0].getBranches()[4].getBranchElements()[0]));//2.feszgen
+        circuit.getMeshes()[2].getBranches()[3].setTh2Pole(true);
+        for (let i = 0; i < circuit.getMeshes().length; i++){
+            for(let j = 0; j < circuit.getMeshes()[i].getBranches().length; j++){
+                let mesh : Mesh =  circuit.getMeshes()[i];
+                mesh.setMeshVoltage(mesh.getBranches()[j]);
+                mesh.setMeshResistance(mesh.getBranches()[j]);
+            }
+        }
+        //console.log(commonMeshesAndBranchTypes);
         return circuit;
     }
     public meshGenerator(circui: Circuit): Mesh{
