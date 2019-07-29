@@ -3,7 +3,7 @@ import { Wire } from "./wire";
 import { Resistance } from "./resistance";
 import { CurrentSource } from "./currentsource";
 import { VoltageSource } from "./voltagesource";
-import { Branch, branchCounter } from "./branch";
+import { Branch, branchCounter } from './branch';
 import { Mesh, meshCounter } from "./mesh";
 import { Circuit } from "./circuit";
 import * as math from 'mathjs';
@@ -110,7 +110,7 @@ export class CircuitGenerator {
                               this.randomIntNumber(6,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(1,1),
-                              this.randomIntNumber(2,2)];
+                              this.randomIntNumber(3,3)];
                 break;
             }
             //Egyszeru 2 hurkos halozat, 1-nel tobb generatorral
@@ -146,6 +146,7 @@ export class CircuitGenerator {
         let circParam: Object = circuit.getParameters();
         let maxMesh: number = 1;
         let commonMeshesAndBranchTypes: number[][] = [];
+        //let commonMeshesAndBranchTypes: number[][] = [[2,1,1,1],[3,1,2,1],[4,2,1,1],[5,3,1,1],[6,3,2,2]];
         console.log('Kozos branch szamlalo: '+circParam[4]);
         //let validBranchIndexes: number[] = [];
         for (let h = 0; h < maxMesh; h++) {
@@ -153,7 +154,7 @@ export class CircuitGenerator {
             let actualMeshCommonBranch: number;
             //let copiedCommonBranches: number[] = [];
             let multiplyCommonMesh: boolean = true;//this.randomBoolean();
-            let multiplyCommonBranch: boolean = this.randomBoolean();  
+            let multiplyCommonBranch: boolean = true;//this.randomBoolean();  
             console.log('Tobb kozos ag egy hurokban: '+multiplyCommonMesh);
             console.log('Agon belul tobb kozos ag: '+multiplyCommonBranch);
             let maxBranch: number = 4;
@@ -165,7 +166,10 @@ export class CircuitGenerator {
                 do {
                     maxBranch = this.randomIntNumber((circParam[4] > 0 ? 4+circParam[4]-1 : 4),4); 
                     console.log('maxBranch: '+maxBranch);
-                } while (maxBranch > 6);
+                } while (maxBranch > 7);
+
+                //TESZTHEZ
+                //maxBranch = 8
             }
             console.log('MAXBRANCH: '+maxBranch);
             let otherEqBranchType: number;
@@ -196,9 +200,18 @@ export class CircuitGenerator {
                         otherEqBranchType = (i < 4 ? i : this.randomIntNumber(3,0));
                     }*/
                     randomBranch = this.randomIntNumber(3,0);
+                    console.log('randomBranch - IF - 4: '+randomBranch);
+                    /*for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                        if (circuit.getMeshes()[h].getBranches()[j].getType() === randomBranch){
+                            circuit.getMeshes()[h].getBranches().splice(j,0,new Branch(randomBranch,h));
+                            equalDirectionBranches.push(randomBranch);
+                            break;
+                        }
+                    }*/
+                    //circuit.getMeshes()[h].setBranches(new Branch(this.randomIntNumber(3,0),h));
+
                     circuit.getMeshes()[h].getBranches().splice(randomBranch+1,0,new Branch(randomBranch,h));
                     equalDirectionBranches.push(randomBranch);
-                    //circuit.getMeshes()[h].setBranches(new Branch(this.randomIntNumber(3,0),h));
                 } else {
                     console.log('IF - 5');
                     circuit.getMeshes()[h].setBranches(new Branch(i,h));
@@ -208,8 +221,26 @@ export class CircuitGenerator {
             console.log('equalDirectionBranches: '+equalDirectionBranches);
             if (commonMeshesAndBranchTypes[0] !== undefined){
                 console.log('IF - 6');
-                console.log('EZ MAR TUTI A 2 kor');
+                console.log('EZ MAR TUTI A 2 kor, azaz: '+h+1);
+                let eqTypeCommonBranches: number[] = [];
+                let eqTypeCommonBranchesArray: number[][] = [[0]];
+                let counter: number = 0;
                 for (let i = 0; i < commonMeshesAndBranchTypes.length; i++){
+                    console.log('IF - 6 - for: '+i);
+                    //if (eqTypeCommonBranchesArray[0] === undefined){
+                    if (eqTypeCommonBranches[0] === undefined){
+                        console.log('IF - 6.1');
+                        eqTypeCommonBranches.push(counter);
+                        //branchCounter++;
+                    } else  if (commonMeshesAndBranchTypes[i+2] === undefined || commonMeshesAndBranchTypes[i+2][0]-commonMeshesAndBranchTypes[i+1][0] !== 1){
+                        counter++;
+                        console.log('IF - 6.2');
+                        eqTypeCommonBranches.push(counter);
+                        //eqTypeCommonBranchesArray.push(eqTypeCommonBranches);
+                        //eqTypeCommonBranchesArray.splice(0,1,eqTypeCommonBranches);
+                    }
+                    
+                    //}
                     if (commonMeshesAndBranchTypes[i][0] === circuit.getMeshes()[h].getMeshNumber()){
                         console.log('IF - 7');
                         switch (commonMeshesAndBranchTypes[i][1]){
@@ -239,92 +270,207 @@ export class CircuitGenerator {
                             }
                         }
                         console.log('Masolt Kozos brancek indexei: '+copiedCommonBranches);
-                        if (commonMeshesAndBranchTypes[i+1] === undefined) {
-                            commonMeshesAndBranchTypes.splice(i,1);
+                        if ((commonMeshesAndBranchTypes[i+1] === undefined && commonMeshesAndBranchTypes[i-1] !== undefined && commonMeshesAndBranchTypes[i][1] === commonMeshesAndBranchTypes[i-1][1]) || ( commonMeshesAndBranchTypes[i-1] !== undefined && commonMeshesAndBranchTypes[i+1] !== undefined && commonMeshesAndBranchTypes[i][1] !== commonMeshesAndBranchTypes[i+1][1]) ){
+                            console.log('IF - 8.11');
+                            switch (commonMeshesAndBranchTypes[i][1]){
+                                case 0: {
+                                    for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 3){
+                                            console.log('IF - 8.12');
+                                            copiedCommonBranches.push(j);
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                        }
+                                    }
+                                    break;
+                                }
+                                case 1: {
+                                    for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 0){
+                                            console.log('IF - 8.13');
+                                            copiedCommonBranches.push(j);
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                        }
+                                    }
+                                    break;
+                                }
+                                case 2: {
+                                    for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 1){
+                                            console.log('IF - 8.14');
+                                            copiedCommonBranches.push(j);
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                        }
+                                    }
+                                    break;
+                                }
+                                case 3: {
+                                    for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 2){
+                                            console.log('IF - 8.15');
+                                            copiedCommonBranches.push(j);
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        if (commonMeshesAndBranchTypes[i+1] === undefined || commonMeshesAndBranchTypes[i+1][1] !== commonMeshesAndBranchTypes[i][1]) {
+                            console.log('IF - 8.01');
+                            //commonMeshesAndBranchTypes.splice(i,1);
                         }
                         //commonMeshesAndBranchTypes.splice(i,1);
                     }
                     console.log('commonMeshesAndBranchTypes-1: '+commonMeshesAndBranchTypes);
                     if (commonMeshesAndBranchTypes[i+1] !== undefined) {
                         console.log('IF - 8.1');
-                        let commonMeshes: number[] = [];
-                        for (let i = 0; i < commonMeshesAndBranchTypes.length; i++){
-                            if (i !== commonMeshesAndBranchTypes.length-1){
-                                if (commonMeshesAndBranchTypes[i+1][0]-commonMeshesAndBranchTypes[i][0] === 1 && commonMeshesAndBranchTypes[i][1] === commonMeshesAndBranchTypes[i+1][1]){
-                                    commonMeshes.push(commonMeshesAndBranchTypes[i][0]);
-                                }
-                            }else {
-                                if (commonMeshesAndBranchTypes[i][0] - commonMeshes[commonMeshes.length-1] === 1) {
-                                    commonMeshes.push(commonMeshesAndBranchTypes[i][0]);
-                                } 
-                            }
-                            
-                        }
-                        console.log('commonMeshes: '+commonMeshes);
                         if (commonMeshesAndBranchTypes[i+1][0]-commonMeshesAndBranchTypes[i][0] === 1){
                             console.log('IF - 8.2');
                             if (commonMeshesAndBranchTypes[i][1] === commonMeshesAndBranchTypes[i+1][1]){
                                 console.log('IF - 8.3');
-                                if (commonMeshesAndBranchTypes[i][1] === 0){
-                                    console.log('IF - 8.4');
-                                    for (let j = 0; j < circuit.getMeshes()[h-1].getBranches().length; j++){
-
-                                    }
-                                }
-                                if (commonMeshesAndBranchTypes[i][1] === 1){
-                                    console.log('IF - 8.7');
-                                    for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
-                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 1 && j%2 === 0) {
-                                            console.log('IF - 8.8');
-                                            copiedCommonBranches.push(j);
-                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);
+                                
+                                if (commonMeshesAndBranchTypes[i][1] === 0 && commonMeshesAndBranchTypes[i][0] === circuit.getMeshes()[h].getMeshNumber()){
+                                    console.log('IF - 8.41');
+                                    if (commonMeshesAndBranchTypes[i-1] === undefined || commonMeshesAndBranchTypes[i][1] !== commonMeshesAndBranchTypes[i-1][1]){
+                                        console.log('IF - 8.411');
+                                        for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                            if (circuit.getMeshes()[h].getBranches()[j].getType() === 1){
+                                                console.log('IF - 8.412');
+                                                copiedCommonBranches.push(j);
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                            }
                                         }
-                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 3 && j%2 !== 0) {
-                                            console.log('IF - 8.9');
-                                            copiedCommonBranches.push(j);
-                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i][0]);
-                                        }
-                                    }
-                                }
-                                if (commonMeshesAndBranchTypes[i][1] === 2){
-                                    console.log('IF - 8.10');
-                                    for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
-                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 3 && j%2 === 0) {
-                                            console.log('IF - 8.11');
-                                            copiedCommonBranches.push(j);
-                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);
-                                        }
-                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 1 && j%2 !== 0) {
-                                            console.log('IF - 8.12');
-                                            copiedCommonBranches.push(j);
-                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i][0]);
+                                    } 
+                                    if (commonMeshesAndBranchTypes[i-1] !== undefined && commonMeshesAndBranchTypes[i-1][1] === commonMeshesAndBranchTypes[i][1] && commonMeshesAndBranchTypes[i][1] === commonMeshesAndBranchTypes[i-1][1]){
+                                        console.log('IF - 8.413');
+                                        for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                            if (circuit.getMeshes()[h].getBranches()[j].getType() === 3){
+                                                console.log('IF - 8.414');
+                                                copiedCommonBranches.push(j);
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                            }
+                                            if (circuit.getMeshes()[h].getBranches()[j].getType() === 1){
+                                                console.log('IF - 8.415');
+                                                copiedCommonBranches.push(j);
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                            }
                                         }
                                     }
+                                
                                 }
-                                if (commonMeshesAndBranchTypes[i][1] === 3){
-                                    console.log('IF - 8.13');
-                                    for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
-                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 0 && j%2 === 0) {
-                                            console.log('IF - 8.14');
-                                            copiedCommonBranches.push(j);
-                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);
+                                if (commonMeshesAndBranchTypes[i][1] === 1 && commonMeshesAndBranchTypes[i][0] === circuit.getMeshes()[h].getMeshNumber()){
+                                    console.log('IF - 8.42');
+                                    if (commonMeshesAndBranchTypes[i-1] === undefined || commonMeshesAndBranchTypes[i][1] !== commonMeshesAndBranchTypes[i-1][1]){
+                                        console.log('IF - 8.421');
+                                        for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                            //console.log('IF - 8.422');
+                                            if (circuit.getMeshes()[h].getBranches()[j].getType() === 2){
+                                                console.log('IF - 8.423');
+                                                copiedCommonBranches.push(j);
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                            }
                                         }
-                                        if (circuit.getMeshes()[h].getBranches()[j].getType() === 2 && j%2 !== 0) {
-                                            console.log('IF - 8.15');
-                                            copiedCommonBranches.push(j);
-                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i][0]);
+                                    } 
+                                    if (commonMeshesAndBranchTypes[i-1] !== undefined && commonMeshesAndBranchTypes[i-1][1] === commonMeshesAndBranchTypes[i][1] && commonMeshesAndBranchTypes[i][1] === commonMeshesAndBranchTypes[i-1][1]){
+                                        console.log('IF - 8.424');
+                                        for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                            
+                                            if (circuit.getMeshes()[h].getBranches()[j].getType() === 0){
+                                                console.log('IF - 8.425');
+                                                copiedCommonBranches.push(j);
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                            }
+                                            if (circuit.getMeshes()[h].getBranches()[j].getType() === 2){
+                                                console.log('IF - 8.426');
+                                                copiedCommonBranches.push(j);
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                            }
                                         }
                                     }
+                                
                                 }
+                                if (commonMeshesAndBranchTypes[i][1] === 2 && commonMeshesAndBranchTypes[i][0] === circuit.getMeshes()[h].getMeshNumber()){
+                                    console.log('IF - 8.43');
+                                    if (commonMeshesAndBranchTypes[i-1] === undefined || commonMeshesAndBranchTypes[i][1] !== commonMeshesAndBranchTypes[i-1][1]){
+                                        console.log('IF - 8.431');
+                                        for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                            if (circuit.getMeshes()[h].getBranches()[j].getType() === 3){
+                                                console.log('IF - 8.432');
+                                                copiedCommonBranches.push(j);
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                            }
+                                        }
+                                    } 
+                                    if (commonMeshesAndBranchTypes[i-1] !== undefined && commonMeshesAndBranchTypes[i-1][1] === commonMeshesAndBranchTypes[i][1] && commonMeshesAndBranchTypes[i][1] === commonMeshesAndBranchTypes[i-1][1]){
+                                        console.log('IF - 8.433');
+                                        for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                            if (circuit.getMeshes()[h].getBranches()[j].getType() === 1){
+                                                console.log('IF - 8.434');
+                                                copiedCommonBranches.push(j);
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                            }
+                                            if (circuit.getMeshes()[h].getBranches()[j].getType() === 3){
+                                                console.log('IF - 8.435');
+                                                copiedCommonBranches.push(j);
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                            }
+                                        }
+                                    }
+                                
+                                }
+                                if (commonMeshesAndBranchTypes[i][1] === 3 && commonMeshesAndBranchTypes[i][0] === circuit.getMeshes()[h].getMeshNumber()){
+                                    console.log('IF - 8.44');
+                                    if (commonMeshesAndBranchTypes[i-1] === undefined || commonMeshesAndBranchTypes[i][1] !== commonMeshesAndBranchTypes[i-1][1]){
+                                        console.log('IF - 8.441');
+                                        for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                            
+                                            if (circuit.getMeshes()[h].getBranches()[j].getType() === 0){
+                                                console.log('IF - 8.442');
+                                                copiedCommonBranches.push(j);
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                            }
+                                        }
+                                    } 
+                                    if (commonMeshesAndBranchTypes[i-1] !== undefined && commonMeshesAndBranchTypes[i-1][1] === commonMeshesAndBranchTypes[i][1] && commonMeshesAndBranchTypes[i][1] === commonMeshesAndBranchTypes[i-1][1]){
+                                        console.log('IF - 8.443');
+                                        for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                            if (circuit.getMeshes()[h].getBranches()[j].getType() === 2){
+                                                console.log('IF - 8.444');
+                                                copiedCommonBranches.push(j);
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                            }
+                                            if (circuit.getMeshes()[h].getBranches()[j].getType() === 0){
+                                                console.log('IF - 8.445');
+                                                copiedCommonBranches.push(j);
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                            }
+                                        }
+                                    }
+                                
+                                }
+                            } else {
+                                eqTypeCommonBranches = [];
+                                counter = 0;
                             }
-                        }
+                        } 
                         //commonMeshesAndBranchTypes.splice(i,1);
-                    }
+                    } /*else {
+                        if (commonMeshesAndBranchTypes[i-1] !== undefined && commonMeshesAndBranchTypes[i][0] - commonMeshesAndBranchTypes[i-1][0] === 1){
+                            console.log('IF - 8.16');
+                            eqTypeCommonBranches.push(i);
+                        }
+                    }*/
                     
                 }
+                console.log('eqTypeCommonBranchesArray: ');
+                console.log(eqTypeCommonBranchesArray);
+                console.log('eqTypeCommonBranches: '+eqTypeCommonBranches);
+                //commonMeshesAndBranchTypes.splice(0,1);
             } 
             console.log('copiedCommonBranches a mesh elejen');
             console.log(copiedCommonBranches);
+            
+
             if (circParam[4] > 0) {
                 //if (otherEqBranchType !== undefined){
                 /*let validBranchIndexes: number[] = [];
@@ -358,6 +504,7 @@ export class CircuitGenerator {
                                     commonMeshesAndBranchTypes.push(meshAndBranchType);
                                     circParam[4]--;
                                     maxMesh++;
+                                    console.log('meshAndBranchType-1: '+meshAndBranchType);
                                 }
                             }
                         } else if (circParam[4] > 0){
@@ -377,6 +524,7 @@ export class CircuitGenerator {
                             commonMeshesAndBranchTypes.push(meshAndBranchType);
                             circParam[4]--;
                             maxMesh++;
+                            console.log('meshAndBranchType-2: '+meshAndBranchType);
                         }
                         //} 
                         /*else {
@@ -466,6 +614,7 @@ export class CircuitGenerator {
                         meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[randomBranch].getType(),randomBranch,h+1]
                         circuit.getMeshes()[h].getBranches()[randomBranch].setCommon(otherMeshCounter);
                         commonMeshesAndBranchTypes.push(meshAndBranchType);
+                        console.log('meshAndBranchType-3: '+meshAndBranchType);
                         circParam[4]--;
                         console.log('Kozos branch szamlalo: '+circParam[4]);
                         maxMesh++;
@@ -498,6 +647,7 @@ export class CircuitGenerator {
                                             meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
                                             circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
                                             commonMeshesAndBranchTypes.push(meshAndBranchType);
+                                            console.log('meshAndBranchType-4: '+meshAndBranchType);
                                             circParam[4]--;
                                             maxMesh++;
 
@@ -511,6 +661,7 @@ export class CircuitGenerator {
                                         meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
                                         circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
                                         commonMeshesAndBranchTypes.push(meshAndBranchType);
+                                        console.log('meshAndBranchType-5: '+meshAndBranchType);
                                         circParam[4]--;
                                         maxMesh++;
 
@@ -562,6 +713,7 @@ export class CircuitGenerator {
                             meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[randomBranch].getType(),randomBranch,h+1]
                             circuit.getMeshes()[h].getBranches()[randomBranch].setCommon(otherMeshCounter);
                             commonMeshesAndBranchTypes.push(meshAndBranchType);
+                            console.log('meshAndBranchType-6: '+meshAndBranchType);
                             circParam[4]--;
                             console.log('Kozos branch szamlalo: '+circParam[4]);
                             maxMesh++;
@@ -618,6 +770,7 @@ export class CircuitGenerator {
                         //console.log(circuit.getMeshes()[h].getBranches()[randomBranch]);
                         circuit.getMeshes()[h].getBranches()[randomBranch].setCommon(otherMeshCounter);
                         commonMeshesAndBranchTypes.push(meshAndBranchType);
+                        console.log('meshAndBranchType-7: '+meshAndBranchType);
                         circParam[4]--;
                         console.log('Kozos branch szamlalo: '+circParam[4]);
                         maxMesh++;
