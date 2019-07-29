@@ -110,7 +110,7 @@ export class CircuitGenerator {
                               this.randomIntNumber(6,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(1,1),
-                              this.randomIntNumber(3,3)];
+                              this.randomIntNumber(2,2)];
                 break;
             }
             //Egyszeru 2 hurkos halozat, 1-nel tobb generatorral
@@ -211,7 +211,17 @@ export class CircuitGenerator {
                     //circuit.getMeshes()[h].setBranches(new Branch(this.randomIntNumber(3,0),h));
 
                     circuit.getMeshes()[h].getBranches().splice(randomBranch+1,0,new Branch(randomBranch,h));
-                    equalDirectionBranches.push(randomBranch);
+                    if (equalDirectionBranches[0] === undefined){
+                        equalDirectionBranches.push(randomBranch);
+                    } else {
+                        for (let j = 0; j <equalDirectionBranches.length; j++){
+                            if (randomBranch !== equalDirectionBranches[j]){
+                                equalDirectionBranches.push(randomBranch);
+                            }
+                        }
+                    }
+                    
+                    //equalDirectionBranches.push(randomBranch);
                 } else {
                     console.log('IF - 5');
                     circuit.getMeshes()[h].setBranches(new Branch(i,h));
@@ -221,7 +231,7 @@ export class CircuitGenerator {
             console.log('equalDirectionBranches: '+equalDirectionBranches);
             if (commonMeshesAndBranchTypes[0] !== undefined){
                 console.log('IF - 6');
-                console.log('EZ MAR TUTI A 2 kor, azaz: '+h+1);
+                console.log('EZ MAR TUTI A 2 kor, azaz: '+(h+1));
                 let eqTypeCommonBranches: number[] = [];
                 let eqTypeCommonBranchesArray: number[][] = [[0]];
                 let counter: number = 0;
@@ -270,7 +280,9 @@ export class CircuitGenerator {
                             }
                         }
                         console.log('Masolt Kozos brancek indexei: '+copiedCommonBranches);
-                        if ((commonMeshesAndBranchTypes[i+1] === undefined && commonMeshesAndBranchTypes[i-1] !== undefined && commonMeshesAndBranchTypes[i][1] === commonMeshesAndBranchTypes[i-1][1]) || ( commonMeshesAndBranchTypes[i-1] !== undefined && commonMeshesAndBranchTypes[i+1] !== undefined && commonMeshesAndBranchTypes[i][1] !== commonMeshesAndBranchTypes[i+1][1]) ){
+                        if ((commonMeshesAndBranchTypes[i+1] === undefined && commonMeshesAndBranchTypes[i-1] !== undefined && commonMeshesAndBranchTypes[i][1] === commonMeshesAndBranchTypes[i-1][1]) || 
+                             ( commonMeshesAndBranchTypes[i-1] !== undefined && commonMeshesAndBranchTypes[i+1] !== undefined && 
+                                commonMeshesAndBranchTypes[i][1] !== commonMeshesAndBranchTypes[i+1][1]) && commonMeshesAndBranchTypes[i][1] === commonMeshesAndBranchTypes[i-1][1]){
                             console.log('IF - 8.11');
                             switch (commonMeshesAndBranchTypes[i][1]){
                                 case 0: {
