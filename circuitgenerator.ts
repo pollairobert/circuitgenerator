@@ -110,7 +110,7 @@ export class CircuitGenerator {
                               this.randomIntNumber(6,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(1,1),
-                              this.randomIntNumber(2,2)];
+                              this.randomIntNumber(4,4)];
                 break;
             }
             //Egyszeru 2 hurkos halozat, 1-nel tobb generatorral
@@ -119,7 +119,7 @@ export class CircuitGenerator {
                               this.randomIntNumber(6,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(2,2),
-                              this.randomIntNumber(2,2)];
+                              this.randomIntNumber(3,3)];
                 break;
             }
             case 3: {
@@ -146,6 +146,7 @@ export class CircuitGenerator {
         let circParam: Object = circuit.getParameters();
         let maxMesh: number = 1;
         let commonMeshesAndBranchTypes: number[][] = [];
+        //let copiedCommonBranches: number[] = [];
         //let commonMeshesAndBranchTypes: number[][] = [[2,1,1,1],[3,1,2,1],[4,2,1,1],[5,3,1,1],[6,3,2,2]];
         console.log('Kozos branch szamlalo: '+circParam[4]);
         //let validBranchIndexes: number[] = [];
@@ -166,7 +167,7 @@ export class CircuitGenerator {
                 do {
                     maxBranch = this.randomIntNumber((circParam[4] > 0 ? 4+circParam[4]-1 : 4),4); 
                     console.log('maxBranch: '+maxBranch);
-                } while (maxBranch > 7);
+                } while (maxBranch > 6);
 
                 //TESZTHEZ
                 //maxBranch = 8
@@ -212,12 +213,14 @@ export class CircuitGenerator {
 
                     circuit.getMeshes()[h].getBranches().splice(randomBranch+1,0,new Branch(randomBranch,h));
                     if (equalDirectionBranches[0] === undefined){
+                        console.log('IF - 4.1');
                         equalDirectionBranches.push(randomBranch);
                     } else {
                         for (let j = 0; j <equalDirectionBranches.length; j++){
                             if (randomBranch !== equalDirectionBranches[j]){
-                                equalDirectionBranches.push(randomBranch);
-                            }
+                                console.log('IF - 4.2');
+                                equalDirectionBranches.splice(1,1,randomBranch);
+                            } 
                         }
                     }
                     
@@ -277,6 +280,7 @@ export class CircuitGenerator {
                                 console.log('actualMeshCommonBranch: '+actualMeshCommonBranch);
                                 copiedCommonBranches.push(j);
                                 circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i][3]);
+                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');
                             }
                         }
                         console.log('Masolt Kozos brancek indexei: '+copiedCommonBranches);
@@ -290,7 +294,9 @@ export class CircuitGenerator {
                                         if (circuit.getMeshes()[h].getBranches()[j].getType() === 3){
                                             console.log('IF - 8.12');
                                             copiedCommonBranches.push(j);
-                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);
+                                            console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');
+
                                         }
                                     }
                                     break;
@@ -300,7 +306,8 @@ export class CircuitGenerator {
                                         if (circuit.getMeshes()[h].getBranches()[j].getType() === 0){
                                             console.log('IF - 8.13');
                                             copiedCommonBranches.push(j);
-                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]); 
+                                            console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');  
                                         }
                                     }
                                     break;
@@ -310,7 +317,8 @@ export class CircuitGenerator {
                                         if (circuit.getMeshes()[h].getBranches()[j].getType() === 1){
                                             console.log('IF - 8.14');
                                             copiedCommonBranches.push(j);
-                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);
+                                            console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');   
                                         }
                                     }
                                     break;
@@ -320,7 +328,8 @@ export class CircuitGenerator {
                                         if (circuit.getMeshes()[h].getBranches()[j].getType() === 2){
                                             console.log('IF - 8.15');
                                             copiedCommonBranches.push(j);
-                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                            circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);
+                                            console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');   
                                         }
                                     }
                                     break;
@@ -349,7 +358,8 @@ export class CircuitGenerator {
                                             if (circuit.getMeshes()[h].getBranches()[j].getType() === 1){
                                                 console.log('IF - 8.412');
                                                 copiedCommonBranches.push(j);
-                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);
+                                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');   
                                             }
                                         }
                                     } 
@@ -359,12 +369,14 @@ export class CircuitGenerator {
                                             if (circuit.getMeshes()[h].getBranches()[j].getType() === 3){
                                                 console.log('IF - 8.414');
                                                 copiedCommonBranches.push(j);
-                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);
+                                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');   
                                             }
                                             if (circuit.getMeshes()[h].getBranches()[j].getType() === 1){
                                                 console.log('IF - 8.415');
                                                 copiedCommonBranches.push(j);
-                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);
+                                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');   
                                             }
                                         }
                                     }
@@ -380,6 +392,7 @@ export class CircuitGenerator {
                                                 console.log('IF - 8.423');
                                                 copiedCommonBranches.push(j);
                                                 circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');
                                             }
                                         }
                                     } 
@@ -390,12 +403,14 @@ export class CircuitGenerator {
                                             if (circuit.getMeshes()[h].getBranches()[j].getType() === 0){
                                                 console.log('IF - 8.425');
                                                 copiedCommonBranches.push(j);
-                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]); 
+                                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');  
                                             }
                                             if (circuit.getMeshes()[h].getBranches()[j].getType() === 2){
                                                 console.log('IF - 8.426');
                                                 copiedCommonBranches.push(j);
-                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);
+                                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');   
                                             }
                                         }
                                     }
@@ -409,7 +424,8 @@ export class CircuitGenerator {
                                             if (circuit.getMeshes()[h].getBranches()[j].getType() === 3){
                                                 console.log('IF - 8.432');
                                                 copiedCommonBranches.push(j);
-                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]); 
+                                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');  
                                             }
                                         }
                                     } 
@@ -420,11 +436,13 @@ export class CircuitGenerator {
                                                 console.log('IF - 8.434');
                                                 copiedCommonBranches.push(j);
                                                 circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');
                                             }
                                             if (circuit.getMeshes()[h].getBranches()[j].getType() === 3){
                                                 console.log('IF - 8.435');
                                                 copiedCommonBranches.push(j);
-                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]); 
+                                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');  
                                             }
                                         }
                                     }
@@ -439,7 +457,8 @@ export class CircuitGenerator {
                                             if (circuit.getMeshes()[h].getBranches()[j].getType() === 0){
                                                 console.log('IF - 8.442');
                                                 copiedCommonBranches.push(j);
-                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]); 
+                                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');  
                                             }
                                         }
                                     } 
@@ -449,12 +468,14 @@ export class CircuitGenerator {
                                             if (circuit.getMeshes()[h].getBranches()[j].getType() === 2){
                                                 console.log('IF - 8.444');
                                                 copiedCommonBranches.push(j);
-                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]);   
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i-1][0]); 
+                                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');  
                                             }
                                             if (circuit.getMeshes()[h].getBranches()[j].getType() === 0){
                                                 console.log('IF - 8.445');
                                                 copiedCommonBranches.push(j);
-                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);   
+                                                circuit.getMeshes()[h].getBranches()[j].setCommon(commonMeshesAndBranchTypes[i+1][0]);
+                                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[j].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[j].getCommon()+ ' common erteke');   
                                             }
                                         }
                                     }
@@ -481,8 +502,6 @@ export class CircuitGenerator {
             } 
             console.log('copiedCommonBranches a mesh elejen');
             console.log(copiedCommonBranches);
-            
-
             if (circParam[4] > 0) {
                 //if (otherEqBranchType !== undefined){
                 /*let validBranchIndexes: number[] = [];
@@ -512,10 +531,17 @@ export class CircuitGenerator {
                                     console.log('IF - 12');
                                     otherMeshCounter++;
                                     circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
+                                    console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[i].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[i].getCommon()+ ' common erteke');
                                     meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
                                     commonMeshesAndBranchTypes.push(meshAndBranchType);
                                     circParam[4]--;
+
                                     maxMesh++;
+                                    if (commonMeshesAndBranchTypes.length > 1 && commonMeshesAndBranchTypes[commonMeshesAndBranchTypes.length-2][1] === commonMeshesAndBranchTypes[commonMeshesAndBranchTypes.length-1][1]){
+                                        console.log('IF - 12.1');
+                                        circParam[4]--;
+                                        
+                                    }
                                     console.log('meshAndBranchType-1: '+meshAndBranchType);
                                 }
                             }
@@ -523,6 +549,7 @@ export class CircuitGenerator {
                             console.log('IF - 13');
                             otherMeshCounter++;
                             for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                console.log('IF - 13 - FOR 1');
                                 for (let k = 0; k < copiedCommonBranches.length; k++){
                                     if (copiedCommonBranches[k] !== j){
                                         console.log('IF - 14');
@@ -533,9 +560,28 @@ export class CircuitGenerator {
                             randomBranch = validBranchIndexes[Math.floor(Math.random() * validBranchIndexes.length)];
                             meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[randomBranch].getType(),randomBranch,h+1];
                             circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
-                            commonMeshesAndBranchTypes.push(meshAndBranchType);
+                            console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[i].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[i].getCommon()+ ' common erteke');
+                            for (let k = 0; commonMeshesAndBranchTypes.length; k++ ){
+                                if ((meshAndBranchType[3] === commonMeshesAndBranchTypes[k][3] && meshAndBranchType[0] - commonMeshesAndBranchTypes[k][0] === 1 && meshAndBranchType[1] === commonMeshesAndBranchTypes[k][1]) || (meshAndBranchType[1] === commonMeshesAndBranchTypes[k][1] && meshAndBranchType[3] === commonMeshesAndBranchTypes[k][3])){
+                                    console.log('IF - 14.1');
+                                    commonMeshesAndBranchTypes.splice(k+1,0,meshAndBranchType);
+                                    break;
+                                } else {
+                                    console.log('IF - 14.2');
+                                    commonMeshesAndBranchTypes.push(meshAndBranchType);
+                                    break;
+                                }
+                            }
+                            
+                            
+                            //commonMeshesAndBranchTypes.push(meshAndBranchType);
                             circParam[4]--;
                             maxMesh++;
+                            if (commonMeshesAndBranchTypes[0] !== undefined && commonMeshesAndBranchTypes[commonMeshesAndBranchTypes.length-1][1] === meshAndBranchType[1]){
+                                console.log('IF - 14.3');
+                                circParam[4]--;
+                                
+                            }
                             console.log('meshAndBranchType-2: '+meshAndBranchType);
                         }
                         //} 
@@ -581,6 +627,7 @@ export class CircuitGenerator {
                     if (h > 0 && circParam[4] > 0){
                         console.log('IF - 15');
                         for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                            console.log('IF - 15 - FOR 1');
                             for (let k = 0; k < copiedCommonBranches.length; k++){
                                 if (copiedCommonBranches[k] !== j){
                                     console.log('IF - 16');
@@ -625,6 +672,7 @@ export class CircuitGenerator {
                         //let randomBranch: number = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
                         meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[randomBranch].getType(),randomBranch,h+1]
                         circuit.getMeshes()[h].getBranches()[randomBranch].setCommon(otherMeshCounter);
+                        console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[randomBranch].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[randomBranch].getCommon()+ ' common erteke');
                         commonMeshesAndBranchTypes.push(meshAndBranchType);
                         console.log('meshAndBranchType-3: '+meshAndBranchType);
                         circParam[4]--;
@@ -657,11 +705,24 @@ export class CircuitGenerator {
                                             console.log('IF - 22');
                                             otherMeshCounter++;
                                             meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
-                                            circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
-                                            commonMeshesAndBranchTypes.push(meshAndBranchType);
+                                            //circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
+                                            if (commonMeshesAndBranchTypes[commonMeshesAndBranchTypes.length-1][1] !== meshAndBranchType[1]){
+                                                console.log('IF - 22.1');
+                                                circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
+                                                console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[i].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[i].getCommon()+ ' common erteke');
+                                                commonMeshesAndBranchTypes.push(meshAndBranchType);
+                                                console.log('meshAndBranchType-4: '+meshAndBranchType);
+                                                circParam[4]--;
+                                                maxMesh++;
+                                            } else {
+                                                console.log('IF - 22.2');
+                                                otherMeshCounter--;
+                                                meshAndBranchType = [];
+                                            }
+                                            /*commonMeshesAndBranchTypes.push(meshAndBranchType);
                                             console.log('meshAndBranchType-4: '+meshAndBranchType);
                                             circParam[4]--;
-                                            maxMesh++;
+                                            maxMesh++;*/
 
                                         }
                                     }
@@ -672,6 +733,7 @@ export class CircuitGenerator {
                                         otherMeshCounter++;
                                         meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[i].getType(),i,h+1];
                                         circuit.getMeshes()[h].getBranches()[i].setCommon(otherMeshCounter);
+                                        console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[i].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[i].getCommon()+ ' common erteke');
                                         commonMeshesAndBranchTypes.push(meshAndBranchType);
                                         console.log('meshAndBranchType-5: '+meshAndBranchType);
                                         circParam[4]--;
@@ -692,6 +754,7 @@ export class CircuitGenerator {
                                 console.log('IF - 26');
                                 
                                 for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                    console.log('IF - 26 - FOR 1');
                                     for (let k = 0; k < copiedCommonBranches.length; k++){
                                         if (copiedCommonBranches[k] !== j){
                                             console.log('IF - 27');
@@ -724,6 +787,7 @@ export class CircuitGenerator {
                             //let randomBranch: number = this.randomIntNumber(circuit.getMeshes()[h].getBranches().length-1,0);
                             meshAndBranchType = [otherMeshCounter,circuit.getMeshes()[h].getBranches()[randomBranch].getType(),randomBranch,h+1]
                             circuit.getMeshes()[h].getBranches()[randomBranch].setCommon(otherMeshCounter);
+                            console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[randomBranch].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[randomBranch].getCommon()+ ' common erteke');
                             commonMeshesAndBranchTypes.push(meshAndBranchType);
                             console.log('meshAndBranchType-6: '+meshAndBranchType);
                             circParam[4]--;
@@ -741,6 +805,7 @@ export class CircuitGenerator {
                         if (h > 0){
                             console.log('IF - 30');
                             for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
+                                console.log('IF - 30 - FOR 1');
                                 for (let k = 0; k < copiedCommonBranches.length; k++){
                                     if (copiedCommonBranches[k] !== j){
                                         console.log('IF - 31');
@@ -781,6 +846,7 @@ export class CircuitGenerator {
                         
                         //console.log(circuit.getMeshes()[h].getBranches()[randomBranch]);
                         circuit.getMeshes()[h].getBranches()[randomBranch].setCommon(otherMeshCounter);
+                        console.log(circuit.getMeshes()[h].getMeshNumber()+'. hurok, '+circuit.getMeshes()[h].getBranches()[randomBranch].getType()+ ' tipusu branch, '+circuit.getMeshes()[h].getBranches()[randomBranch].getCommon()+ ' common erteke');
                         commonMeshesAndBranchTypes.push(meshAndBranchType);
                         console.log('meshAndBranchType-7: '+meshAndBranchType);
                         circParam[4]--;
@@ -796,6 +862,7 @@ export class CircuitGenerator {
                 console.log('IF - 33');
                 console.log('ELFOGYOTT A KOZOS BRANCH');
             }
+            console.log('VEGE A '+circuit.getMeshes()[h].getMeshNumber()+'. MESH GENERALASNAK');
             //CSAK A TESZTELESHEZ A KIIRATAS MIATT
             for (let i = 0; i < maxBranch; i++){
                 console.log(circuit.getMeshes()[h].getBranches()[i]);
