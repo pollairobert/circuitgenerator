@@ -14,6 +14,12 @@ c.setQuestionOrVoltmeterResistance(1000000);
 c.setConnectedVoltagesourceValue(12);
 c.setConnectedVoltagesourceResistance(10);
 let type = 1;
+let x = 10;
+for (let i = 0; i < 10; i++){
+    console.log(c.randomIncrementOrDecrement());
+}
+console.log(c.randomIncrementOrDecrement());
+//console.log(x);
 //console.log(1%2);
 c.generateCircuit(type);
 //c.generateCircuit2(type);

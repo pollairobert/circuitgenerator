@@ -12,6 +12,7 @@ export class Mesh {
     private meshResistance: number = 0;
     private meshVoltage: number = 0;
     private meshCurrent: number = 0;
+    private meshCoordinates: number[][] = [];
 
     constructor(/*maxmesh: number, res: number, cur: number, volt: number, comm: number*/) {
         //this.maxMeshNumb = maxmesh;
@@ -35,6 +36,9 @@ export class Mesh {
         this.branches.push(branch);
         //this.meshResistance += branch.getBranchResistance();
         //this.meshVoltage += branch.getBranchVoltage();
+    }
+    public setMeshCoordinates(coordinate: number[]): void{
+        this.meshCoordinates.push(coordinate);
     }
     private cloneMeshNumber(mshnumb: number): void {
         this.meshNumber = mshnumb;
@@ -61,6 +65,9 @@ export class Mesh {
         meshClone.cloneMeshVoltage(msh.getMeshVoltage());
         meshClone.cloneMeshCurrent(msh.getMesCurrent());
         return meshClone;
+    }
+    public getMeshCoordinates(): number[][]{
+        return this.meshCoordinates;
     }
     public getMeshNumber(): number {
         return this.meshNumber;

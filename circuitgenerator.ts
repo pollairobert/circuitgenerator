@@ -106,7 +106,7 @@ export class CircuitGenerator {
         switch (type){
             //Egyszeru feszoszto, csak feszgennel
             case 1: {
-                parameters = [this.randomIntNumber(2,2),
+                parameters = [this.randomIntNumber(4,4),
                               this.randomIntNumber(6,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(1,1),
@@ -141,6 +141,130 @@ export class CircuitGenerator {
         return parameters;
     }
     public buildFinalCircuit(circuit: Circuit, type: number): Circuit{
+        let circParam: Object = circuit.getParameters();
+        let firstMeshStartCoordinate: number[] = [this.randomIntNumber(10,1),this.randomIntNumber(10,1)];
+        //firstMeshStartCoordinate = [1,1];
+        console.log('meshStartCoordinate: '+firstMeshStartCoordinate);
+        let multiplySideForOneMeshes: boolean = false;
+        let oneSideForMultiplyMeshes: boolean = true;
+        for (let h = 0; h < circParam[0]; h++) {
+            console.log('FOR - 1');
+            circuit.setMeshes(new Mesh());
+            if (h === 0){
+                console.log('IF - 1');
+                if (!multiplySideForOneMeshes && !oneSideForMultiplyMeshes){
+                    console.log('IF - 2');
+                    circuit.getMeshes()[h].setMeshCoordinates(firstMeshStartCoordinate);
+                } else if (!multiplySideForOneMeshes && oneSideForMultiplyMeshes){
+                    console.log('IF - 3');
+                    circuit.getMeshes()[h].setMeshCoordinates(firstMeshStartCoordinate);
+                    console.log('circuit.getMeshes()[h].getMeshCoordinates()[0][0]: '+circuit.getMeshes()[h].getMeshCoordinates()[0][0]);
+                    console.log('circuit.getMeshes()[h].getMeshCoordinates()[0][1]: '+circuit.getMeshes()[h].getMeshCoordinates()[0][1]);
+                    console.log('circuit.getMeshes()[h].getMeshCoordinates()[0]: '+circuit.getMeshes()[h].getMeshCoordinates()[0]);
+                    console.log('circuit.getMeshes()[h].getMeshCoordinates(): '+circuit.getMeshes()[h].getMeshCoordinates());
+                    let maxRow: number; 
+                    if (circParam[0] === 2){
+                        console.log('IF - 4');
+                        maxRow = this.randomIntNumber(0,0);
+                    } else if (circParam[0] === 3) {
+                        console.log('IF - 5');
+                        maxRow = this.randomIntNumber(1,1);
+                    } else {
+                        console.log('IF - 6');
+                        maxRow = this.randomIntNumber(2,1);
+                    }
+                    let randomXorY: number; // X a 0, Y az 1
+                    let randomIncOrDec: number;
+                    let additionalCoordinate: number[] = [];
+                    randomXorY = this.randomChangeXorYcooordinate();
+                    //maxRow = 4;
+                    console.log('maxRow: '+maxRow);
+                    console.log('kivonas X bol: '+(circuit.getMeshes()[h].getMeshCoordinates()[0][0]-maxRow));
+                    let xSubt: number = circuit.getMeshes()[h].getMeshCoordinates()[0][0]-maxRow;
+                    console.log(xSubt);
+                    console.log('kivonas Y bol: '+(circuit.getMeshes()[h].getMeshCoordinates()[0][1]-maxRow));
+                    let ySubt: number = circuit.getMeshes()[h].getMeshCoordinates()[0][1]-maxRow;
+                    console.log(ySubt);
+                    
+                    if ( xSubt >= 1 && ySubt >= 1){
+                        console.log('IF - 7');
+                        randomIncOrDec = this.randomIncrementOrDecrement();
+                    } else if (xSubt < 1 && ySubt-maxRow >= 1){
+                        console.log('IF - 8');
+                        if (randomXorY === 0){
+                            console.log('IF - 9');
+                            randomIncOrDec = 1;
+                        } else if (randomXorY === 1){
+                            console.log('IF - 10');
+                            randomIncOrDec = this.randomIncrementOrDecrement();
+                        }
+                    } else if (xSubt >= 1 && ySubt < 1){
+                        console.log('IF - 11');
+                        if (randomXorY === 0){
+                            console.log('IF - 12');
+                            randomIncOrDec = this.randomIncrementOrDecrement();
+                        } else if (randomXorY === 1){
+                            console.log('IF - 13');
+                            randomIncOrDec = 1
+                        }
+                    } else if (xSubt < 1 && ySubt < 1){
+                        console.log('IF - 14');
+                        randomIncOrDec = 1
+                    }
+                    console.log('randomXorY: '+randomXorY);
+                    console.log(randomXorY);
+                    
+                    for (let i = 0; i < maxRow; i++){
+                        console.log('FOR - 2');
+                        console.log('circuit.getMeshes()[h].getMeshCoordinates(): '+circuit.getMeshes()[h].getMeshCoordinates()[circuit.getMeshes()[h].getMeshCoordinates().length-1]);
+                        console.log('circuit.getMeshes()[h].getMeshCoordinates() hossza: '+circuit.getMeshes()[h].getMeshCoordinates().length);
+                        additionalCoordinate = [];
+                        additionalCoordinate = circuit.getMeshes()[h].getMeshCoordinates()[circuit.getMeshes()[h].getMeshCoordinates().length-1].slice();
+                        console.log('additionalCoordinate tartalama masolas utan: '+additionalCoordinate);
+                        additionalCoordinate[randomXorY] +=randomIncOrDec;
+                        console.log('additionalCoordinate tartalama modositas utan: '+additionalCoordinate);
+                        circuit.getMeshes()[h].setMeshCoordinates(additionalCoordinate); 
+
+                    }
+                } else if (multiplySideForOneMeshes && !oneSideForMultiplyMeshes){
+                    console.log('IF - 15');
+                    circuit.getMeshes()[h].setMeshCoordinates(firstMeshStartCoordinate);
+                } else if (multiplySideForOneMeshes && oneSideForMultiplyMeshes){
+                    console.log('IF - 16');
+                    circuit.getMeshes()[h].setMeshCoordinates(firstMeshStartCoordinate);
+                    let maxRow: number = this.randomIntNumber(2,1);
+                    let maxColumn: number = this.randomIntNumber(2,1);
+                    for (let i = 0; i < maxRow; i++){
+                        for (let j = 0; j < maxColumn; j++){
+
+                        }
+                    }
+                }
+            } else {
+                console.log('IF - 17');
+            }
+        }
+        if (!multiplySideForOneMeshes && !oneSideForMultiplyMeshes){
+            
+        } else if (!multiplySideForOneMeshes && oneSideForMultiplyMeshes){
+
+        } else if (multiplySideForOneMeshes && !oneSideForMultiplyMeshes){
+           
+        } else if (multiplySideForOneMeshes && oneSideForMultiplyMeshes){
+
+        }
+
+
+
+
+        
+        for (let h = 0; h < circParam[0]; h++) {
+            console.log(circuit.getMeshes()[h]);
+            //for (let i = 0; i< circuit.getMeshes())
+        }
+        return circuit;
+    }
+    public buildFinalCircuit3(circuit: Circuit, type: number): Circuit{
         //let circuit: Circuit;
         
         let circParam: Object = circuit.getParameters();
@@ -1034,6 +1158,23 @@ export class CircuitGenerator {
         let resistance: number[]=[1000,10000,100000];
         let e6base: number[] = [1,1.5,2.2,3.3,4.7,6.8];
         return e6base[this.randomIntNumber(5,0)]*resistance[this.randomIntNumber(2,0)];
+    }
+    public randomIncrementOrDecrement():number{
+        let number: number;
+        if ((Math.floor(Math.random() * 2) + 1) === 1) {
+            number = 1;
+        } else {
+            number = (3-4);
+        }
+        return number;
+    }
+
+    public randomChangeXorYcooordinate():number{
+        if ((Math.floor(Math.random() * 2) + 1) === 1) {
+            return 1; //Y kordinata
+        } else {
+            return 0; //X kordinata
+        }
     }
     public setCommonBranches(commonBranch: Branch): void{
         this.commonBranches.push(commonBranch);
