@@ -10,12 +10,24 @@ import { CircuitGenerator } from './circuitgenerator'
 import * as math from 'mathjs';
 
 var c: CircuitGenerator = new CircuitGenerator();
+let changeArray: number [][] = [];
+for (let j = 0; j < 10; j++){
+    if (c.randomBoolean()){
+        changeArray.push([j,j+1]);
+        
+    }
+}
+
+let arrayWithchangeArray: Object[] = [];
+arrayWithchangeArray.push(changeArray);
+arrayWithchangeArray.push([[1,2],[2,3]]);
+console.log(arrayWithchangeArray);
 c.setQuestionOrVoltmeterResistance(1000000);
 c.setConnectedVoltagesourceValue(12);
 c.setConnectedVoltagesourceResistance(10);
 let type = 1;
 //console.log(1%2);
-c.generateCircuit(type);
+//c.generateCircuit(type);
 //c.generateCircuit2(type);
 console.log();
 for (let i = 0; i < c.getCircuit().getMeshes().length; i++){
@@ -141,6 +153,8 @@ if (c.getOutputVoltageWithConnectedVoltageSource() !== undefined){
     console.log('A '+ c.getConnectedVoltagesourceValue()+ ' V-os es ' +c.getConnectedVoltagesourceResistance()+ ' Ohm belso ellenallasu feszgen csatlakoztatasa eseten:');
     console.log('A halozat kapocsfeszultseges a keresett pontok kozott: ' +c.getOutputVoltageWithConnectedVoltageSource());
 }
+
+
 /*console.log(c.getCircuit().getNumberOfMesh());
 console.log(c.getCircuit().getNumbOfRes());
 console.log(c.getCircuit().getNumbOfCurrSource());

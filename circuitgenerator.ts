@@ -152,6 +152,7 @@ export class CircuitGenerator {
         //let validBranchIndexes: number[] = [];
         for (let h = 0; h < maxMesh; h++) {
             circuit.setMeshes(new Mesh());
+            console.log(circuit.getMeshes()[h].getMeshNumber()+'. HUROK TORTENESEI:');
             let actualMeshCommonBranch: number;
             //let copiedCommonBranches: number[] = [];
             let multiplyCommonMesh: boolean = true;//this.randomBoolean();
@@ -166,7 +167,7 @@ export class CircuitGenerator {
                 //kontrolalva van, hogy max mennyi branch objektum lehet egy meshben
                 do {
                     maxBranch = this.randomIntNumber((circParam[4] > 0 ? 4+circParam[4]-1 : 4),4); 
-                    console.log('maxBranch: '+maxBranch);
+                    console.log('randommaxBranch: '+maxBranch);
                 } while (maxBranch > 6);
 
                 //TESZTHEZ
@@ -175,7 +176,7 @@ export class CircuitGenerator {
             console.log('MAXBRANCH: '+maxBranch);
             let otherEqBranchType: number;
             let otherMeshCounter: number;
-            console.log(circuit.getMeshes()[h]);
+            
             //console.log(commonMeshesAndBranchTypes[0]);
             if (commonMeshesAndBranchTypes[0] !== undefined){
                 otherMeshCounter = commonMeshesAndBranchTypes[commonMeshesAndBranchTypes.length-1][0];
@@ -577,7 +578,7 @@ export class CircuitGenerator {
                             //commonMeshesAndBranchTypes.push(meshAndBranchType);
                             circParam[4]--;
                             maxMesh++;
-                            if (commonMeshesAndBranchTypes[0] !== undefined && commonMeshesAndBranchTypes[commonMeshesAndBranchTypes.length-1][1] === meshAndBranchType[1]){
+                            if (commonMeshesAndBranchTypes[commonMeshesAndBranchTypes.length-2][1] === commonMeshesAndBranchTypes[commonMeshesAndBranchTypes.length-1][1]){
                                 console.log('IF - 14.3');
                                 circParam[4]--;
                                 
@@ -865,7 +866,8 @@ export class CircuitGenerator {
             console.log('VEGE A '+circuit.getMeshes()[h].getMeshNumber()+'. MESH GENERALASNAK');
             //CSAK A TESZTELESHEZ A KIIRATAS MIATT
             for (let i = 0; i < maxBranch; i++){
-                console.log(circuit.getMeshes()[h].getBranches()[i]);
+                console.log((h+1)+ '. HUROK AGAI:');
+                console.log('   '+circuit.getMeshes()[h].getBranches()[i].getType()+' tipusu ag COMMON erteke: '+circuit.getMeshes()[h].getBranches()[i].getCommon()+', es szama: '+circuit.getMeshes()[h].getBranches()[i].getBranchNumber());
             }
         }
         
