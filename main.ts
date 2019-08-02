@@ -13,17 +13,34 @@ var c: CircuitGenerator = new CircuitGenerator();
 c.setQuestionOrVoltmeterResistance(1000000);
 c.setConnectedVoltagesourceValue(12);
 c.setConnectedVoltagesourceResistance(10);
+/*let first: number[] = [c.randomIntNumber(10,1),c.randomIntNumber(10,1)];
+console.log(first);
+console.log();
 let type = 1;
-let x = 10;
-for (let i = 0; i < 10; i++){
-    console.log(c.randomIncrementOrDecrement());
-}
-console.log(c.randomIncrementOrDecrement());
+let z: number[][][] = [];
+z= c.buildMeshCoordinatesMatrix(first,5,5);
+
+console.log();
+console.log(z);
+console.log();*/
+
+
+
+//x[11]=[];
+//x[4][4] = first;
+//x[5] = [];
+
+//x[0][0] = first;
+//console.log(z);
+
+console.log();
+//console.log(x);
 //console.log(x);
 //console.log(1%2);
+let type = 1;
 c.generateCircuit(type);
 //c.generateCircuit2(type);
-console.log();
+
 for (let i = 0; i < c.getCircuit().getMeshes().length; i++){
     console.log('A(z) '+c.getCircuit().getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
     console.log('   Mesh ellenallasa (matrixhoz, a benne levo ellenallasok osszege): '+c.getCircuit().getMeshes()[i].getMeshResistance());
