@@ -10,7 +10,7 @@ import { CircuitGenerator } from './circuitgenerator'
 import * as math from 'mathjs';
 
 var c: CircuitGenerator = new CircuitGenerator();
-let changeArray: number [][] = [];
+/*let changeArray: number [][] = [];
 for (let j = 0; j < 10; j++){
     if (c.randomBoolean()){
         changeArray.push([j,j+1]);
@@ -21,13 +21,13 @@ for (let j = 0; j < 10; j++){
 let arrayWithchangeArray: Object[] = [];
 arrayWithchangeArray.push(changeArray);
 arrayWithchangeArray.push([[1,2],[2,3]]);
-console.log(arrayWithchangeArray);
+console.log(arrayWithchangeArray);*/
 c.setQuestionOrVoltmeterResistance(1000000);
 c.setConnectedVoltagesourceValue(12);
 c.setConnectedVoltagesourceResistance(10);
 let type = 1;
 //console.log(1%2);
-//c.generateCircuit(type);
+c.generateCircuit(type);
 //c.generateCircuit2(type);
 console.log();
 for (let i = 0; i < c.getCircuit().getMeshes().length; i++){
