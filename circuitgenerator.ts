@@ -106,8 +106,8 @@ export class CircuitGenerator {
         switch (type){
             //Egyszeru feszoszto, csak feszgennel
             case 1: {
-                parameters = [this.randomIntNumber(2,2),
-                              this.randomIntNumber(6,2),
+                parameters = [this.randomIntNumber(3,3),
+                              this.randomIntNumber(2,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(1,1),
                               this.randomIntNumber(2,2)];
@@ -142,21 +142,51 @@ export class CircuitGenerator {
     }
     public buildFinalCircuit(circuit: Circuit, type: number): Circuit{
         let circParam: Object = circuit.getParameters();
-        let firstMeshStartCoordinate: number[] = [this.randomIntNumber(10,1),this.randomIntNumber(10,1)];
+        let meshStartCoordinate: number[] = [];
         //firstMeshStartCoordinate = [1,1];
-        console.log('meshStartCoordinate: '+firstMeshStartCoordinate);
+        let xLength: number;
+        let yLength: number;
+        let startCornerType: number;
         let multiplySideForOneMeshes: boolean = this.randomBoolean();
         let oneSideForMultiplyMeshes: boolean = this.randomBoolean();
         console.log('multiplySideForOneMeshes: '+multiplySideForOneMeshes);
         console.log('oneSideForMultiplyMeshes: '+oneSideForMultiplyMeshes);
-        
+        if (type === 1 || type === 2){
+            xLength = 2;
+            yLength = 2;
+            startCornerType = this.randomChoiseTwoNumber(1,2);
+            console.log('startCornerType: '+startCornerType);
+        }
         for (let h = 0; h < circParam[0]; h++) {
             circuit.setMeshes(new Mesh())
-            circuit.getMeshes()[h].setMeshCoordinatesMatrix(this.buildMeshCoordinatesMatrix(firstMeshStartCoordinate,5,5))
-            console.log(circuit.getMeshes()[h]);
+            if (circuit.getMeshes()[h].getMeshNumber() === 1){
+                meshStartCoordinate = [this.randomIntNumber(10,1),this.randomIntNumber(10,1)];
+                console.log('meshStartCoordinate - 1 HUROK: '+meshStartCoordinate);
+                circuit.getMeshes()[h].setMeshCoordinatesMatrix(this.buildMeshCoordinatesMatrix(circuit, meshStartCoordinate,xLength,yLength));
+            } else {
+                if (circuit.getMeshes()[h].getMeshNumber() > 2){
+                    startCornerType = undefined;
+                }
+                meshStartCoordinate = this.choiseNextMeshMatrixFirstCoordinate(circuit, circuit.getMeshes()[h-1].getMeshCoordinatesMatrix(),startCornerType);
+                if (circuit.getMeshes()[h].getMeshNumber() > 2){
+                    startCornerType = meshStartCoordinate[2];
+                }
+                console.log('meshStartCoordinate - KOVETKEZO HUROK: '+meshStartCoordinate);
+                circuit.getMeshes()[h].setMeshCoordinatesMatrix(this.buildMeshCoordinatesMatrix(circuit, meshStartCoordinate,xLength,yLength,startCornerType));
+            }
+            //circuit.getMeshes()[h].setMeshCoordinatesMatrix(this.buildMeshCoordinatesMatrix(circuit, meshStartCoordinate,6,6))
             console.log(circuit.getMeshes()[h].getMeshCoordinatesMatrix());
+            //console.log(circuit.getMeshes()[h].getMeshCoordinatesMatrix());
             //for (let i = 0; i< circuit.getMeshes())
         }
+        //console.log(circuit);
+        /*for (let h = 0; h < circuit.getMeshes().length; h++){
+            for (let i = 0; i < circuit.getMeshes()[h].getMeshCoordinatesMatrix().length; i++){
+                for (let j = 0; j < circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i].length; j++){
+                    console.log(circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]);
+                }
+            }
+        }*/
         return circuit;
     }
     public buildFinalCircuit3(circuit: Circuit, type: number): Circuit{
@@ -1007,7 +1037,18 @@ export class CircuitGenerator {
         }
         return circuitelement;
     }
-    public buildMeshCoordinatesMatrix(first: number[], xLength: number, yLength: number): number[][][]{
+    /**
+     * 
+     * @param first kezdo koordinataja a matrixnak
+     * @param xLength matrix x iranyu hossza
+     * @param yLength matrix y iranyu hossza
+     * @param corner opcionalis. megadhato fixen, hogy melyik sarokba keruljon a kezdo koordinata
+     *        1: bal also
+     *        2: bal felso
+     *        3: jobb felso
+     *        4: jobb also
+     */
+    public buildMeshCoordinatesMatrix(circuit: Circuit, first: number[], xLength?: number, yLength?: number, corner?: number): number[][][]{
         let meshCoordinates: number[][][] = [];
         let yCoordinate: number;
         let xCoordinate: number;
@@ -1015,8 +1056,9 @@ export class CircuitGenerator {
         let ySubstFirstYCoordinate: number = first[1] - yLength;
         let x: number;
         let y: number;
+        //console.log('first: '+ first);
         //let first: number[] = [c.randomIntNumber(5,1),c.randomIntNumber(5,1)];
-        //jobb felso sarok
+        /*jobb felso sarok
         if (xSubstFirstXCoordinate >= 1 && ySubstFirstYCoordinate >= 1){
             console.log('IF - 1');
             y = first[1] + this.randomChoiseTwoNumber(yLength-1,0);
@@ -1033,15 +1075,46 @@ export class CircuitGenerator {
             console.log('IF - 4');
             y = first[1] + this.randomChoiseTwoNumber(yLength-1,0);
             x = first[0];
+        } */
+        y = first[1] + this.randomChoiseTwoNumber(yLength-1,0);
+        x = first[0] - this.randomChoiseTwoNumber(xLength-1,0);
+        if (corner !== undefined){
+            console.log('IF - 5');
+            switch (corner){
+                case 1: {
+                    y = first[1] + (yLength-1);
+                    x = first[0];
+                    break;
+                }
+                case 2: {
+                    y = first[1];
+                    x = first[0];
+                    break;
+                }
+                case 3: {
+                    y = first[1];
+                    x = first[0] - (xLength-1);
+                    break;
+                }
+                case 4: {
+                    y = first[1] + (yLength-1);
+                    x = first[0] - (xLength-1);
+                    break;
+                }
+            }
+            console.log('x switch: '+x);
+            console.log('y switch: '+y);
         }
-        console.log('x: '+x);
-        console.log('y: '+y);
+        
+        //console.log('x: '+x);
+        //console.log('y: '+y);
         for (let row = 0; row < yLength; row++){
             meshCoordinates[row] = [];
             yCoordinate = y-row;
             for (let col = 0; col < xLength; col++){
                 xCoordinate = x+col;
                 meshCoordinates[row][col]=[xCoordinate,yCoordinate];
+                //circuit.setAllMeshCoordinates([xCoordinate,yCoordinate]);
                 
             }
         }
@@ -1080,6 +1153,74 @@ export class CircuitGenerator {
         }
         //meshCoordinates[0][4] = first;*/
         return meshCoordinates;
+    }
+    public choiseNextMeshMatrixFirstCoordinate(circuit: Circuit, meshMatrix: number[][][], corner?: number): number[] {
+        let firstCoordinate: number[];
+        let matrixCorners: number[][] =[];
+        if (corner !== undefined){
+            console.log('IF - 52');
+            switch (corner){
+                case 1: {
+                    console.log('SWITCH - 1');
+                    matrixCorners.push([meshMatrix[0][0][0],meshMatrix[0][0][1]+1]);
+                    break;
+                }
+                case 2: {
+                    console.log('SWITCH - 2');
+                    matrixCorners.push([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1]]);
+                    break;
+                }
+                case 3: {
+                    console.log('SWITCH - 3');
+                    matrixCorners.push([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]-1]);
+                    break;
+                }
+                case 4: {
+                    console.log('SWITCH - 4');
+                    matrixCorners.push([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1]]);
+                    break;
+                }
+            }
+            
+        } else {
+            
+            matrixCorners.push([meshMatrix[0][0][0],meshMatrix[0][0][1]+1,1]);
+            matrixCorners.push([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1],2]);
+            matrixCorners.push([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]-1,3]);
+            matrixCorners.push([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1],4]);
+            for (let h = 0; h < circuit.getMeshes().length; h++){
+                for (let i = 0; i < circuit.getMeshes()[h].getMeshCoordinatesMatrix().length; i++){
+                    for (let j = 0; j < circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i].length; j++){
+                        console.log(circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]);
+                        if ([meshMatrix[0][0][0],meshMatrix[0][0][1]+1] !== circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]){
+                             matrixCorners.push([meshMatrix[0][0][0],meshMatrix[0][0][1]+1,1]);
+                        }
+                        if ([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1]] !== circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]){
+                            matrixCorners.push([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1],2]);
+                        }
+                        if ([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]] !== circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]){
+                            matrixCorners.push([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]-1,3]);
+                        }
+                        if ([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1]] !== circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]){
+                            matrixCorners.push([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1],4]);
+                        }
+                    }
+                }
+            }
+        }
+        console.log('matrixCorners: ');
+        console.log(matrixCorners);
+        firstCoordinate = this.randomCoordinateArryElement(matrixCorners);
+        return firstCoordinate;
+    }
+    /**
+     * Egy mar letezo Mesh
+     * @param basic amelyik matrixhoz csatlakoztatni akarjuk a kovetkezo matrixot
+     * @param connecting amit csatlakoztatni akarunk, majd ezt modositva visszaadjuk, ha szukseges
+     */
+    public testAndSetTwoCoordinateMatrixConnectivity(basic: number[][][], connecting: number[][][]): number[][][]{
+
+        return connecting;
     }
     /**
      * 
@@ -1151,6 +1292,11 @@ export class CircuitGenerator {
         } else {
             return two;
         }
+    }
+    public randomCoordinateArryElement(array: number[][]): number[]{
+        let result: number[];
+        result = array[Math.floor(Math.random() * array.length)];
+        return result;
     }
     public wichBiger(num1: number, num2: number): number{
         if (num1 >= num2){

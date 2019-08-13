@@ -16,6 +16,7 @@ export class Circuit {
     private numbOfVoltageSource: number;
     private numbOfCommonBranch: number; // meg kerdeses, hogy kell-e
     private circuitParameters: number[];
+    //private allMeshCoordinates: number[][] = [];
     
     /**
      * Aramkor konstruktora, amely beallitja a szukseges ertkeit a prameterek alapjan
@@ -49,6 +50,9 @@ export class Circuit {
     public setThevVolt(volt: number): void {
         this.theveninVoltage = volt;
     }
+    /*public setAllMeshCoordinates(coordinate: number[]): void {
+        this.allMeshCoordinates.push(coordinate);
+    }*/
     private cloneCircuitMeshes(msh: Mesh): void {
         this.meshes.push(msh);
     }
@@ -118,5 +122,8 @@ export class Circuit {
     public getParameters(): Object{
         return this.circuitParameters;
     }
+    /*public getAllMeshCoordinates(): number[][] {
+        return this.allMeshCoordinates;
+    }*/
     
 }
