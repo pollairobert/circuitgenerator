@@ -15,6 +15,7 @@ export class Circuit {
     private numbOfCurrentSource: number;
     private numbOfVoltageSource: number;
     private numbOfCommonBranch: number; // meg kerdeses, hogy kell-e
+    private circuitParameters: number[];
     
     /**
      * Aramkor konstruktora, amely beallitja a szukseges ertkeit a prameterek alapjan
@@ -23,13 +24,21 @@ export class Circuit {
      * @param cur aramgeneratorok szama
      * @param volt feszultseggeneratorok szama
      * @param comm hurkok kozos againak szama (ez meg kerdeses, hogy marad-e)
-     */
+     *
     constructor(meshnumb: number, res: number, cur: number, volt: number, comm: number) {
         this.numberOfMesh = meshnumb;
         this.numbOfResistance = res;
         this.numbOfCurrentSource = cur;
         this.numbOfVoltageSource = volt;
         this.numbOfCommonBranch = comm;
+    }*/
+    constructor(parameters: number[]){
+        this.numberOfMesh = parameters[0];
+        this.numbOfResistance = parameters[1];
+        this.numbOfCurrentSource = parameters[2];
+        this.numbOfVoltageSource = parameters[3];
+        this.numbOfCommonBranch = parameters[4];
+        this.circuitParameters = parameters;
     }
     public setMeshes(mesh: Mesh): void {
         this.meshes.push(mesh);
@@ -65,7 +74,8 @@ export class Circuit {
         this.numbOfCommonBranch = num;
     }
     public cloneCircuit(circ: Circuit): Circuit {
-        var circuitClone: Circuit = new Circuit(circ.getNumberOfMesh(),circ.getNumbOfRes(),circ.getNumbOfCurrSource(),circ.getNumbOfVoltSource(),circ.getNumbOfCommonBranc());
+        //var circuitClone: Circuit = new Circuit(circ.getNumberOfMesh(),circ.getNumbOfRes(),circ.getNumbOfCurrSource(),circ.getNumbOfVoltSource(),circ.getNumbOfCommonBranc());
+        var circuitClone: Circuit = new Circuit(this.circuitParameters);
         for(var i = 0; i < circ.getMeshes().length; i++){
             circuitClone.cloneCircuitMeshes(circ.getMeshes()[i].cloneMesh(circ.getMeshes()[i]));
         }
@@ -77,6 +87,9 @@ export class Circuit {
         circuitClone.cloneNumbOfVoltageSource(circ.getNumbOfVoltSource());
         circuitClone.cloneNumbOfCommonBranch(circ.getNumbOfCommonBranc());
         return circuitClone;
+    }
+    public setNumberOfMesh(number: number): void {
+        this.numberOfMesh = number;
     }
     public getThevRes(): number {
         return this.theveninResistance;
@@ -101,6 +114,9 @@ export class Circuit {
     }
     public getNumbOfCommonBranc(): number{
         return this.numbOfCommonBranch;
+    }
+    public getParameters(): Object{
+        return this.circuitParameters;
     }
     
 }

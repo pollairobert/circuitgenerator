@@ -18,7 +18,9 @@ export class Mesh {
         this.meshNumber = meshCounter;
         meshCounter++;
     }
-
+    public clearMeshVoltage(): void{
+        this.meshVoltage = 0;
+    }
     public setMeshResistance(branch: Branch): void {
         this.meshResistance += branch.getBranchResistance();
     }
