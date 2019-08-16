@@ -171,7 +171,7 @@ export class CircuitGenerator {
                 } while (maxBranch > 6);
 
                 //TESZTHEZ
-                //maxBranch = 8
+                //maxBranch = 8;
             }
             console.log('MAXBRANCH: '+maxBranch);
             let otherEqBranchType: number;
@@ -202,6 +202,7 @@ export class CircuitGenerator {
                         otherEqBranchType = (i < 4 ? i : this.randomIntNumber(3,0));
                     }*/
                     randomBranch = this.randomIntNumber(3,0);
+                    //randomBranch = 1;
                     console.log('randomBranch - IF - 4: '+randomBranch);
                     /*for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
                         if (circuit.getMeshes()[h].getBranches()[j].getType() === randomBranch){
