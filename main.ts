@@ -15,8 +15,8 @@ c.setConnectedVoltagesourceValue(12);
 c.setConnectedVoltagesourceResistance(10);
 let type = 1;
 //console.log(1%2);
-c.generateCircuit(type);
-//c.generateCircuit2(type);
+//c.generateCircuit(type);
+c.generateCircuit2(type);
 console.log();
 for (let i = 0; i < c.getCircuit().getMeshes().length; i++){
     console.log('A(z) '+c.getCircuit().getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
