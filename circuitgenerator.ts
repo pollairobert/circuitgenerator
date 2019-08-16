@@ -1269,6 +1269,42 @@ export class CircuitGenerator {
         let e6base: number[] = [1,1.5,2.2,3.3,4.7,6.8];
         return e6base[this.randomIntNumber(5,0)]*resistance[this.randomIntNumber(2,0)];
     }
+    public randomIncrementOrDecrement():number{
+        let number: number;
+        if ((Math.floor(Math.random() * 2) + 1) === 1) {
+            number = 1;
+        } else {
+            number = (3-4);
+        }
+        return number;
+    }
+
+    public randomChangeXorYcooordinate():number{
+        if ((Math.floor(Math.random() * 2) + 1) === 1) {
+            return 1; //Y kordinata
+        } else {
+            return 0; //X kordinata
+        }
+    }
+    public randomChoiseTwoNumber(one: number, two: number):number{
+        if ((Math.floor(Math.random() * 2) + 1) === 1) {
+            return one;
+        } else {
+            return two;
+        }
+    }
+    public randomCoordinateArryElement(array: number[][]): number[]{
+        let result: number[];
+        result = array[Math.floor(Math.random() * array.length)];
+        return result;
+    }
+    public wichBiger(num1: number, num2: number): number{
+        if (num1 >= num2){
+            return num1;
+        } else {
+            return num2;
+        }
+    }
     public setCommonBranches(commonBranch: Branch): void{
         this.commonBranches.push(commonBranch);
     }
