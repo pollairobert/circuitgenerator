@@ -106,7 +106,7 @@ export class CircuitGenerator {
         switch (type){
             //Egyszeru feszoszto, csak feszgennel
             case 1: {
-                parameters = [this.randomIntNumber(3,3),
+                parameters = [this.randomIntNumber(4,4),
                               this.randomIntNumber(2,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(1,1),
@@ -153,7 +153,7 @@ export class CircuitGenerator {
         console.log('oneSideForMultiplyMeshes: '+oneSideForMultiplyMeshes);
         if (type === 1 || type === 2){
             xLength = 2;
-            yLength = 2;
+            yLength = 4;
             startCornerType = this.randomChoiseTwoNumber(1,2);
             console.log('startCornerType: '+startCornerType);
         }
@@ -1155,63 +1155,108 @@ export class CircuitGenerator {
         return meshCoordinates;
     }
     public choiseNextMeshMatrixFirstCoordinate(circuit: Circuit, meshMatrix: number[][][], corner?: number): number[] {
-        let firstCoordinate: number[];
-        let matrixCorners: number[][] =[];
+        let startCoordinate: number[];
+        let possibleStartCoordinates: number[][] =[];
+        let invalidCoordinates: number[][] = [];
+        let ok: boolean = false;
         if (corner !== undefined){
             console.log('IF - 52');
             switch (corner){
                 case 1: {
                     console.log('SWITCH - 1');
-                    matrixCorners.push([meshMatrix[0][0][0],meshMatrix[0][0][1]+1]);
+                    possibleStartCoordinates.push([meshMatrix[0][0][0],meshMatrix[0][0][1]+1]);
                     break;
                 }
                 case 2: {
                     console.log('SWITCH - 2');
-                    matrixCorners.push([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1]]);
+                    possibleStartCoordinates.push([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1]]);
                     break;
                 }
                 case 3: {
                     console.log('SWITCH - 3');
-                    matrixCorners.push([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]-1]);
+                    possibleStartCoordinates.push([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]-1]);
                     break;
                 }
                 case 4: {
                     console.log('SWITCH - 4');
-                    matrixCorners.push([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1]]);
+                    possibleStartCoordinates.push([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1]]);
                     break;
                 }
             }
             
         } else {
             
-            matrixCorners.push([meshMatrix[0][0][0],meshMatrix[0][0][1]+1,1]);
-            matrixCorners.push([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1],2]);
-            matrixCorners.push([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]-1,3]);
-            matrixCorners.push([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1],4]);
+            possibleStartCoordinates.push([meshMatrix[0][0][0],meshMatrix[0][0][1]+1,1]);
+            possibleStartCoordinates.push([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1],2]);
+            possibleStartCoordinates.push([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]-1,3]);
+            possibleStartCoordinates.push([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1],4]);
+            console.log();
+            console.log(possibleStartCoordinates);
+            console.log();
             for (let h = 0; h < circuit.getMeshes().length; h++){
                 for (let i = 0; i < circuit.getMeshes()[h].getMeshCoordinatesMatrix().length; i++){
                     for (let j = 0; j < circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i].length; j++){
                         console.log(circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]);
-                        if ([meshMatrix[0][0][0],meshMatrix[0][0][1]+1] !== circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]){
-                             matrixCorners.push([meshMatrix[0][0][0],meshMatrix[0][0][1]+1,1]);
+                        //console.log(typeof(circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]));
+                        if (JSON.stringify([meshMatrix[0][0][0],meshMatrix[0][0][1]+1]) === JSON.stringify(circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j])){
+                            //invalidCoordinates.push([meshMatrix[0][0][0],meshMatrix[0][0][1]+1,1]);
+                            for (let k = 0; k < possibleStartCoordinates.length; k++){
+                                if (JSON.stringify(possibleStartCoordinates[k]) === JSON.stringify([meshMatrix[0][0][0],meshMatrix[0][0][1]+1,1])){
+                                    possibleStartCoordinates.splice(k,1);
+                                }
+                            }
+                            //possibleStartCoordinates.push([meshMatrix[0][0][0],meshMatrix[0][0][1]+1,1]);
                         }
-                        if ([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1]] !== circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]){
-                            matrixCorners.push([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1],2]);
+                        if (JSON.stringify([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1]]) === JSON.stringify(circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]) ){
+                            //invalidCoordinates.push([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1],2]);
+                            for (let k = 0; k < possibleStartCoordinates.length; k++){
+                                if (JSON.stringify(possibleStartCoordinates[k]) === JSON.stringify([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1],2])){
+                                    possibleStartCoordinates.splice(k,1);
+                                }
+                            }
+                            //possibleStartCoordinates.push([meshMatrix[0][meshMatrix[0].length-1][0]+1,meshMatrix[0][meshMatrix[0].length-1][1],2]);
                         }
-                        if ([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]] !== circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]){
-                            matrixCorners.push([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]-1,3]);
+                        if (JSON.stringify([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]-1]) === JSON.stringify(circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]) ){
+                            //invalidCoordinates.push([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]-1,3]);
+                            for (let k = 0; k < possibleStartCoordinates.length; k++){
+                                if (JSON.stringify(possibleStartCoordinates[k]) === JSON.stringify([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]-1,3])){
+                                    possibleStartCoordinates.splice(k,1);
+                                }
+                            }
+                            //possibleStartCoordinates.push([meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][0],meshMatrix[meshMatrix.length-1][meshMatrix[meshMatrix.length-1].length-1][1]-1,3]);
                         }
-                        if ([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1]] !== circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j]){
-                            matrixCorners.push([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1],4]);
+                        if (JSON.stringify([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1]]) === JSON.stringify(circuit.getMeshes()[h].getMeshCoordinatesMatrix()[i][j])){
+                            //invalidCoordinates.push([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1],4]);
+                            for (let k = 0; k < possibleStartCoordinates.length; k++){
+                                if (JSON.stringify(possibleStartCoordinates[k]) === JSON.stringify([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1],4])){
+                                    possibleStartCoordinates.splice(k,1);
+                                }
+                            }
+                            //possibleStartCoordinates.push([meshMatrix[meshMatrix.length-1][0][0]-1,meshMatrix[meshMatrix.length-1][0][1],4]);
                         }
                     }
                 }
             }
         }
-        console.log('matrixCorners: ');
-        console.log(matrixCorners);
-        firstCoordinate = this.randomCoordinateArryElement(matrixCorners);
-        return firstCoordinate;
+        console.log();
+        console.log(possibleStartCoordinates);
+        console.log();
+        //console.log('invalid: ');
+        //console.log(invalidCoordinates);
+        startCoordinate = this.randomCoordinateArryElement(possibleStartCoordinates);
+        /*do {
+            
+            startCoordinate = this.randomCoordinateArryElement(possibleStartCoordinates);
+            for (let i = 0; i < invalidCoordinates.length; i++){
+                if (JSON.stringify(invalidCoordinates[i]) === JSON.stringify(startCoordinate)){
+                    ok = true;
+                    break;
+                }
+            }
+        }
+        while (ok);*/
+        console.log(startCoordinate);
+        return startCoordinate;
     }
     /**
      * Egy mar letezo Mesh
