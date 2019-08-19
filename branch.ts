@@ -27,7 +27,7 @@ export class Branch {
     /**
      * Konstruktor, beallitasra kerul az orientacio es az irany
      * @param type 4 tipus. 0: fel, 1: jobbra, 2: le, 3: balra
-     * @param meshNumber az ot tartalmazo hurok szama
+     * @param meshNumber az ot tartalmazo hurok szama-1 !!!!
      */
     constructor(type: number, meshNumber: number) {
         this.type = type;

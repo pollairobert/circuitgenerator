@@ -86,7 +86,7 @@ export class CircuitGenerator {
     }
     //TESZTHEZ KELL CSAK EZ A METODUS
     public generateCircuit2(type: number){
-        let parameters: number[] = [3,2,0,1,1];
+        let parameters: number[] = [5,2,0,1,1];
         this.circuit = this.buildFinalCircuit2(new Circuit(parameters),type);
         this.finalCalculateOfTheveninSubstitutes(this.circuit);
     }
@@ -114,8 +114,8 @@ export class CircuitGenerator {
                 break;
             }
             //Egyszeru 2 hurkos halozat, 1-nel tobb generatorral
-            case 2: {
-                parameters = [this.randomIntNumber(2,2),
+            case 3: {
+                parameters = [this.randomIntNumber(5,5),
                               this.randomIntNumber(6,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(2,2),
@@ -141,6 +141,101 @@ export class CircuitGenerator {
         return parameters;
     }
     public buildFinalCircuit(circuit: Circuit, type: number): Circuit{
+        let circParam: Object = circuit.getParameters();
+        let meshPieceArray: number[] = [];
+        //let connectBranches: number[] = [];
+        let commonBranchPairs: number[][] = [[0,2], //balrol csatlakozo
+                                             [1,3], //fentrol
+                                             [2,0], //jobbrol
+                                             [3,1]  //lentrol
+                                            ];
+        let numberOfMeshes = circuit.getNumberOfMesh();
+        for (let h = 0; h < circuit.getNumberOfMesh(); h++) {
+            circuit.setMeshes(new Mesh());
+            for (let i = 0; i < 4; i++){
+                circuit.getMeshes()[h].setBranches(new Branch(i,h));
+            }
+        }
+        for (let h = 1; h <= circParam[0]; h++){
+            meshPieceArray.push(h);
+        } 
+        console.log('START - meshPieceArray: '+meshPieceArray);
+        //console.log(typeof(meshPieceArray));
+        for (let h = 1; h <= numberOfMeshes; h++){
+            this.removeElementInAnyArray(h,meshPieceArray);
+            console.log('FOR - meshPieceArray: '+meshPieceArray);
+            //console.log(meshPieceArray);
+            let tempBranchPairs: number[] = [];
+            let connectBranches: number[] = [];
+            let choiseMeshNumber: number;
+            let randomCommonBranchPair: number[] = [];
+            if ((type === 1 || type === 2) && h < numberOfMeshes) {
+                
+                choiseMeshNumber = this.randomChoiseInAnyArray(meshPieceArray);
+                randomCommonBranchPair = this.randomChoiseTwoAnything([1,3],[2,0]);
+                //randomCommonBranchPair = this.randomChoiseInAnyArray(commonBranchPairs);
+                console.log(choiseMeshNumber);
+                //this.removeElementInAnyArray(choiseMeshNumber,meshPieceArray);
+                connectBranches.push(randomCommonBranchPair[0],randomCommonBranchPair[1],choiseMeshNumber,h);
+                circuit.getMeshes()[h-1].setCommonBranchesArray(connectBranches);
+                console.log( circuit.getMeshes()[h-1].getCommonBranchesArray());
+                this.addConnectedBranchFromCommmonBranchesArrayElement(circuit,h,choiseMeshNumber);
+                //numberOfMeshes--;*/
+            } else {
+                let tempPieceArray: number[] = meshPieceArray.slice();
+                console.log('tempPieceArray: '+tempPieceArray);
+                let randomFor: number = this.randomIntNumber(tempPieceArray.length,1)
+                console.log('randomFor: '+randomFor);
+                for (let i = 0; i < randomFor; i++){
+                    console.log('For: '+i);
+                    console.log('circuit.getMeshes()[h-1].getCommonBranchesArray(): '+circuit.getMeshes()[h-1].getCommonBranchesArray());
+                    for (let j = 0; j < circuit.getMeshes()[h-1].getCommonBranchesArray().length; j++){
+                        this.removeElementInAnyArray(circuit.getMeshes()[h-1].getCommonBranchesArray()[j][2],tempPieceArray);
+                    }
+                    console.log('tempPieceArray - for: '+tempPieceArray);
+                    if (this.randomBoolean()){
+                        choiseMeshNumber = this.randomChoiseInAnyArray(tempPieceArray);
+                    } else {
+                        choiseMeshNumber = undefined;
+                    }
+                    if (choiseMeshNumber !== undefined){
+                        console.log('choiseMeshNumber: '+choiseMeshNumber);
+                        this.removeElementInAnyArray(choiseMeshNumber,tempPieceArray);
+                        
+                        randomCommonBranchPair = this.randomChoiseInAnyArray(commonBranchPairs);
+                        connectBranches.push(randomCommonBranchPair[0],randomCommonBranchPair[1],choiseMeshNumber,h);
+                        console.log('connectBranches - for: '+connectBranches);
+                        
+                        circuit.getMeshes()[h-1].setCommonBranchesArray(connectBranches);
+                        this.addConnectedBranchFromCommmonBranchesArrayElement(circuit,h,choiseMeshNumber);
+                    }
+                    
+                    connectBranches = [];
+
+                }
+                if (circuit.getMeshes()[h-1].getCommonBranchesArray().length === 0){
+                    choiseMeshNumber = this.randomChoiseInAnyArray(tempPieceArray);
+                    randomCommonBranchPair = this.randomChoiseInAnyArray(commonBranchPairs);
+                    connectBranches.push(randomCommonBranchPair[0],randomCommonBranchPair[1],choiseMeshNumber,h);
+                    circuit.getMeshes()[h-1].setCommonBranchesArray(connectBranches);
+                    this.addConnectedBranchFromCommmonBranchesArrayElement(circuit,h,choiseMeshNumber);
+                }
+            }
+            meshPieceArray.push(h);
+            
+            //console.log(meshPieceArray);
+        }
+        //console.log(connectBranches);
+        console.log();
+        for (let i = 0; i < circuit.getNumberOfMesh(); i++){
+            this.setCommonBranchesInMesh(circuit, circuit.getMeshes()[i].getCommonBranchesArray());
+            console.log(circuit.getMeshes()[i].getCommonBranchesArray());
+            console.log(circuit.getMeshes()[i].getBranches());
+        }
+        return circuit;
+    }
+
+    public buildFinalCircuit3(circuit: Circuit, type: number): Circuit{
         //let circuit: Circuit;
         
         let circParam: Object = circuit.getParameters();
@@ -673,23 +768,61 @@ export class CircuitGenerator {
                 circuit.getMeshes()[h].setBranches(new Branch(i,h));
             }
         }
-        circuit.getMeshes()[0].getBranches().splice(3,0,new Branch(2,0));
-        circuit.getMeshes()[0].getBranches()[0].setBranchElements(new Resistance(this.randomE6Resistance()));
-        circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));
-        circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
-        //circuit.getMeshes()[0].getBranches()[3].setBranchElements(new Resistance(this.randomE6Resistance()));
-        circuit.getMeshes()[0].getBranches()[4].setBranchElements(new Resistance(this.randomE6Resistance()));
-        circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomIntNumber(1,24),this.randomBoolean()));
-        circuit.getMeshes()[1].getBranches()[3].setBranchElements(new Resistance(this.randomE6Resistance()));//2. feszgen
-        //circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(this.randomIntNumber(1,20)));
-        //circuit.getMeshes()[2].getBranches()[2].setBranchElements(new Resistance(3));
-        circuit.getMeshes()[0].getBranches()[2].setCommon(2);
+        /*circuit.getMeshes()[0].getBranches().splice(2,0,new Branch(2,0));
+        circuit.getMeshes()[3].getBranches().splice(0,0,new Branch(0,3));
+        circuit.getMeshes()[3].getBranches().splice(0,0,new Branch(0,3));
+        circuit.getMeshes()[4].getBranches().splice(3,0,new Branch(3,4));*/
+        circuit.getMeshes()[0].setBranches(new Branch(2,0));
+        circuit.getMeshes()[3].setBranches(new Branch(0,3));
+        circuit.getMeshes()[3].setBranches(new Branch(0,3));
+        circuit.getMeshes()[4].setBranches(new Branch(3,4));
+
+        circuit.getMeshes()[0].getBranches()[2].setCommon(3);
+        circuit.getMeshes()[0].getBranches()[3].setCommon(2);
+        circuit.getMeshes()[0].getBranches()[1].setCommon(5);
+
         circuit.getMeshes()[1].getBranches()[0].setCommon(1);
-        circuit.getMeshes()[0].getBranches()[4].setCommon(3);
-        circuit.getMeshes()[2].getBranches()[1].setCommon(1);
-        circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]));
-        circuit.getMeshes()[2].getBranches()[1].setBranchElements(this.copyCommonElement(circuit.getMeshes()[0].getBranches()[4].getBranchElements()[0]));//2.feszgen
-        circuit.getMeshes()[2].getBranches()[3].setTh2Pole(true);
+        circuit.getMeshes()[1].getBranches()[1].setCommon(3);
+        circuit.getMeshes()[1].getBranches()[2].setCommon(4);
+
+        circuit.getMeshes()[2].getBranches()[0].setCommon(1);
+        circuit.getMeshes()[2].getBranches()[1].setCommon(5);
+        circuit.getMeshes()[2].getBranches()[2].setCommon(4);
+        circuit.getMeshes()[2].getBranches()[3].setCommon(2);
+
+        circuit.getMeshes()[3].getBranches()[0].setCommon(2);
+        circuit.getMeshes()[3].getBranches()[1].setCommon(3);
+        circuit.getMeshes()[3].getBranches()[2].setCommon(5);
+
+        circuit.getMeshes()[4].getBranches()[2].setCommon(4);
+        circuit.getMeshes()[4].getBranches()[3].setCommon(3);
+        circuit.getMeshes()[4].getBranches()[4].setCommon(1);
+        
+        circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(5,false));
+        circuit.getMeshes()[0].getBranches()[0].setBranchElements(new Resistance(10));
+        circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(20));
+        circuit.getMeshes()[0].getBranches()[2].setBranchElements(new VoltageSource(15,true));
+        circuit.getMeshes()[0].getBranches()[3].setBranchElements(new Resistance(80));
+
+        circuit.getMeshes()[1].getBranches()[0].setBranchElements(this.copyCommonElement(circuit.getMeshes()[0].getBranches()[3].getBranchElements()[0]));
+        circuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(70));
+        circuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(25,true));
+
+        circuit.getMeshes()[2].getBranches()[0].setBranchElements(this.copyCommonElement(circuit.getMeshes()[0].getBranches()[2].getBranchElements()[0]));
+        circuit.getMeshes()[2].getBranches()[1].setBranchElements(new Resistance(50));
+        circuit.getMeshes()[2].getBranches()[2].setBranchElements(new Resistance(60));
+        circuit.getMeshes()[2].getBranches()[3].setBranchElements(this.copyCommonElement(circuit.getMeshes()[1].getBranches()[1].getBranchElements()[0]));
+
+        circuit.getMeshes()[3].getBranches()[0].setBranchElements(this.copyCommonElement(circuit.getMeshes()[1].getBranches()[2].getBranchElements()[0]));
+        circuit.getMeshes()[3].getBranches()[1].setBranchElements(this.copyCommonElement(circuit.getMeshes()[2].getBranches()[2].getBranchElements()[0]));
+        circuit.getMeshes()[3].getBranches()[2].setBranchElements(new Resistance(40));
+        circuit.getMeshes()[3].getBranches()[4].setTh2Pole(true);
+
+        circuit.getMeshes()[4].getBranches()[1].setBranchElements(new VoltageSource(10,false));
+        circuit.getMeshes()[4].getBranches()[1].setBranchElements(new Resistance(30));
+        circuit.getMeshes()[4].getBranches()[2].setBranchElements(this.copyCommonElement(circuit.getMeshes()[3].getBranches()[2].getBranchElements()[0]));
+        circuit.getMeshes()[4].getBranches()[3].setBranchElements(this.copyCommonElement(circuit.getMeshes()[2].getBranches()[1].getBranchElements()[0]));
+        circuit.getMeshes()[4].getBranches()[4].setBranchElements(this.copyCommonElement(circuit.getMeshes()[0].getBranches()[1].getBranchElements()[0]));
         for (let i = 0; i < circuit.getMeshes().length; i++){
             for(let j = 0; j < circuit.getMeshes()[i].getBranches().length; j++){
                 let mesh : Mesh =  circuit.getMeshes()[i];
@@ -1034,6 +1167,136 @@ export class CircuitGenerator {
         let resistance: number[]=[1000,10000,100000];
         let e6base: number[] = [1,1.5,2.2,3.3,4.7,6.8];
         return e6base[this.randomIntNumber(5,0)]*resistance[this.randomIntNumber(2,0)];
+    }
+    public randomIncrementOrDecrement():number{
+        let number: number;
+        if ((Math.floor(Math.random() * 2) + 1) === 1) {
+            number = 1;
+        } else {
+            number = (3-4);
+        }
+        return number;
+    }
+
+    public randomChangeXorYcooordinate():number{
+        if ((Math.floor(Math.random() * 2) + 1) === 1) {
+            return 1; //Y kordinata
+        } else {
+            return 0; //X kordinata
+        }
+    }
+    public randomChoiseTwoNumber(one: number, two: number):number{
+        if ((Math.floor(Math.random() * 2) + 1) === 1) {
+            return one;
+        } else {
+            return two;
+        }
+    }
+    public randomChoiseTwoAnything(one: any, two: any):any{
+        if ((Math.floor(Math.random() * 2) + 1) === 1) {
+            return one;
+        } else {
+            return two;
+        }
+    }
+    
+    public randomCoordinateArryElement(array: number[][]): number[]{
+        let result: number[];
+        result = array[Math.floor(Math.random() * array.length)];
+        return result;
+    }
+
+    public randomChoiseInAnyArray(array: any): any{
+        let result: any;
+        result = array[Math.floor(Math.random()*array.length)]
+        return result;
+    }
+    public removeElementInAnyArray(element: any, array: any): any{
+        for (let i = 0; i < array.length; i++){
+            if (JSON.stringify(element) === JSON.stringify(array[i])){
+                array.splice(i,1);
+            }
+        }
+        return array;
+    }
+    public wichBiger(num1: number, num2: number): number{
+        if (num1 >= num2){
+            return num1;
+        } else {
+            return num2;
+        }
+    }
+    public addConnectedBranchFromCommmonBranchesArrayElement(circuit: Circuit, baseMesNumb: number, connectedMeshNumb: number, meshPieces?: number[]): void{
+        for (let i = 0; i < circuit.getMeshes()[baseMesNumb-1].getCommonBranchesArray().length; i++){
+            if (circuit.getMeshes()[baseMesNumb-1].getCommonBranchesArray()[i][2] === connectedMeshNumb){
+                if (circuit.getMeshes()[connectedMeshNumb-1].getCommonBranchesArray().length > 0){
+                    let existconnectedMeshNumb: boolean = false;
+                    for (let j = 0; j < circuit.getMeshes()[connectedMeshNumb-1].getCommonBranchesArray().length; j++){
+                        if (circuit.getMeshes()[connectedMeshNumb-1].getCommonBranchesArray()[j][2] === baseMesNumb){
+                            existconnectedMeshNumb = true;
+                            break;
+                        }
+                    }
+                    if (!existconnectedMeshNumb){
+                        circuit.getMeshes()[connectedMeshNumb-1].setCommonBranchesArray([circuit.getMeshes()[baseMesNumb-1].getCommonBranchesArray()[i][1],circuit.getMeshes()[baseMesNumb-1].getCommonBranchesArray()[i][0],baseMesNumb,connectedMeshNumb]);
+                    }
+                } else {
+                    circuit.getMeshes()[connectedMeshNumb-1].setCommonBranchesArray([circuit.getMeshes()[baseMesNumb-1].getCommonBranchesArray()[i][1],circuit.getMeshes()[baseMesNumb-1].getCommonBranchesArray()[i][0],baseMesNumb,connectedMeshNumb]);
+                }
+           }
+        }
+    }
+    public setCommonBranchesInMesh(circuit: Circuit, commonBranchesArray: number[][]): void {
+        let counterOfType0: number = 0;
+        let counterOfType1: number = 0;
+        let counterOfType2: number = 0;
+        let counterOfType3: number = 0;
+        for (let h = 0; h < commonBranchesArray.length; h++){
+            console.log('h:' +h);
+            for (let i = 0; i < circuit.getMeshes()[commonBranchesArray[h][3]-1].getBranches().length; i++){
+                console.log('i:' +i);
+                if (circuit.getMeshes()[commonBranchesArray[h][3]-1].getBranches()[i].getType() === commonBranchesArray[h][0]){
+                    console.log('Az egyezo tipusu branch: '+circuit.getMeshes()[commonBranchesArray[h][3]-1].getBranches()[i].getType());
+                    let tempBranch: Branch = new Branch(commonBranchesArray[h][0],commonBranchesArray[h][3]-1);
+                    tempBranch.setCommon(commonBranchesArray[h][2]);
+                    circuit.getMeshes()[commonBranchesArray[h][3]-1].getBranches().splice(i,0,tempBranch);
+                    break;
+                }
+            }
+            /*let tempBranch: Branch = new Branch(commonBranchesArray[h][0],commonBranchesArray[h][3]-1);
+            tempBranch.setCommon(commonBranchesArray[h][2]);
+            circuit.getMeshes()[commonBranchesArray[h][3]-1].setBranches(tempBranch);*/
+        }
+        for (let i = 0; i < circuit.getMeshes()[commonBranchesArray[0][3]-1].getBranches().length; i++){
+            if (i > 0){
+                if (circuit.getMeshes()[commonBranchesArray[0][3]-1].getBranches()[i].getType() === circuit.getMeshes()[commonBranchesArray[0][3]-1].getBranches()[i-1].getType()){
+                    if (i < circuit.getMeshes()[commonBranchesArray[0][3]-1].getBranches().length-1 && (circuit.getMeshes()[commonBranchesArray[0][3]-1].getBranches()[i].getType() !== circuit.getMeshes()[commonBranchesArray[0][3]-1].getBranches()[i+1].getType())){
+                        circuit.getMeshes()[commonBranchesArray[0][3]-1].getBranches().splice(i,1);
+                    } 
+                    if (i === circuit.getMeshes()[commonBranchesArray[0][3]-1].getBranches().length-1){
+                        circuit.getMeshes()[commonBranchesArray[0][3]-1].getBranches().splice(i,1);
+                    }
+                }
+            }
+            /*switch (circuit.getMeshes()[commonBranchesArray[0][3]-1].getBranches()[i].getType()){
+                case 0: {
+                    counterOfType0++;
+                    break;
+                }
+                case 1: {
+                    counterOfType1++;
+                    break;
+                }
+                case 2: {
+                    counterOfType2++;
+                    break;
+                }
+                case 3: {
+                    counterOfType3++;
+                    break;
+                }
+            }*/
+        }
     }
     public setCommonBranches(commonBranch: Branch): void{
         this.commonBranches.push(commonBranch);

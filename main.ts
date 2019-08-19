@@ -14,9 +14,17 @@ c.setQuestionOrVoltmeterResistance(1000000);
 c.setConnectedVoltagesourceValue(12);
 c.setConnectedVoltagesourceResistance(10);
 let type = 1;
+///let x: number[];
+//console.log(x.length);
+//let x = [2,3,4,5,6];
+//let x = ['macska','gyoker','pina'];
+/*let y = c.randomChoiseInAnyArray(x);
+console.log(y);
+console.log(c.removeElementInAnyArray(y,x));*/
+
 //console.log(1%2);
-//c.generateCircuit(type);
-c.generateCircuit2(type);
+c.generateCircuit(type);
+//c.generateCircuit2(type);
 console.log();
 for (let i = 0; i < c.getCircuit().getMeshes().length; i++){
     console.log('A(z) '+c.getCircuit().getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
