@@ -1247,10 +1247,6 @@ export class CircuitGenerator {
         }
     }
     public setCommonBranchesInMesh(circuit: Circuit, commonBranchesArray: number[][]): void {
-        let counterOfType0: number = 0;
-        let counterOfType1: number = 0;
-        let counterOfType2: number = 0;
-        let counterOfType3: number = 0;
         for (let h = 0; h < commonBranchesArray.length; h++){
             console.log('h:' +h);
             for (let i = 0; i < circuit.getMeshes()[commonBranchesArray[h][3]-1].getBranches().length; i++){
@@ -1278,24 +1274,6 @@ export class CircuitGenerator {
                     }
                 }
             }
-            /*switch (circuit.getMeshes()[commonBranchesArray[0][3]-1].getBranches()[i].getType()){
-                case 0: {
-                    counterOfType0++;
-                    break;
-                }
-                case 1: {
-                    counterOfType1++;
-                    break;
-                }
-                case 2: {
-                    counterOfType2++;
-                    break;
-                }
-                case 3: {
-                    counterOfType3++;
-                    break;
-                }
-            }*/
         }
     }
     public setCommonBranches(commonBranch: Branch): void{
