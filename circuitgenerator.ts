@@ -175,7 +175,7 @@ export class CircuitGenerator {
             let connectBranches: number[] = [];
             let choiseMeshNumber: number;
             let randomCommonBranchPair: number[] = [];
-            if ((type === 1 || type === 2) && h < numberOfMeshes) {
+            /*if ((type === 3 || type === 4) && h < numberOfMeshes) {
                 console.log('IF-1');
                 choiseMeshNumber = this.randomChoiseInAnyArray(meshPieceArray);
                 randomCommonBranchPair = this.randomChoiseTwoAnything([1,3],[2,0]);
@@ -187,7 +187,7 @@ export class CircuitGenerator {
                 console.log( circuit.getMeshes()[h-1].getCommonBranchesArray());
                 this.addConnectedBranchFromCommmonBranchesArrayElement(circuit,h,choiseMeshNumber);
                 console.log('Ellenallasok szama: '+ circParam[1]);
-            } else {
+            } else {*/
                 let tempPieceArray: number[] = meshPieceArray.slice();
                 console.log('tempPieceArray: '+tempPieceArray);
                 let randomFor: number = this.randomIntNumber(tempPieceArray.length,1)
@@ -207,8 +207,11 @@ export class CircuitGenerator {
                     if (choiseMeshNumber !== undefined){
                         console.log('choiseMeshNumber: '+choiseMeshNumber);
                         this.removeElementInAnyArray(choiseMeshNumber,tempPieceArray);
-                        
-                        randomCommonBranchPair = this.randomChoiseInAnyArray(commonBranchPairs);
+                        if (type === 1 || type ===2){
+                            randomCommonBranchPair = this.randomChoiseTwoAnything([1,3],[2,0]);
+                        } else {
+                            randomCommonBranchPair = this.randomChoiseInAnyArray(commonBranchPairs);
+                        }
                         connectBranches.push(randomCommonBranchPair[0],randomCommonBranchPair[1],choiseMeshNumber,h);
                         console.log('connectBranches - for: '+connectBranches);
                         
@@ -218,10 +221,14 @@ export class CircuitGenerator {
                     
                     connectBranches = [];
 
-                }
+                //}
                 if (circuit.getMeshes()[h-1].getCommonBranchesArray().length === 0){
                     choiseMeshNumber = this.randomChoiseInAnyArray(tempPieceArray);
-                    randomCommonBranchPair = this.randomChoiseInAnyArray(commonBranchPairs);
+                    if (type === 1 || type ===2){
+                        randomCommonBranchPair = this.randomChoiseTwoAnything([1,3],[2,0]);
+                    } else {
+                        randomCommonBranchPair = this.randomChoiseInAnyArray(commonBranchPairs);
+                    }
                     connectBranches.push(randomCommonBranchPair[0],randomCommonBranchPair[1],choiseMeshNumber,h);
                     circuit.getMeshes()[h-1].setCommonBranchesArray(connectBranches);
                     this.addConnectedBranchFromCommmonBranchesArrayElement(circuit,h,choiseMeshNumber);
@@ -1244,7 +1251,13 @@ export class CircuitGenerator {
         } else {
             return num2;
         }
-    }
+    }/**
+     * 
+     * @param circuit aramkor objektum
+     * @param baseMesNumb annak a huroknak a szama amiben generaltunk egy commonBranch elemet a tombbe
+     * @param connectedMeshNumb a generalt commonBranch elemben szereplo masik hurok szama, amihez csatlakozik a base
+     * @param meshPieces opcionalis, meg nem hasznalt.
+     */
     public addConnectedBranchFromCommmonBranchesArrayElement(circuit: Circuit, baseMesNumb: number, connectedMeshNumb: number, meshPieces?: number[]): void{
         for (let i = 0; i < circuit.getMeshes()[baseMesNumb-1].getCommonBranchesArray().length; i++){
             if (circuit.getMeshes()[baseMesNumb-1].getCommonBranchesArray()[i][2] === connectedMeshNumb){
@@ -1324,14 +1337,17 @@ export class CircuitGenerator {
     }
     /**
      * Ellenallasok elhelyezeseert felelos.
-     * @param circuit 
-     * @param type 
+     * @param circuit aramkor objektum
+     * @param type feladat tipusanak megfelelo szam
      */
     public setResistanceInCircuit(circuit: Circuit, type: number): void{
         let circuitResistanceNumber: number = circuit.getParameters()[1];
-        
-        switch (type){
-            case 1: {
+        let tempType:  number = type;
+        if (type ===1 || type === 2){
+            tempType = 12;
+        }
+        switch (tempType){
+            case 12: {
                 console.log('RES 1');
                 if (circuit.getMeshes()[0].getCommonBranchesArray()[0][0] === 1){
                     console.log('RES 1 - 1');
@@ -1339,28 +1355,37 @@ export class CircuitGenerator {
                     circuitResistanceNumber--;
                     circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomE6Resistance()));
                     circuitResistanceNumber--;
-                    if (this.randomBoolean()){
-                        console.log('RES 1 - 2');
-                        circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
-                        circuitResistanceNumber--;
+                    console.log('circuitResistanceNumber: '+circuitResistanceNumber);
+                    if (circuitResistanceNumber > 0){
+                        if (this.randomBoolean()){
+                            console.log('RES 1 - 2');
+                            circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
+                            circuitResistanceNumber--;
+                        }
                     }
                 } else {
                     console.log('RES 1 - 3');
-                    if (this.randomBoolean()){
-                        console.log('RES 1 - 4');
-                        circuit.getMeshes()[0].getBranches()[0].setBranchElements(new Resistance(this.randomE6Resistance()));
-                        circuitResistanceNumber--;
-                    }
                     circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomE6Resistance()));
                     circuitResistanceNumber--;
                     circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
                     circuitResistanceNumber--;
+                    console.log('circuitResistanceNumber: '+circuitResistanceNumber);
+                    if (circuitResistanceNumber > 0){
+                        if (this.randomBoolean()){
+                            console.log('RES 1 - 4');
+                            circuit.getMeshes()[0].getBranches()[0].setBranchElements(new Resistance(this.randomE6Resistance()));
+                            circuitResistanceNumber--;
+                            console.log('circuitResistanceNumber: '+circuitResistanceNumber);
+                        }
+                    }
                 }
                 if (circuitResistanceNumber > 0){
                     console.log('RES 1 - 5');
-                    for (let i = 0; i < circuitResistanceNumber; i++){
+                    let tempFor: number = circuitResistanceNumber;
+                    for (let i = 0; i < tempFor; i++){
                         circuit.getMeshes()[0].getBranches()[this.randomChoiseTwoNumber(1,2)].setBranchElements(new Resistance(this.randomE6Resistance()));
                         circuitResistanceNumber--;
+                        console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                     }
                 }
                 //circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
