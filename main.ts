@@ -13,11 +13,11 @@ var c: CircuitGenerator = new CircuitGenerator();
 c.setQuestionOrVoltmeterResistance(1000000);
 c.setConnectedVoltagesourceValue(12);
 c.setConnectedVoltagesourceResistance(10);
-let type = 1;
+let type = 2;
 ///let x: number[];
 //console.log(x.length);
 //let x = [2,3,4,5,6];
-//let x = ['macska','gyoker','pina'];
+//let x = ['macska','gyoker'];
 /*let y = c.randomChoiseInAnyArray(x);
 console.log(y);
 console.log(c.removeElementInAnyArray(y,x));*/

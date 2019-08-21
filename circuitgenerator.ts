@@ -107,7 +107,7 @@ export class CircuitGenerator {
             //Egyszeru feszoszto, csak feszgennel
             case 1: {
                 parameters = [this.randomIntNumber(2,2),
-                              this.randomIntNumber(5,2),
+                              this.randomIntNumber(3,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(1,1),
                               this.randomIntNumber(2,2)];
@@ -116,7 +116,7 @@ export class CircuitGenerator {
             //Egyszeru 2 hurkos halozat (feszoszto), 1-nel tobb generatorral
             case 2: {
                 parameters = [this.randomIntNumber(2,2),
-                              this.randomIntNumber(5,2),
+                              this.randomIntNumber(3,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(2,2),
                               this.randomIntNumber(2,2)];
