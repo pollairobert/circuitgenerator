@@ -12,7 +12,9 @@ export class Wire implements CircuitElements {
         throw new Error("Method not implemented.");
     }
     public cloneElements(element: CircuitElements): CircuitElements {
-        throw new Error("Method not implemented.");
+        var wireClone: CircuitElements = new Wire();
+        wireClone.setCurrent(element.getCurrent());
+        return wireClone;
     }
     public setVoltage(vol: number): void {
         this.voltage = vol;
