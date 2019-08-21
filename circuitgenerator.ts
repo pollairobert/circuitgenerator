@@ -7,6 +7,7 @@ import { Branch, branchCounter } from "./branch";
 import { Mesh, meshCounter } from "./mesh";
 import { Circuit } from "./circuit";
 import * as math from 'mathjs';
+import * as fs from 'fs';
 
 export class CircuitGenerator {
     private circuit: Circuit;
@@ -24,6 +25,8 @@ export class CircuitGenerator {
     private connectedVoltagesourceValue: number;
     private connectedVoltagesourceInsideResistance: number;
     private outpuVoltageWithconnectedVoltagesource: number;
+
+    private fs = require('fs');
     /*private th2PoleMeshNumber: number;
     private th2PoleBranchType: number;
     private th2PoleNumberOfBranch: number;
@@ -1587,7 +1590,42 @@ export class CircuitGenerator {
      * A generalt aramkor a www.falstad.com oldalhoz megfelelo txt formatumba exportalasa a teszteles megkonnyitesere.
      */
     public exportCircuitToText(): void {
+        let coordinateStep: number = 16;
+        let branchSize: number = 12*coordinateStep;
+        let elementSize: number;
+        this.fs.truncate('proba.txt', 0,  function(err) {
+            if (err) {
+                return console.error(err);
+            }});
+        this.fs.appendFile('proba.txt', '$ 1 0.000005 10.20027730826997 50 5 43 \n',  function(err) {
+            if (err) {
+                return console.error(err);
+            }});
+        for (let h = 0; h < this.circuit.getNumberOfMesh(); h++){
+            for (let i = 0;  i < this.circuit.getMeshes()[h].getBranches().length; i++){
+                for (let j = 0; j < this.circuit.getMeshes()[h].getBranches()[i].getBranchElements().length; j++){
+                    elementSize = branchSize/this.circuit.getMeshes()[h].getBranches()[i].getBranchElements().length;
+                    if (this.circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getId() === 'W'){
+                        if (h === 0){
+                            if (i === 0){
 
+                            }
+                        }
+                    }
+                    if (this.circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getId() === 'R'){
+                        
+                    }
+                    if (this.circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getId() === 'C'){
+                        
+                    }
+                }
+            }
+            this.fs.appendFile('proba.txt', 'I am cool!: '+h+ '\n' ,  function(err) {
+                if (err) {
+                    return console.error(err);
+                }});
+        }
+        
     }
     public setCommonBranches(commonBranch: Branch): void{
         this.commonBranches.push(commonBranch);

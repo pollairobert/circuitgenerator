@@ -22,10 +22,12 @@ let type = 2.1;
 console.log(y);
 console.log(c.removeElementInAnyArray(y,x));*/
 
-//console.log(1%2);
+
 c.generateCircuit(type);
 //c.generateCircuit2(type);
 console.log();
+c.exportCircuitToText();
+console.log(72%16);
 for (let i = 0; i < c.getCircuit().getMeshes().length; i++){
     console.log('A(z) '+c.getCircuit().getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
     console.log('   Mesh ellenallasa (matrixhoz, a benne levo ellenallasok osszege): '+c.getCircuit().getMeshes()[i].getMeshResistance());

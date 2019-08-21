@@ -5,6 +5,7 @@ export class Wire implements CircuitElements {
     private resistance: number = 0;
     private current: number;
     private voltage: number = 0;
+    private coordinate: number[] = [];
     /*constructor(){
         wireCounter += 1;
     }*/
@@ -24,6 +25,12 @@ export class Wire implements CircuitElements {
     }
     public setCurrent(cur: number): void {
         this.current = cur;
+    }
+    public setCoordinate(startX: number, startY: number, endX: number, endY: number): void {
+        this.coordinate.push(startX,startY,endX,endY);
+    }
+    public getCoordinate(): number[]{
+        return this.coordinate;
     }
     public getId() {
         return this.id;
