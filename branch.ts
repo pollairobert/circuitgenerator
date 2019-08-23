@@ -23,6 +23,7 @@ export class Branch {
     private type: number; //4 tipus. 0: fel, 1: jobbra, 2: le, 3: balra
     private thevenin2pole: boolean = false;
     private commBrancResistance: number;
+    private branchSize: number = 96;
 
     /**
      * Konstruktor, beallitasra kerul az orientacio es az irany
@@ -143,6 +144,7 @@ export class Branch {
     private cloneMeshNumber(num: number): void {
         this.meshNumber = num;
     }
+    
     public deleteLastBranchElement(): void {
         this.branchElements.pop();
     }
@@ -198,5 +200,8 @@ export class Branch {
     }
     public getTh2Pole(): boolean {
         return this.thevenin2pole;
+    }
+    public getBrancSize(): number {
+        return this.branchSize;
     }
 }

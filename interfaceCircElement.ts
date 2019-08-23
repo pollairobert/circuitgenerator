@@ -16,4 +16,6 @@ export interface CircuitElements {
     setVoltage(vol: number): void;
     setCoordinate(startX: number, startY: number, endX: number, endY: number): void;
     getCoordinate(): number[];
+    setElementSize(size: number): void;
+    getElementSize(): number;
 }

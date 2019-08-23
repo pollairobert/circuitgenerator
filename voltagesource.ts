@@ -7,6 +7,7 @@ export class VoltageSource implements CircuitElements {
     private voltage: number;
     private direction: boolean;
     private coordinate: number[] = [];
+    private elementSize: number;
     
     constructor(voltage: number, dir: boolean) {
         this.voltage = voltage;
@@ -32,6 +33,12 @@ export class VoltageSource implements CircuitElements {
     }
     public setCoordinate(startX: number, startY: number, endX: number, endY: number): void {
         this.coordinate.push(startX,startY,endX,endY);
+    }
+    public setElementSize(size: number): void {
+        this.elementSize = size;
+    }
+    public getElementSize(): number {
+        return this.elementSize;
     }
     public getCoordinate(): number[]{
         return this.coordinate;

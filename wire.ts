@@ -6,6 +6,7 @@ export class Wire implements CircuitElements {
     private current: number;
     private voltage: number = 0;
     private coordinate: number[] = [];
+    private elementSize: number;
     /*constructor(){
         wireCounter += 1;
     }*/
@@ -15,6 +16,7 @@ export class Wire implements CircuitElements {
     public cloneElements(element: CircuitElements): CircuitElements {
         var wireClone: CircuitElements = new Wire();
         wireClone.setCurrent(element.getCurrent());
+        //wireClone.setCoordinate(element.getCoordinate()[0],element.getCoordinate()[1],element.getCoordinate()[2],element.getCoordinate()[3]);
         return wireClone;
     }
     public setVoltage(vol: number): void {
@@ -28,6 +30,12 @@ export class Wire implements CircuitElements {
     }
     public setCoordinate(startX: number, startY: number, endX: number, endY: number): void {
         this.coordinate.push(startX,startY,endX,endY);
+    }
+    public setElementSize(size: number): void {
+        this.elementSize = size;
+    }
+    public getElementSize(): number {
+        return this.elementSize;
     }
     public getCoordinate(): number[]{
         return this.coordinate;

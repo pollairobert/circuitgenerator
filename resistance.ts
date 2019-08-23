@@ -6,6 +6,7 @@ export class Resistance implements CircuitElements {
     private current: number;
     private voltage: number;
     private coordinate: number[] = [];
+    private elementSize: number;
     /**
      * Konstruktor
      * @param resistance ellenallas ertekenek beallitasahoz
@@ -43,6 +44,12 @@ export class Resistance implements CircuitElements {
     }
     public setCoordinate(startX: number, startY: number, endX: number, endY: number): void {
         this.coordinate.push(startX,startY,endX,endY);
+    }
+    public setElementSize(size: number): void {
+        this.elementSize = size;
+    }
+    public getElementSize(): number {
+        return this.elementSize;
     }
     public getCoordinate(): number[]{
         return this.coordinate;
