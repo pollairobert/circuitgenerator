@@ -13,7 +13,7 @@ var c: CircuitGenerator = new CircuitGenerator();
 c.setQuestionOrVoltmeterResistance(1000000);
 c.setConnectedVoltagesourceValue(12);
 c.setConnectedVoltagesourceResistance(10);
-let type = 2.1;
+let type = 3;
 ///let x: number[];
 //console.log(x.length);
 //let x = [2,3,4,5,6];

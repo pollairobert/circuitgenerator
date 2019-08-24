@@ -144,10 +144,10 @@ export class CircuitGenerator {
                 break;
             }
             case 3: {
-                parameters = [this.randomIntNumber(6,6),
-                              this.randomIntNumber(5,4),
+                parameters = [this.randomIntNumber(3,3),
+                              this.randomIntNumber(5,3),
                               this.randomIntNumber(0,0),
-                              this.randomIntNumber(1,1),
+                              this.randomIntNumber(2,2),
                               this.randomIntNumber(2,2)];
                 break;
             }
@@ -185,7 +185,7 @@ export class CircuitGenerator {
         let randomCommonBranchPair: number[] = [];
         if (type === 1 || type === 1.1){
             randomCommonBranchPair = this.randomChoiseInAnyArray([[1,3],[2,0],[0,2]]);
-        } else if (type === 2){
+        } else if (type === 2 || type === 3){
             randomCommonBranchPair = this.randomChoiseInAnyArray([[1,3],[2,0],[0,2]]);
         } else if (type === 2.1){
             randomCommonBranchPair = [1,3];
@@ -207,7 +207,7 @@ export class CircuitGenerator {
             let tempPieceArray: number[] = meshPieceArray.slice();
             console.log('tempPieceArray: '+tempPieceArray);
             let randomFor: number;
-            if (type === 2 || type === 2.1){
+            if (type === 2 || type === 2.1 || type ===3){
                 randomFor = 1;
                 if (h < numberOfMeshes){
                     choiseMeshNumber = (h+1); 
@@ -223,7 +223,7 @@ export class CircuitGenerator {
                     this.removeElementInAnyArray(circuit.getMeshes()[h-1].getCommonBranchesArray()[j][2],tempPieceArray);
                 }
                 console.log('tempPieceArray - for: '+tempPieceArray);
-                if (type > 2.1){
+                if (type > 3){
                     if (this.randomBoolean()){
                         choiseMeshNumber = this.randomChoiseInAnyArray(tempPieceArray);
                     } else {
@@ -260,7 +260,7 @@ export class CircuitGenerator {
         //console.log(connectBranches);
         console.log();
         this.setCommonBranchesInCircuit(circuit);
-        if (type <= 2.1){
+        if (type <= 3){
             this.setVoltageSourceInCircuit(circuit, type);
             this.setResistanceInCircuit(circuit, type);
             this.setCommonBranchesCloneElement(circuit);
@@ -1587,6 +1587,86 @@ export class CircuitGenerator {
                 }
                 break;
             }
+            case 3: {
+                for (let i = 0; i < circuit.getNumberOfMesh(); i++){
+                    if (i < circuit.getNumberOfMesh()-1){
+                        for (let j= 0; j < circuit.getMeshes()[i].getBranches().length; j++){
+                            if (circuit.getMeshes()[i].getCommonBranchesArray()[0][0] === 1 || circuit.getMeshes()[i].getCommonBranchesArray()[0][0] === 3){
+                                if (circuit.getMeshes()[0].getBranches()[0].getBranchElements()[0] !== undefined && circuit.getMeshes()[0].getBranches()[0].getBranchElements()[0].getId() === 'V') {
+                                    if (circuit.getMeshes()[i].getBranches()[j].getType() === 0 || circuit.getMeshes()[i].getBranches()[j].getType() === 1){
+                                        if (i === 0 && circuit.getMeshes()[i].getBranches()[j].getType() === 0 ){
+                                            circuit.getMeshes()[i].getBranches()[j].setBranchElements(new Resistance(this.randomE6Resistance()));
+                                            circuitResistanceNumber--;
+                                        } else {
+                                            if (circuit.getMeshes()[i].getBranches()[j].getType() === 0){
+                                                if (circuitResistanceNumber > 3 && this.randomBoolean()){
+                                                    circuit.getMeshes()[i].getBranches()[j].setBranchElements(new Resistance(this.randomE6Resistance()));
+                                                    circuitResistanceNumber--;
+                                                }
+                                            } else {
+                                                circuit.getMeshes()[i].getBranches()[j].setBranchElements(new Resistance(this.randomE6Resistance()));
+                                                circuitResistanceNumber--;
+                                            }
+                                            
+                                        }
+                                        //circuit.getMeshes()[i].getBranches()[j].setBranchElements(new Resistance(this.randomE6Resistance()));
+                                        //circuitResistanceNumber--;
+                                    }
+                                } else {
+                                    if (circuit.getMeshes()[i].getBranches()[j].getType() === 1){
+                                        circuit.getMeshes()[i].getBranches()[j].setBranchElements(new Resistance(this.randomE6Resistance()));
+                                        circuitResistanceNumber--;
+                                    } 
+                                    if (circuit.getMeshes()[i].getBranches()[j].getType() === 2){
+                                        if (i === 0){
+                                            circuit.getMeshes()[i].getBranches()[j].setBranchElements(new Resistance(this.randomE6Resistance()));
+                                            circuitResistanceNumber--;
+                                        } else {
+                                            if (circuitResistanceNumber > 3 && this.randomBoolean()){
+                                                circuit.getMeshes()[i].getBranches()[j].setBranchElements(new Resistance(this.randomE6Resistance()));
+                                                circuitResistanceNumber--;
+                                            }
+                                        }
+                                        //circuit.getMeshes()[i].getBranches()[j].setBranchElements(new Resistance(this.randomE6Resistance()));
+                                        //circuitResistanceNumber--;
+                                    }
+                                }
+                                
+                            } else if (circuit.getMeshes()[i].getCommonBranchesArray()[0][0] === 0 || circuit.getMeshes()[i].getCommonBranchesArray()[0][0] === 2){
+                                if (i === 0){
+                                    if (circuit.getMeshes()[i].getBranches()[j].getType() === 2 || circuit.getMeshes()[i].getBranches()[j].getType() === 0){
+                                        circuit.getMeshes()[i].getBranches()[j].setBranchElements(new Resistance(this.randomE6Resistance()));
+                                        circuitResistanceNumber--;
+                                    }
+                                    
+                                } else if (circuit.getMeshes()[i].getBranches()[j].getType() === 2 && circuit.getMeshes()[i].getCommonBranchesArray()[0][0] === 0){
+                                    circuit.getMeshes()[i].getBranches()[j].setBranchElements(new Resistance(this.randomE6Resistance()));
+                                    circuitResistanceNumber--;
+                                } else if (circuit.getMeshes()[i].getBranches()[j].getType() === 0 && circuit.getMeshes()[i].getCommonBranchesArray()[0][0] === 2){
+                                    circuit.getMeshes()[i].getBranches()[j].setBranchElements(new Resistance(this.randomE6Resistance()));
+                                    circuitResistanceNumber--;
+                                } else if (circuit.getMeshes()[i].getBranches()[j].getType() === 1){
+                                    if (circuitResistanceNumber > 3 && this.randomBoolean()){
+                                        circuit.getMeshes()[i].getBranches()[j].setBranchElements(new Resistance(this.randomE6Resistance()));
+                                        circuitResistanceNumber--;
+                                    }
+                                }
+                            } 
+                        }
+                    }
+                }
+                /*circuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(this.randomE6Resistance()));
+                if (circuitResistanceNumber > 0){
+                    if (circuit.getMeshes()[0].getBranches()[0].getBranchElements()[0] !== undefined) {
+                        circuit.getMeshes()[0].getBranches()[0].setBranchElements(new Resistance(this.randomE6Resistance()));
+                        circuitResistanceNumber--;    
+                    } else {
+                        circuit.getMeshes()[0].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
+                        circuitResistanceNumber--;    
+                    }
+                }*/
+                break;
+            }
         }
     }
     /**
@@ -1646,6 +1726,21 @@ export class CircuitGenerator {
                 }
                 break;
             }
+            case 3: {
+                if (circuit.getMeshes()[0].getCommonBranchesArray()[0][0] === 1){
+                    circuit.getMeshes()[0].getBranches()[1].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
+                    if (this.randomChoiseTwoNumber(0,2) === 0){
+                        circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
+                    } else {
+                        circuit.getMeshes()[0].getBranches()[2].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
+                    }
+                } else if (circuit.getMeshes()[0].getCommonBranchesArray()[0][0] === 2 || circuit.getMeshes()[0].getCommonBranchesArray()[0][0] === 0){
+                    circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
+                    circuit.getMeshes()[0].getBranches()[2].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
+                } 
+                //circuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
+                break;
+            }
         }
     }
     /**
@@ -1683,6 +1778,15 @@ export class CircuitGenerator {
                 break;
             }
             case 2.1: {
+                //console.log('22222222222222222222222222');
+                for (let i = 0; i < circuit.getMeshes()[circuit.getNumberOfMesh()-1].getBranches().length; i++){
+                    if (circuit.getMeshes()[circuit.getNumberOfMesh()-1].getBranches()[i].getType() === circuit.getMeshes()[circuit.getNumberOfMesh()-1].getCommonBranchesArray()[0][1]){
+                        circuit.getMeshes()[circuit.getNumberOfMesh()-1].getBranches()[i].setTh2Pole(true);
+                    }
+                }
+                break;
+            }
+            case 3: {
                 //console.log('22222222222222222222222222');
                 for (let i = 0; i < circuit.getMeshes()[circuit.getNumberOfMesh()-1].getBranches().length; i++){
                     if (circuit.getMeshes()[circuit.getNumberOfMesh()-1].getBranches()[i].getType() === circuit.getMeshes()[circuit.getNumberOfMesh()-1].getCommonBranchesArray()[0][1]){
