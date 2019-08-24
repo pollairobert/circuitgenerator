@@ -13,7 +13,7 @@ var c: CircuitGenerator = new CircuitGenerator();
 c.setQuestionOrVoltmeterResistance(1000000);
 c.setConnectedVoltagesourceValue(12);
 c.setConnectedVoltagesourceResistance(10);
-let type = 1;
+let type = 2.1;
 ///let x: number[];
 //console.log(x.length);
 //let x = [2,3,4,5,6];
@@ -26,7 +26,7 @@ console.log(c.removeElementInAnyArray(y,x));*/
 c.generateCircuit(type);
 //c.generateCircuit2(type);
 console.log();
-c.exportCircuitToText();
+//c.exportCircuitToText();
 console.log(72%16);
 for (let i = 0; i < c.getCircuit().getMeshes().length; i++){
     console.log('A(z) '+c.getCircuit().getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
