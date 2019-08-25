@@ -6,7 +6,8 @@ export class CurrentSource implements CircuitElements {
     private current: number;
     private subsVoltage: number; //Helyettesito Feszgen feszultsege
     private direction: boolean; //A helyettesito feszgennek az iranya ellentetes ezzel.
-
+    private coordinate: number[] = [];
+    private elementSize: number;
     /**
      * Konstruktor
      * @param current aramgenerator aramerteke
@@ -34,6 +35,18 @@ export class CurrentSource implements CircuitElements {
     }
     public setCurrent(cur: number): void {
         this.current = cur;
+    }
+    public setCoordinate(startX: number, startY: number, endX: number, endY: number): void {
+        this.coordinate.push(startX,startY,endX,endY);
+    }
+    public setElementSize(size: number): void {
+        this.elementSize = size;
+    }
+    public getElementSize(): number {
+        return this.elementSize;
+    }
+    public getCoordinate(): number[]{
+        return this.coordinate;
     }
     public getId() {
         return this.id;

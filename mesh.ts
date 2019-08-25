@@ -12,6 +12,8 @@ export class Mesh {
     private meshResistance: number = 0;
     private meshVoltage: number = 0;
     private meshCurrent: number = 0;
+    private commonBranchesArray: number[][] = [];
+    private meshBranchesSize: number[] = [96, 96, 96, 96]; //a megfelelo tipusu branchekhez tartozo ertekek (0,1,2,3)
 
     constructor(/*maxmesh: number, res: number, cur: number, volt: number, comm: number*/) {
         //this.maxMeshNumb = maxmesh;
@@ -36,10 +38,13 @@ export class Mesh {
         //this.meshResistance += branch.getBranchResistance();
         //this.meshVoltage += branch.getBranchVoltage();
     }
-    private cloneMeshNumber(mshnumb: number): void {
+    public setCommonBranchesArray(array: number[]): void{
+        this.commonBranchesArray.push(array);
+    }
+    public cloneMeshNumber(mshnumb: number): void {
         this.meshNumber = mshnumb;
     }
-    private cloneMeshBranches(branch: Branch): void {
+    public cloneMeshBranches(branch: Branch): void {
         this.branches.push(branch);
     }
     public cloneMeshResistance(mshres: number): void {
@@ -51,6 +56,9 @@ export class Mesh {
     public cloneMeshCurrent(mshcur: number): void {
         this.meshCurrent = mshcur;
     }
+    public cloneCommonBranchesArray(mshCBA: number[][]): void{
+        this.commonBranchesArray = mshCBA;
+    }
     public cloneMesh(msh: Mesh): Mesh {
         var meshClone: Mesh = new Mesh();
         meshClone.cloneMeshNumber(msh.getMeshNumber());
@@ -60,7 +68,14 @@ export class Mesh {
         meshClone.cloneMeshResistance(msh.getMeshResistance());
         meshClone.cloneMeshVoltage(msh.getMeshVoltage());
         meshClone.cloneMeshCurrent(msh.getMesCurrent());
+        meshClone.cloneCommonBranchesArray(msh.getCommonBranchesArray());
         return meshClone;
+    }
+    public setMeshBranchesSize(branchType: number, size: number): void {
+        this.meshBranchesSize[branchType] = size;
+    }
+    public getMeshBranchesSize(): number[]{
+        return this.meshBranchesSize;
     }
     public getMeshNumber(): number {
         return this.meshNumber;
@@ -80,5 +95,8 @@ export class Mesh {
 
     public getMeshVoltage(): number {
         return this.meshVoltage;
+    }
+    public getCommonBranchesArray(): number[][]{
+        return this.commonBranchesArray;
     }
 }
