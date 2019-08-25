@@ -10,14 +10,24 @@ import { CircuitGenerator } from './circuitgenerator'
 import * as math from 'mathjs';
 
 var c: CircuitGenerator = new CircuitGenerator();
-c.setQuestionOrVoltmeterResistance(1000000);
+c.setQuestionOrVoltmeterResistance(10000000);
 c.setConnectedVoltagesourceValue(12);
 c.setConnectedVoltagesourceResistance(10);
-let type = 1;
-//console.log(1%2);
+let type = 3.1;
+///let x: number[];
+//console.log(x.length);
+//let x = [2,3,4,5,6];
+//let x = ['macska','gyoker'];
+/*let y = c.randomChoiseInAnyArray(x);
+console.log(y);
+console.log(c.removeElementInAnyArray(y,x));*/
+
+
 c.generateCircuit(type);
 //c.generateCircuit2(type);
 console.log();
+//c.exportCircuitToText();
+console.log(72%16);
 for (let i = 0; i < c.getCircuit().getMeshes().length; i++){
     console.log('A(z) '+c.getCircuit().getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
     console.log('   Mesh ellenallasa (matrixhoz, a benne levo ellenallasok osszege): '+c.getCircuit().getMeshes()[i].getMeshResistance());
@@ -131,11 +141,11 @@ for (let i = 0; i < c.getCircuit().getMeshes().length; i++){
 
 
 console.log();
-console.log('Az aramkor Thevenin ellenalasa: '+c.getCircuit().getThevRes().toFixed(4)+ ' Ohm');
-console.log('Az aramkor Thevenin helyettesito feszultsege: '+c.getCircuit().getThevVolt().toFixed(4)+ ' V');
+console.log('Az aramkor Thevenin ellenalasa: '+c.getCircuit().getThevRes().toFixed(6)+ ' Ohm');
+console.log('Az aramkor Thevenin helyettesito feszultsege: '+c.getCircuit().getThevVolt().toFixed(6)+ ' V');
 //console.log('A keresett ellenallas arama: '+c.getQuestionResCurrent().toFixed(4)+ ' A');
 if (c.getQuestionRes() !== undefined){
-    console.log('A mert feszultseg: '+c.getQuestionResVoltage().toFixed(4)+ ' V');
+    console.log('A mert feszultseg: '+c.getQuestionResVoltage().toFixed(6)+ ' V');
 }
 if (c.getOutputVoltageWithConnectedVoltageSource() !== undefined){
     console.log('A '+ c.getConnectedVoltagesourceValue()+ ' V-os es ' +c.getConnectedVoltagesourceResistance()+ ' Ohm belso ellenallasu feszgen csatlakoztatasa eseten:');
