@@ -4,13 +4,13 @@ import { Circuit } from './circuit';
 var express=require('express');
 var app=express();
 app.get('/generate',function(req,res) {
-    let type = +req.query.type;
+    let type: number = +req.query.type;
     //console.log(typeof(type));
 
     //type = 2;
-    let circuit = new CircuitGenerator();
+    let generator: CircuitGenerator = new CircuitGenerator();
     
-    let response = circuit.generateCircuit(type);
+    let response: Circuit = generator.generateCircuit(type);
     console.log(response);
     //console.log(typeof(type));
     res.end(JSON.stringify(response));
