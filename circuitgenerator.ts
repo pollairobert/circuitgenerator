@@ -101,11 +101,26 @@ export class CircuitGenerator {
             case 6: {
                 break;
             }
-            case 7: {
+            case 10: {
+                parameters = [this.randomIntNumber(4,4),
+                              this.randomIntNumber(5,3),
+                              this.randomIntNumber(0,0),
+                              this.randomIntNumber(3,3),
+                              this.randomIntNumber(2,2)];
                 break;
             }
         }
         return parameters;
+    }
+    public buildCircuitSkeleton(numberOfMesh: number): Circuit{
+        let circuit: Circuit;
+        for (let h = 0; h < numberOfMesh; h++) {
+            circuit.setMeshes(new Mesh());
+            for (let i = 0; i < 4; i++){
+                circuit.getMeshes()[h].setBranches(new Branch(i,h));
+            }
+        }
+        return circuit;
     }
     public buildFinalCircuit(circuit: Circuit, type: number): Circuit{
         let circParam: Object = circuit.getParameters();
@@ -168,7 +183,14 @@ export class CircuitGenerator {
                 }
                 console.log('tempPieceArray - for: '+tempPieceArray);
                 if (type > 3.1){
-                    if (this.randomBoolean()){
+                    if (h === 1){
+                        if (this.randomBoolean()){
+                            choiseMeshNumber = this.choiseMinimumValueInNumberArray(tempPieceArray);
+                            this.removeElementInAnyArray(choiseMeshNumber,tempPieceArray);
+                        } else {
+                            choiseMeshNumber = undefined;
+                        }
+                    } else if (this.randomBoolean()){
                         choiseMeshNumber = this.randomChoiseInAnyArray(tempPieceArray);
                     } else {
                         choiseMeshNumber = undefined;
@@ -191,7 +213,11 @@ export class CircuitGenerator {
 
             }
             if (circuit.getMeshes()[h-1].getCommonBranchesArray().length === 0){
-                choiseMeshNumber = this.randomChoiseInAnyArray(tempPieceArray);
+                if (h === 1){
+                    choiseMeshNumber = this.choiseMinimumValueInNumberArray(tempPieceArray);
+                } else {
+                    choiseMeshNumber = this.randomChoiseInAnyArray(tempPieceArray);
+                }
                 connectBranches.push(randomCommonBranchPair[0],randomCommonBranchPair[1],choiseMeshNumber,h);
                 circuit.getMeshes()[h-1].setCommonBranchesArray(connectBranches);
                 this.addConnectedBranchFromCommmonBranchesArrayElement(circuit,h,choiseMeshNumber);
@@ -226,7 +252,7 @@ export class CircuitGenerator {
         for (let i = 0; i < circuit.getNumberOfMesh(); i++){
             //this.setCommonBranchesInMesh(circuit, circuit.getMeshes()[i].getCommonBranchesArray());
             console.log(circuit.getMeshes()[i].getCommonBranchesArray());
-            console.log(circuit.getMeshes()[i].getBranches());
+            //console.log(circuit.getMeshes()[i].getBranches());
         }
         return circuit;
     }
@@ -439,7 +465,17 @@ export class CircuitGenerator {
         } else {
             return num2;
         }
-    }/**
+    }
+    public choiseMinimumValueInNumberArray(array: number[]): number{
+        let result: number = Infinity;
+        for (let i = 0; i < array.length; i++){
+            if (array[i] < result){
+                result = array[i];
+            }
+        }
+        return result;
+    }
+    /**
      * Beallitja az aktualis hurokhoz tartozo eppen aktualis commonBranchesArray elemben szereplo masik hurokban is a megfelelo commonBranchesArray elemet.
      * @param circuit aramkor objektum
      * @param baseMesNumb annak a huroknak a szama amiben generaltunk egy commonBranch elemet a tombbe
