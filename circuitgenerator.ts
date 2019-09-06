@@ -7,7 +7,6 @@ import { Branch, branchCounter } from "./branch";
 import { Mesh, meshCounter } from "./mesh";
 import { Circuit } from "./circuit";
 import * as math from 'mathjs';
-import * as fs from 'fs';
 import { CircuitAnalyzer } from './circuitanalyzer';
 
 /**
@@ -25,7 +24,7 @@ export class CircuitGenerator {
         //let ca: CircuitAnalyzer = new CircuitAnalyzer();
         //ca.analyzeCircuit(circuit);
         //this.finalCalculateOfTheveninSubstitutes(this.circuit);
-        return circuit;
+       return circuit;
     }
     /**
      * A parameternek megfeleloen megad egy olyan tombot, ami a halozat generalasahoz
@@ -112,19 +111,23 @@ export class CircuitGenerator {
         }
         return parameters;
     }
-    public buildCircuitSkeleton(numberOfMesh: number): Circuit{
-        let circuit: Circuit;
+    public buildCircuitSkeleton(circuit: Circuit): void{
+        let numberOfMesh: number = circuit.getNumberOfMesh();
         for (let h = 0; h < numberOfMesh; h++) {
             circuit.setMeshes(new Mesh());
             for (let i = 0; i < 4; i++){
                 circuit.getMeshes()[h].setBranches(new Branch(i,h));
             }
         }
-        return circuit;
     }
     public buildFinalCircuit(circuit: Circuit, type: number): Circuit{
         let circParam: Object = circuit.getParameters();
-        let meshPieceArray: number[] = [];
+        //let meshPieceArray: number[] = [];
+
+        /**
+         * [[sajat branch type, kapcsolodo branch type, sajt meshnumber]]
+         */
+        let acceptebleCommonBranchArray: number[][] = [];
         //let connectBranches: number[] = [];
         let commonBranchPairs: number[][] = [[0,2], //balrol csatlakozo
                                              [1,3], //fentrol
@@ -132,14 +135,15 @@ export class CircuitGenerator {
                                              [3,1]  //lentrol
                                             ];
         let numberOfMeshes = circuit.getNumberOfMesh();
-        for (let h = 0; h < circuit.getNumberOfMesh(); h++) {
+        this.buildCircuitSkeleton(circuit);
+        /*for (let h = 0; h < circuit.getNumberOfMesh(); h++) {
             circuit.setMeshes(new Mesh());
             for (let i = 0; i < 4; i++){
                 circuit.getMeshes()[h].setBranches(new Branch(i,h));
             }
-        }
+        }*/
         for (let h = 1; h <= circParam[0]; h++){
-            meshPieceArray.push(h);
+            //meshPieceArray.push(h);
         } 
         let randomCommonBranchPair: number[] = [];
         if (type === 1 || type === 1.1){
@@ -152,30 +156,41 @@ export class CircuitGenerator {
             randomCommonBranchPair = this.randomChoiseInAnyArray(commonBranchPairs);
         }
         console.log('randomCommonBranchPair: '+randomCommonBranchPair);
-        console.log('START - meshPieceArray: '+meshPieceArray);
+        //console.log('START - meshPieceArray: '+meshPieceArray);
         //console.log(typeof(meshPieceArray));
         for (let h = 1; h <= numberOfMeshes; h++){
 
-            this.removeElementInAnyArray(h,meshPieceArray);
-            console.log('FOR - meshPieceArray: '+meshPieceArray+ ',for: '+h);
+            //this.removeElementInAnyArray(h,meshPieceArray);
+            //console.log('FOR - meshPieceArray: '+meshPieceArray+ ',for: '+h);
             //console.log(meshPieceArray);
-            let tempBranchPairs: number[] = [];
+            //let tempBranchPairs: number[] = [];
             let connectBranches: number[] = [];
             let choiseMeshNumber: number;
             
-            let tempPieceArray: number[] = meshPieceArray.slice();
-            console.log('tempPieceArray: '+tempPieceArray);
+            //let tempPieceArray: number[] = meshPieceArray.slice();
+            ///console.log('tempPieceArray: '+tempPieceArray);
             let randomFor: number;
-            if (type === 2 || type === 2.1 || type ===3 || type === 3.1){
+            if (type === 1 || type === 1.1 || type === 2 || type === 2.1 || type ===3 || type >= 3.1 ){
                 randomFor = 1;
                 if (h < numberOfMeshes){
                     choiseMeshNumber = (h+1); 
+                    console.log('choiseMeshNumber: '+choiseMeshNumber);
+                    //this.removeElementInAnyArray(choiseMeshNumber,tempPieceArray);
+                    if (type === 2.1 && h > 1){
+                        randomCommonBranchPair = this.randomChoiseTwoAnything([0,2],[2,0]);
+                    }
+                    connectBranches.push(randomCommonBranchPair[0],randomCommonBranchPair[1],choiseMeshNumber,h);
+                    console.log('connectBranches - for: '+connectBranches);
+                    
+                    circuit.getMeshes()[h-1].setCommonBranchesArray(connectBranches);
+                    this.addConnectedBranchFromCommmonBranchesArrayElement(circuit,h,choiseMeshNumber);
                 } 
             } else {
-                randomFor = this.randomIntNumber(tempPieceArray.length,1)
+                //randomFor = this.randomIntNumber(tempPieceArray.length,1)
             }
+            
             console.log('randomFor: '+randomFor);
-            for (let i = 0; i < randomFor; i++){
+            /*for (let i = 0; i < randomFor; i++){
                 console.log('For: '+i);
                 console.log('circuit.getMeshes()[h-1].getCommonBranchesArray(): '+circuit.getMeshes()[h-1].getCommonBranchesArray());
                 for (let j = 0; j < circuit.getMeshes()[h-1].getCommonBranchesArray().length; j++){
@@ -183,6 +198,11 @@ export class CircuitGenerator {
                 }
                 console.log('tempPieceArray - for: '+tempPieceArray);
                 if (type > 3.1){
+                    if (h === 1) {
+                        choiseMeshNumber = h+1;
+                    } else {
+
+                    }
                     if (h === 1){
                         if (this.randomBoolean()){
                             choiseMeshNumber = this.choiseMinimumValueInNumberArray(tempPieceArray);
@@ -211,8 +231,8 @@ export class CircuitGenerator {
                 
                 connectBranches = [];
 
-            }
-            if (circuit.getMeshes()[h-1].getCommonBranchesArray().length === 0){
+            }*/
+            /*if (circuit.getMeshes()[h-1].getCommonBranchesArray().length === 0){
                 if (h === 1){
                     choiseMeshNumber = this.choiseMinimumValueInNumberArray(tempPieceArray);
                 } else {
@@ -221,9 +241,10 @@ export class CircuitGenerator {
                 connectBranches.push(randomCommonBranchPair[0],randomCommonBranchPair[1],choiseMeshNumber,h);
                 circuit.getMeshes()[h-1].setCommonBranchesArray(connectBranches);
                 this.addConnectedBranchFromCommmonBranchesArrayElement(circuit,h,choiseMeshNumber);
-            }
+            }*/
+
             
-            meshPieceArray.push(h);
+            //meshPieceArray.push(h);
             
             //console.log(meshPieceArray);
         }
@@ -1022,6 +1043,22 @@ export class CircuitGenerator {
         }
     }
 
+    /**
+     * 
+     * @param element   
+     * @param array 
+     */
+    public addElementToAcceptableCommonBranchArray(element: number[], array: number[][]): void{
+        if (array.length === 0){
+            array.push(element);
+        } else {
+            for (let i = 0; i < array.length; i++){
+                if (element[0] === array[i][0]){
+                    array.splice(i, 0, element);
+                }
+            }
+        }
+    }
     /**
      * EGYELORE MEG KERDESES A HASZNALATA!!
      * szimetrikus hurkot hoz letre az altal, hogy minden olldalon ugyanannyi branchet hoz letre

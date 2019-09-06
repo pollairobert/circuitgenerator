@@ -11,13 +11,14 @@ import { CircuitAnalyzer } from './circuitanalyzer';
 import * as math from 'mathjs';
 
 var c: CircuitGenerator = new CircuitGenerator();
+
 let can: CircuitAnalyzer = new CircuitAnalyzer();
 can.setQuestionOrVoltmeterResistance(10000000);
 can.setConnectedVoltagesourceValue(12);
 can.setConnectedVoltagesourceResistance(10);
 let type = 3.1;
-let x: number[];
-//console.log(x.length);
+let x: number[] = [];
+console.log(x.length);
 x = [2,3,4,5,6,34,-3,43,-34];
 console.log(c.choiseMinimumValueInNumberArray(x));
 //let x = ['macska','gyoker'];

@@ -8,7 +8,7 @@ import { Branch, branchCounter } from "./branch";
 import { Mesh, meshCounter } from "./mesh";
 import { Circuit } from "./circuit";
 import * as math from 'mathjs';
-import * as fs from 'fs';
+//import * as fs from 'fs';
 
 export class CircuitAnalyzer {
     private circuit: Circuit;
