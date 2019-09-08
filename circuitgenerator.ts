@@ -101,7 +101,7 @@ export class CircuitGenerator {
                 break;
             }
             case 10: {
-                parameters = [this.randomIntNumber(4,4),
+                parameters = [this.randomIntNumber(5,5),
                               this.randomIntNumber(5,3),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(3,3),
@@ -153,25 +153,27 @@ export class CircuitGenerator {
         } else if (type === 2.1){
             randomCommonBranchPair = [1,3];
         } else {
-            randomCommonBranchPair = this.randomChoiseInAnyArray(commonBranchPairs);
+            //randomCommonBranchPair = this.randomChoiseInAnyArray(commonBranchPairs);
         }
+        //let multiBranch: number[] = [];
         console.log('randomCommonBranchPair: '+randomCommonBranchPair);
         //console.log('START - meshPieceArray: '+meshPieceArray);
         //console.log(typeof(meshPieceArray));
         for (let h = 1; h <= numberOfMeshes; h++){
-
+            
             //this.removeElementInAnyArray(h,meshPieceArray);
             //console.log('FOR - meshPieceArray: '+meshPieceArray+ ',for: '+h);
             //console.log(meshPieceArray);
             //let tempBranchPairs: number[] = [];
             let connectBranches: number[] = [];
             let choiseMeshNumber: number;
-            
+            let multiConnection: boolean;
+            let multiBranch: number[];
             //let tempPieceArray: number[] = meshPieceArray.slice();
             ///console.log('tempPieceArray: '+tempPieceArray);
-            let randomFor: number;
-            if (type === 1 || type === 1.1 || type === 2 || type === 2.1 || type ===3 || type >= 3.1 ){
-                randomFor = 1;
+            //let randomFor: number;
+            if (type === 1 || type === 1.1 || type === 2 || type === 2.1 || type === 3 || type == 3.1 ){
+                //randomFor = 1;
                 if (h < numberOfMeshes){
                     choiseMeshNumber = (h+1); 
                     console.log('choiseMeshNumber: '+choiseMeshNumber);
@@ -188,8 +190,82 @@ export class CircuitGenerator {
             } else {
                 //randomFor = this.randomIntNumber(tempPieceArray.length,1)
             }
+            if (type > 3.1){
+                choiseMeshNumber = (h+1);
+                for (let i = 0; i < 4; i++) {
+                    acceptebleCommonBranchArray.push([commonBranchPairs[i][0],commonBranchPairs[i][1],h]);
+                }
+                //console.log('acceptebleCommonBranchArray - before: '+acceptebleCommonBranchArray);
+                if (h === 1){
+                    randomCommonBranchPair = this.randomChoiseInAnyArray(commonBranchPairs);
+                    console.log('randomCommonBranchPair a '+h+'. korben: '+randomCommonBranchPair);
+                    connectBranches.push(randomCommonBranchPair[0],randomCommonBranchPair[1],choiseMeshNumber,h);
+                    circuit.getMeshes()[h-1].setCommonBranchesArray(connectBranches);
+                    this.addConnectedBranchFromCommmonBranchesArrayElement(circuit,h,choiseMeshNumber);
+                    this.deleteNotAcceptableBranchInArray(circuit, acceptebleCommonBranchArray, h);
+                } else if (h < numberOfMeshes){
+                    let choiseType: number;
+                    //choiseMeshNumber = (h+1);
+                    this.deleteNotAcceptableBranchInArray(circuit, acceptebleCommonBranchArray,h);
+                    console.log('acceptebleCommonBranchArray a '+h+'. kor elejen: '+acceptebleCommonBranchArray);
+                    multiBranch = this.searchMultipleBranchTypeInAcceptableCommonBranchArray(acceptebleCommonBranchArray);
+                    console.log('multiBranch a '+h+'. korben: '+multiBranch);
+                    multiConnection = this.randomBoolean();
+                    //multiConnection = true;
+                    console.log('multiConnection a '+h+'. korben: '+multiConnection);
+                    if (multiConnection){
+                        choiseType = this.randomChoiseInAnyArray(multiBranch);
+                        console.log('choiseType a '+h+'. korben: '+choiseType);
+                        let choiseTypeCounter: number = this.counterOfChoiseTypeMultibranch(acceptebleCommonBranchArray,choiseType);
+                        for (let i = 0; i < choiseTypeCounter; i++){
+                            for (let j = 0; j < acceptebleCommonBranchArray.length; j++){
+                                if (choiseType === acceptebleCommonBranchArray[j][0]){
+                                    connectBranches.push(acceptebleCommonBranchArray[j][0],acceptebleCommonBranchArray[j][1],choiseMeshNumber,acceptebleCommonBranchArray[j][2]);
+                                    console.log('connectBranches a '+h+'. korben(multiconnect): '+connectBranches);
+                                    circuit.getMeshes()[acceptebleCommonBranchArray[j][2]-1].setCommonBranchesArray(connectBranches);
+                                    this.addConnectedBranchFromCommmonBranchesArrayElement(circuit,acceptebleCommonBranchArray[j][2],choiseMeshNumber);
+                                    this.deleteNotAcceptableBranchInArray(circuit, acceptebleCommonBranchArray,acceptebleCommonBranchArray[j][2]);
+                                    console.log('acceptebleCommonBranchArray a '+h+'. korben, torles utan: '+acceptebleCommonBranchArray);
+                                    connectBranches = [];
+                                    break;
+                                }
+                            }
+                        }
+                        //multiBranch = [];
+                        //multiBranch = this.searchMultipleBranchTypeInAcceptableCommonBranchArray(acceptebleCommonBranchArray);
+                    } else {
+                        let inverz = this.setInverzMultipleBranch(multiBranch);
+                        console.log('inverz a '+h+'. korben: '+inverz);
+                        choiseType = this.randomChoiseInAnyArray(inverz);
+                        console.log('choiseType a '+h+'. korben: '+choiseType);
+                        for (let j = 0; j < acceptebleCommonBranchArray.length; j++){
+                            if (choiseType === acceptebleCommonBranchArray[j][0]){
+                                connectBranches.push(acceptebleCommonBranchArray[j][0],acceptebleCommonBranchArray[j][1],choiseMeshNumber,acceptebleCommonBranchArray[j][2]);
+                                console.log('connectBranches a '+h+'. korben(nem multiconnect): '+connectBranches);
+                                circuit.getMeshes()[acceptebleCommonBranchArray[j][2]-1].setCommonBranchesArray(connectBranches);
+                                this.addConnectedBranchFromCommmonBranchesArrayElement(circuit,acceptebleCommonBranchArray[j][2],choiseMeshNumber);
+                                this.deleteNotAcceptableBranchInArray(circuit, acceptebleCommonBranchArray,acceptebleCommonBranchArray[j][2]);
+                                console.log('acceptebleCommonBranchArray a '+h+'. korben, torles utan: '+acceptebleCommonBranchArray);
+                                connectBranches = [];
+                            }
+                        }
+                        //multiBranch = this.searchMultipleBranchTypeInAcceptableCommonBranchArray(acceptebleCommonBranchArray);
+                        //multiBranch = [];
+                    }
+                    //this.deleteNotAcceptableBranchInArray(circuit, acceptebleCommonBranchArray,h);
+                }
+                if (h === numberOfMeshes){
+                    this.deleteNotAcceptableBranchInArray(circuit, acceptebleCommonBranchArray,h);
+                }
+                //multiBranch = this.searchMultipleBranchTypeInAcceptableCommonBranchArray(acceptebleCommonBranchArray);
+                
+                console.log('acceptebleCommonBranchArray a '+h+'. kor vegen: '+acceptebleCommonBranchArray);
+                //multiBranch = [];
+                //multiBranch = this.searchMultipleBranchTypeInAcceptableCommonBranchArray(acceptebleCommonBranchArray);
+                //console.log('multiBranch - vege: '+multiBranch);
+                //multiBranch = this.searchMultipleBranchTypeInAcceptableCommonBranchArray(acceptebleCommonBranchArray);
+            }
             
-            console.log('randomFor: '+randomFor);
             /*for (let i = 0; i < randomFor; i++){
                 console.log('For: '+i);
                 console.log('circuit.getMeshes()[h-1].getCommonBranchesArray(): '+circuit.getMeshes()[h-1].getCommonBranchesArray());
@@ -248,7 +324,10 @@ export class CircuitGenerator {
             
             //console.log(meshPieceArray);
         }
-        //console.log(connectBranches);
+        console.log('acceptebleCommonBranchArray.length: ' +acceptebleCommonBranchArray.length);
+
+        console.log('acceptebleCommonBranchArray: ' +acceptebleCommonBranchArray);
+        //console.log('acceptebleCommonBranchArray: ' +acceptebleCommonBranchArray);
         console.log();
         this.setCommonBranchesInCircuit(circuit);
         if (type <= 3.1){
@@ -273,7 +352,7 @@ export class CircuitGenerator {
         for (let i = 0; i < circuit.getNumberOfMesh(); i++){
             //this.setCommonBranchesInMesh(circuit, circuit.getMeshes()[i].getCommonBranchesArray());
             console.log(circuit.getMeshes()[i].getCommonBranchesArray());
-            //console.log(circuit.getMeshes()[i].getBranches());
+            console.log(circuit.getMeshes()[i].getBranches());
         }
         return circuit;
     }
@@ -363,7 +442,63 @@ export class CircuitGenerator {
         //console.log(commonMeshesAndBranchTypes);
         return circuit;
     }
-    
+    public counterOfChoiseTypeMultibranch(array: number[][], choiseType: number): number{
+        let count: number = 0;
+        for (let i = 0; i < array.length; i++){
+            if (choiseType === array[i][0]){
+                count++;
+            }
+        }
+        return count;
+    }
+    public deleteNotAcceptableBranchInArray(circuit: Circuit, array: number[][], meshnumber: number): void{
+        for (let j = 0; j < circuit.getMeshes()[meshnumber-1].getCommonBranchesArray().length; j++){
+            for (let i = 0; i < array.length; i++) {
+                if (circuit.getMeshes()[meshnumber-1].getCommonBranchesArray()[j][0] === array[i][0] && array[i][2] === circuit.getMeshes()[meshnumber-1].getCommonBranchesArray()[j][3]) {
+                    array.splice(i,1);
+                    break;
+                }
+            }
+        }
+    }
+        
+    public searchMultipleBranchTypeInAcceptableCommonBranchArray(array: number[][]): number[]{
+        let multipleBrancTypeArray: number[] = [];
+        let counter: number[] = [0,0,0,0];
+        for (let j = 0; j < array.length; j++){
+            if (array[j][0] === 0){
+                counter[0]++;
+            }
+            if (array[j][0] === 1){
+                counter[1]++;
+            }
+            if (array[j][0] === 2){
+                counter[2]++;
+            }
+            if (array[j][0] === 3){
+                counter[3]++;
+            }
+        }
+        for (let i = 0; i < counter.length; i++){
+            if(counter[i] > 1){
+                multipleBrancTypeArray.push(i);
+            }
+        }
+        return multipleBrancTypeArray;
+    }
+
+    public setInverzMultipleBranch(array: number[]): number[]{
+        let singleBranches: number[] = [0,1,2,3];
+        for (let i = 0; i < array.length; i++){
+            for (let j = 0; j < singleBranches.length; j++){
+                if (array[i] === singleBranches[j]){
+                    singleBranches.splice(j,1);
+                    break;
+                }
+            }
+        }
+        return singleBranches;
+    }
      /**
      * A kozos agakban szereplo aramkori elemek masolasat vegzi.
      * A generatoroknal forditja az iranyt, mivel a ket szomszedos hurokban maskepp hatnak.
@@ -439,13 +574,7 @@ export class CircuitGenerator {
         return number;
     }
 
-    public randomChangeXorYcooordinate():number{
-        if ((Math.floor(Math.random() * 2) + 1) === 1) {
-            return 1; //Y kordinata
-        } else {
-            return 0; //X kordinata
-        }
-    }
+    
     public randomChoiseTwoNumber(one: number, two: number):number{
         if ((Math.floor(Math.random() * 2) + 1) === 1) {
             return one;
@@ -461,11 +590,7 @@ export class CircuitGenerator {
         }
     }
     
-    public randomCoordinateArryElement(array: number[][]): number[]{
-        let result: number[];
-        result = array[Math.floor(Math.random() * array.length)];
-        return result;
-    }
+    
 
     public randomChoiseInAnyArray(array: any): any{
         let result: any;
@@ -1043,120 +1168,6 @@ export class CircuitGenerator {
         }
     }
 
-    /**
-     * 
-     * @param element   
-     * @param array 
-     */
-    public addElementToAcceptableCommonBranchArray(element: number[], array: number[][]): void{
-        if (array.length === 0){
-            array.push(element);
-        } else {
-            for (let i = 0; i < array.length; i++){
-                if (element[0] === array[i][0]){
-                    array.splice(i, 0, element);
-                }
-            }
-        }
-    }
-    /**
-     * EGYELORE MEG KERDESES A HASZNALATA!!
-     * szimetrikus hurkot hoz letre az altal, hogy minden olldalon ugyanannyi branchet hoz letre
-     * @param circuit aramkor objektum
-     */
-    public setEmptyBranchInOtherSideOfCommonBranch(circuit: Circuit): void {
-
-        for (let h = 0; h < circuit.getNumberOfMesh(); h++){
-            console.log('IF - FOR h: ');
-            let counterOf0Type: number = 0;
-            let counterOf1Type: number = 0;
-            let counterOf2Type: number = 0;
-            let counterOf3Type: number = 0;
-            let counterOfType: number[] = [0,0,0,0]
-            for (let i = 0; i < circuit.getMeshes()[h].getBranches().length; i++){
-                console.log('IF - FOR i -1: ');
-                if (circuit.getMeshes()[h].getBranches()[i].getType() === 0){
-                    counterOfType[0]++;
-                }
-                if (circuit.getMeshes()[h].getBranches()[i].getType() === 1){
-                    counterOfType[1]++;
-                }
-                if (circuit.getMeshes()[h].getBranches()[i].getType() === 2){
-                    counterOfType[2]++;
-                }
-                if (circuit.getMeshes()[h].getBranches()[i].getType() === 3){
-                    counterOfType[3]++;
-                }
-            }
-            console.log('counterOfType: '+counterOfType);
-            for (let i = 0; i < counterOfType.length; i++){
-                console.log('IF - FOR 1- 2: ');
-                if (counterOfType[i] > 1){
-                    if (i === 0){
-                        if (counterOfType[2] < counterOfType[i]){
-                            let forcount: number = counterOfType[i] - counterOfType[2];
-                            for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
-                                console.log('IF - FOR j - 0: ');
-                                if (circuit.getMeshes()[h].getBranches()[j].getType() === 2){
-                                    for (let k = 0; k < forcount; k++){
-                                        console.log('IF - FOR k - 0: ');
-                                        circuit.getMeshes()[h].getBranches().splice(j,0,new Branch(2,h));
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if (i === 1){
-                        if (counterOfType[3] < counterOfType[i]){
-                            let forcount: number = counterOfType[i] - counterOfType[3];
-                            for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
-                                console.log('IF - FOR j - 1: ');
-                                if (circuit.getMeshes()[h].getBranches()[j].getType() === 3){
-                                    for (let k = 0; k < forcount; k++){
-                                        console.log('IF - FOR k - 1: ');
-                                        circuit.getMeshes()[h].getBranches().splice(j,0,new Branch(3,h));
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if (i === 2){
-                        if (counterOfType[0] < counterOfType[i]){
-                            let forcount: number = counterOfType[i] - counterOfType[0];
-                            for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
-                                console.log('IF - FOR j - 2: ');
-                                if (circuit.getMeshes()[h].getBranches()[j].getType() === 0){
-                                    for (let k = 0; k < forcount; k++){
-                                        console.log('IF - FOR k - 2: ');
-                                        circuit.getMeshes()[h].getBranches().splice(j,0,new Branch(0,h));
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if (i === 3){
-                        if (counterOfType[1] < counterOfType[i]){
-                            let forcount: number = counterOfType[i] - counterOfType[1];
-                            for (let j = 0; j < circuit.getMeshes()[h].getBranches().length; j++){
-                                console.log('IF - FOR j - 3: ');
-                                if (circuit.getMeshes()[h].getBranches()[j].getType() === 1){
-                                    for (let k = 0; k < forcount; k++){
-                                        console.log('IF - FOR k - 3: ');
-                                        circuit.getMeshes()[h].getBranches().splice(j,0,new Branch(1,h));
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
-    }
     
     /**
      * A generalt aramkor a www.falstad.com oldalhoz megfelelo txt formatumba exportalasa a teszteles megkonnyitesere.

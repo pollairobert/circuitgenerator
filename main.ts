@@ -16,7 +16,7 @@ let can: CircuitAnalyzer = new CircuitAnalyzer();
 can.setQuestionOrVoltmeterResistance(10000000);
 can.setConnectedVoltagesourceValue(12);
 can.setConnectedVoltagesourceResistance(10);
-let type = 3.1;
+let type = 10;
 let x: number[] = [];
 console.log(x.length);
 x = [2,3,4,5,6,34,-3,43,-34];
