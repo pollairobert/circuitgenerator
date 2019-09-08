@@ -27,7 +27,9 @@ console.log(y);
 console.log(c.removeElementInAnyArray(y,x));*/
 
 let circ: Circuit = c.generateCircuit(type);
+c.exportCircuitToText(circ);
 can.analyzeCircuit(circ);
+
 //c.generateCircuit(type);
 //c.generateCircuit2(type);
 console.log('Thevenin ellenallas: '+ circ.getThevRes());

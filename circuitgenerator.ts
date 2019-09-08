@@ -7,12 +7,14 @@ import { Branch, branchCounter } from "./branch";
 import { Mesh, meshCounter } from "./mesh";
 import { Circuit } from "./circuit";
 import * as math from 'mathjs';
+import * as fs from 'fs';
 import { CircuitAnalyzer } from './circuitanalyzer';
 
 /**
  * Aramkor generalasat lehetove tevo osztaly. 
  */
 export class CircuitGenerator {
+    
     /**
      * Aramkor generalasaert felelos. 
      * @param type aramkor tipusa adott struktura alapjan 
@@ -101,7 +103,7 @@ export class CircuitGenerator {
                 break;
             }
             case 10: {
-                parameters = [this.randomIntNumber(5,5),
+                parameters = [this.randomIntNumber(6,6),
                               this.randomIntNumber(5,3),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(3,3),
@@ -336,7 +338,7 @@ export class CircuitGenerator {
             this.setCommonBranchesCloneElement(circuit);
             this.setThevenin2PoleInCircuit(circuit, type);
         }
-        
+        this.setAllSizeOfCircuit(circuit);
         //this.setEmptyBranchInOtherSideOfCommonBranch(circuit);
         
         for (let i = 0; i < circuit.getNumberOfMesh(); i++){
@@ -352,6 +354,7 @@ export class CircuitGenerator {
         for (let i = 0; i < circuit.getNumberOfMesh(); i++){
             //this.setCommonBranchesInMesh(circuit, circuit.getMeshes()[i].getCommonBranchesArray());
             console.log(circuit.getMeshes()[i].getCommonBranchesArray());
+            console.log(circuit.getMeshes()[i].getMeshBranchesSize());
             console.log(circuit.getMeshes()[i].getBranches());
         }
         return circuit;
@@ -1167,38 +1170,74 @@ export class CircuitGenerator {
             }
         }
     }
-
+    public setAllSizeOfCircuit(circuit: Circuit): void {
+        circuit.getMeshes()[0].setMeshBranchesSizeAll(96,96,96,96);
+        for (let h = 0; h < circuit.getNumberOfMesh(); h++){
+            //let typeCounter: number[] = [0,0,0,0];
+            if (h > 0){
+                for (let i = 0; i < circuit.getMeshes()[h].getCommonBranchesArray().length; i++){
+                    if (circuit.getMeshes()[h].getCommonBranchesArray()[i][2] < circuit.getMeshes()[h].getMeshNumber()){
+                        if (circuit.getMeshes()[h].getCommonBranchesArray()[i][0] === 0){
+                            circuit.getMeshes()[h].getMeshBranchesSize()[0] += circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getMeshBranchesSize()[2];
+                            circuit.getMeshes()[h].getMeshBranchesSize()[2] = circuit.getMeshes()[h].getMeshBranchesSize()[0];
+                        }
+                        if (circuit.getMeshes()[h].getCommonBranchesArray()[i][0] === 1){
+                            circuit.getMeshes()[h].getMeshBranchesSize()[1] += circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getMeshBranchesSize()[3];
+                            circuit.getMeshes()[h].getMeshBranchesSize()[3] = circuit.getMeshes()[h].getMeshBranchesSize()[1];
+                        }
+                        if (circuit.getMeshes()[h].getCommonBranchesArray()[i][0] === 2){
+                            circuit.getMeshes()[h].getMeshBranchesSize()[2] += circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getMeshBranchesSize()[0];
+                            circuit.getMeshes()[h].getMeshBranchesSize()[0] = circuit.getMeshes()[h].getMeshBranchesSize()[2];
+                        }
+                        if (circuit.getMeshes()[h].getCommonBranchesArray()[i][0] === 3){
+                            circuit.getMeshes()[h].getMeshBranchesSize()[3] += circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getMeshBranchesSize()[1];
+                            circuit.getMeshes()[h].getMeshBranchesSize()[1] = circuit.getMeshes()[h].getMeshBranchesSize()[3];
+                        }
+                    }
+                }
+                for (let i = 0; i < circuit.getMeshes()[h].getMeshBranchesSize().length; i++){
+                    if (circuit.getMeshes()[h].getMeshBranchesSize()[i] === 0){
+                        circuit.getMeshes()[h].getMeshBranchesSize()[i] = 96;
+                    }
+                }
+            }
+        }
+    }
     
     /**
      * A generalt aramkor a www.falstad.com oldalhoz megfelelo txt formatumba exportalasa a teszteles megkonnyitesere.
      */
-    /*public exportCircuitToText(): void {
+    public exportCircuitToText(circuit: Circuit): void {
+        const fs = require('fs');
         let coordinateStep: number = 16;
         let branchSize: number = 12*coordinateStep;
         let elementSize: number;
-        this.fs.truncate('proba.txt', 0,  function(err) {
+        fs.truncate('proba.txt', 0,  function(err) {
             if (err) {
                 return console.error(err);
             }});
-        this.fs.appendFile('proba.txt', '$ 1 0.000005 10.20027730826997 50 5 43 \n',  function(err) {
+            
+
+            
+        fs.writeFile('proba.txt', '$ 1 0.000005 10.20027730826997 50 5 43 \n',  function(err) {
             if (err) {
                 return console.error(err);
             }});
-        for (let h = 0; h < this.circuit.getNumberOfMesh(); h++){
-            for (let i = 0;  i < this.circuit.getMeshes()[h].getBranches().length; i++){
-                for (let j = 0; j < this.circuit.getMeshes()[h].getBranches()[i].getBranchElements().length; j++){
-                    elementSize = branchSize/this.circuit.getMeshes()[h].getBranches()[i].getBranchElements().length;
-                    if (this.circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getId() === 'W'){
+        /*for (let h = 0; h < circuit.getNumberOfMesh(); h++){
+            for (let i = 0;  i < circuit.getMeshes()[h].getBranches().length; i++){
+                for (let j = 0; j < circuit.getMeshes()[h].getBranches()[i].getBranchElements().length; j++){
+                    elementSize = branchSize/circuit.getMeshes()[h].getBranches()[i].getBranchElements().length;
+                    if (circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getId() === 'W'){
                         if (h === 0){
                             if (i === 0){
 
                             }
                         }
                     }
-                    if (this.circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getId() === 'R'){
+                    if (circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getId() === 'R'){
                         
                     }
-                    if (this.circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getId() === 'C'){
+                    if (circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getId() === 'C'){
                         
                     }
                 }
@@ -1207,8 +1246,8 @@ export class CircuitGenerator {
                 if (err) {
                     return console.error(err);
                 }});
-        }
+        }*/
         
-    }*/
+    }
     
 }

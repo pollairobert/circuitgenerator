@@ -13,7 +13,7 @@ export class Mesh {
     private meshVoltage: number = 0;
     private meshCurrent: number = 0;
     private commonBranchesArray: number[][] = [];
-    private meshBranchesSize: number[] = [96, 96, 96, 96]; //a megfelelo tipusu branchekhez tartozo ertekek (0,1,2,3)
+    private meshBranchesSize: number[] = [0,0,0,0]; //a megfelelo tipusu branchekhez tartozo ertekek (0,1,2,3)
 
     constructor(/*maxmesh: number, res: number, cur: number, volt: number, comm: number*/) {
         //this.maxMeshNumb = maxmesh;
@@ -73,6 +73,9 @@ export class Mesh {
     }
     public setMeshBranchesSize(branchType: number, size: number): void {
         this.meshBranchesSize[branchType] = size;
+    }
+    public setMeshBranchesSizeAll(size0: number,size1: number,size2: number,size3: number): void {
+        this.meshBranchesSize = [size0,size1,size2,size3];
     }
     public getMeshBranchesSize(): number[]{
         return this.meshBranchesSize;
