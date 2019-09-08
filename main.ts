@@ -11,28 +11,28 @@ import { CircuitAnalyzer } from './circuitanalyzer';
 import * as math from 'mathjs';
 
 var c: CircuitGenerator = new CircuitGenerator();
-
+c.exportCircuitToText();
 let can: CircuitAnalyzer = new CircuitAnalyzer();
 can.setQuestionOrVoltmeterResistance(10000000);
 can.setConnectedVoltagesourceValue(12);
 can.setConnectedVoltagesourceResistance(10);
-let type = 10;
+let type = 3.1;
 let x: number[] = [];
-console.log(x.length);
-x = [2,3,4,5,6,34,-3,43,-34];
-console.log(c.choiseMinimumValueInNumberArray(x));
+//console.log(x.length);
+//x = [2,3,4,5,6,34,-3,43,-34];
+//console.log(c.choiseMinimumValueInNumberArray(x));
 //let x = ['macska','gyoker'];
 /*let y = c.randomChoiseInAnyArray(x);
 console.log(y);
 console.log(c.removeElementInAnyArray(y,x));*/
 
 let circ: Circuit = c.generateCircuit(type);
-c.exportCircuitToText(circ);
+
 can.analyzeCircuit(circ);
 
 //c.generateCircuit(type);
 //c.generateCircuit2(type);
-console.log('Thevenin ellenallas: '+ circ.getThevRes());
+//console.log('Thevenin ellenallas: '+ circ.getThevRes());
 //c.exportCircuitToText();
 //console.log(72%16);
 for (let i = 0; i < circ.getMeshes().length; i++){
@@ -150,6 +150,7 @@ for (let i = 0; i < circ.getMeshes().length; i++){
 console.log();
 console.log('Az aramkor Thevenin ellenalasa: '+circ.getThevRes().toFixed(6)+ ' Ohm');
 console.log('Az aramkor Thevenin helyettesito feszultsege: '+circ.getThevVolt().toFixed(6)+ ' V');
+
 //console.log('A keresett ellenallas arama: '+c.getQuestionResCurrent().toFixed(4)+ ' A');
 if (can.getQuestionRes() !== undefined){
     console.log('A mert feszultseg: '+can.getQuestionResVoltage().toFixed(6)+ ' V');
@@ -287,6 +288,7 @@ console.log(c.getCircuit().getNumbOfCurrSource());
 console.log(c.getCircuit().getNumbOfVoltSource());
 console.log(c.getCircuit().getNumbOfCommonBranc());*/
 console.log(circ.getParameters());
+
 /*for (let i = 0; i < randomFor; i++){
     randomFor = c.randomIntNumber(10,i);
     console.log(i);

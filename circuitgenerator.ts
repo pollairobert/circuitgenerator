@@ -14,7 +14,7 @@ import { CircuitAnalyzer } from './circuitanalyzer';
  * Aramkor generalasat lehetove tevo osztaly. 
  */
 export class CircuitGenerator {
-    
+    private fs = require('fs');
     /**
      * Aramkor generalasaert felelos. 
      * @param type aramkor tipusa adott struktura alapjan 
@@ -338,7 +338,7 @@ export class CircuitGenerator {
             this.setCommonBranchesCloneElement(circuit);
             this.setThevenin2PoleInCircuit(circuit, type);
         }
-        this.setAllSizeOfCircuit(circuit);
+        
         //this.setEmptyBranchInOtherSideOfCommonBranch(circuit);
         
         for (let i = 0; i < circuit.getNumberOfMesh(); i++){
@@ -351,11 +351,15 @@ export class CircuitGenerator {
                 }
             }
         }
+        this.setAllSizeOfCircuit(circuit);
         for (let i = 0; i < circuit.getNumberOfMesh(); i++){
             //this.setCommonBranchesInMesh(circuit, circuit.getMeshes()[i].getCommonBranchesArray());
             console.log(circuit.getMeshes()[i].getCommonBranchesArray());
             console.log(circuit.getMeshes()[i].getMeshBranchesSize());
             console.log(circuit.getMeshes()[i].getBranches());
+            for (let j = 0; j < circuit.getMeshes()[i].getBranches().length; j++){
+                console.log(circuit.getMeshes()[i].getBranches()[j].getBranchElements());
+            }
         }
         return circuit;
     }
@@ -1173,7 +1177,7 @@ export class CircuitGenerator {
     public setAllSizeOfCircuit(circuit: Circuit): void {
         circuit.getMeshes()[0].setMeshBranchesSizeAll(96,96,96,96);
         for (let h = 0; h < circuit.getNumberOfMesh(); h++){
-            //let typeCounter: number[] = [0,0,0,0];
+            let typeCounter: number[] = [0,0,0,0];
             if (h > 0){
                 for (let i = 0; i < circuit.getMeshes()[h].getCommonBranchesArray().length; i++){
                     if (circuit.getMeshes()[h].getCommonBranchesArray()[i][2] < circuit.getMeshes()[h].getMeshNumber()){
@@ -1201,25 +1205,66 @@ export class CircuitGenerator {
                     }
                 }
             }
+            for (let i = 0; i < circuit.getMeshes()[h].getBranches().length; i++){
+                if (circuit.getMeshes()[h].getBranches()[i].getType() === 0){
+                    typeCounter[0]++;
+                }
+                if (circuit.getMeshes()[h].getBranches()[i].getType() === 1){
+                    typeCounter[1]++;
+                }
+                if (circuit.getMeshes()[h].getBranches()[i].getType() === 2){
+                    typeCounter[2]++;
+                }
+                if (circuit.getMeshes()[h].getBranches()[i].getType() === 3){
+                    typeCounter[3]++;
+                }
+            }
+            for (let i = 0; i < circuit.getMeshes()[h].getBranches().length; i++){
+                if (circuit.getMeshes()[h].getBranches()[i].getType() === 0){
+                    circuit.getMeshes()[h].getBranches()[i].setBranchSize(circuit.getMeshes()[h].getMeshBranchesSize()[0]/typeCounter[0]);
+                    for (let j = 0; j < circuit.getMeshes()[h].getBranches()[i].getBranchElements().length; j++){
+                        circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].setElementSize(circuit.getMeshes()[h].getBranches()[i].getBrancSize()/circuit.getMeshes()[h].getBranches()[i].getBranchElements().length);
+                    }
+                }
+                if (circuit.getMeshes()[h].getBranches()[i].getType() === 1){
+                    circuit.getMeshes()[h].getBranches()[i].setBranchSize(circuit.getMeshes()[h].getMeshBranchesSize()[1]/typeCounter[1]);
+                    for (let j = 0; j < circuit.getMeshes()[h].getBranches()[i].getBranchElements().length; j++){
+                        circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].setElementSize(circuit.getMeshes()[h].getBranches()[i].getBrancSize()/circuit.getMeshes()[h].getBranches()[i].getBranchElements().length);
+                    }
+                }
+                if (circuit.getMeshes()[h].getBranches()[i].getType() === 2){
+                    circuit.getMeshes()[h].getBranches()[i].setBranchSize(circuit.getMeshes()[h].getMeshBranchesSize()[2]/typeCounter[2]);
+                    for (let j = 0; j < circuit.getMeshes()[h].getBranches()[i].getBranchElements().length; j++){
+                        circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].setElementSize(circuit.getMeshes()[h].getBranches()[i].getBrancSize()/circuit.getMeshes()[h].getBranches()[i].getBranchElements().length);
+                    }
+                }
+                if (circuit.getMeshes()[h].getBranches()[i].getType() === 3){
+                    circuit.getMeshes()[h].getBranches()[i].setBranchSize(circuit.getMeshes()[h].getMeshBranchesSize()[3]/typeCounter[3]);
+                    for (let j = 0; j < circuit.getMeshes()[h].getBranches()[i].getBranchElements().length; j++){
+                        circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].setElementSize(circuit.getMeshes()[h].getBranches()[i].getBrancSize()/circuit.getMeshes()[h].getBranches()[i].getBranchElements().length);
+                    }
+                }
+               
+            }
         }
+        //circuit.getMeshes()[5].getBranches()[0].getBranchElements()[0].setElementSize(33);
+
     }
     
     /**
      * A generalt aramkor a www.falstad.com oldalhoz megfelelo txt formatumba exportalasa a teszteles megkonnyitesere.
      */
-    public exportCircuitToText(circuit: Circuit): void {
-        const fs = require('fs');
+    public exportCircuitToText(circuit?: Circuit): void {
+        
         let coordinateStep: number = 16;
         let branchSize: number = 12*coordinateStep;
         let elementSize: number;
-        fs.truncate('proba.txt', 0,  function(err) {
+        
+        this.fs.truncate('proba.txt', 0,  function(err) {
             if (err) {
                 return console.error(err);
             }});
-            
-
-            
-        fs.writeFile('proba.txt', '$ 1 0.000005 10.20027730826997 50 5 43 \n',  function(err) {
+        this.fs.appendFile('proba.txt', '$ 1 0.000005 10.20027730826997 50 5 43 \n',  function(err) {
             if (err) {
                 return console.error(err);
             }});
