@@ -23,7 +23,7 @@ export class Branch {
     private type: number; //4 tipus. 0: fel, 1: jobbra, 2: le, 3: balra
     private thevenin2pole: boolean = false;
     private commBrancResistance: number;
-    private branchSize: number = 96;
+    private branchSize: number = 0;
 
     /**
      * Konstruktor, beallitasra kerul az orientacio es az irany
@@ -116,6 +116,9 @@ export class Branch {
     }
     public setCommon(meshNum: number): void{
         this.common += meshNum;
+    }
+    public setBranchSize(size: number): void{
+        this.branchSize = size;
     }
     public clearBranchResistance(): void{
         this.branchResistance = 0;
