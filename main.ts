@@ -11,12 +11,12 @@ import { CircuitAnalyzer } from './circuitanalyzer';
 import * as math from 'mathjs';
 
 var c: CircuitGenerator = new CircuitGenerator();
-c.exportCircuitToText();
+
 let can: CircuitAnalyzer = new CircuitAnalyzer();
 can.setQuestionOrVoltmeterResistance(10000000);
 can.setConnectedVoltagesourceValue(12);
 can.setConnectedVoltagesourceResistance(10);
-let type = 3.1;
+let type = 10;
 let x: number[] = [];
 //console.log(x.length);
 //x = [2,3,4,5,6,34,-3,43,-34];
@@ -27,7 +27,8 @@ console.log(y);
 console.log(c.removeElementInAnyArray(y,x));*/
 
 let circ: Circuit = c.generateCircuit(type);
-
+c.exportCircuitToText(circ);
+if (type <=3.1){
 can.analyzeCircuit(circ);
 
 //c.generateCircuit(type);
@@ -287,6 +288,7 @@ console.log(c.getCircuit().getNumbOfRes());
 console.log(c.getCircuit().getNumbOfCurrSource());
 console.log(c.getCircuit().getNumbOfVoltSource());
 console.log(c.getCircuit().getNumbOfCommonBranc());*/
+}
 console.log(circ.getParameters());
 
 /*for (let i = 0; i < randomFor; i++){

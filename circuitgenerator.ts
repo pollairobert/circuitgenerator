@@ -103,7 +103,7 @@ export class CircuitGenerator {
                 break;
             }
             case 10: {
-                parameters = [this.randomIntNumber(6,6),
+                parameters = [this.randomIntNumber(4,4),
                               this.randomIntNumber(5,3),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(3,3),
@@ -213,7 +213,7 @@ export class CircuitGenerator {
                     multiBranch = this.searchMultipleBranchTypeInAcceptableCommonBranchArray(acceptebleCommonBranchArray);
                     console.log('multiBranch a '+h+'. korben: '+multiBranch);
                     multiConnection = this.randomBoolean();
-                    //multiConnection = true;
+                    multiConnection = true;
                     console.log('multiConnection a '+h+'. korben: '+multiConnection);
                     if (multiConnection){
                         choiseType = this.randomChoiseInAnyArray(multiBranch);
@@ -352,6 +352,7 @@ export class CircuitGenerator {
             }
         }
         this.setAllSizeOfCircuit(circuit);
+        this.setElementsCoordinate(circuit);
         for (let i = 0; i < circuit.getNumberOfMesh(); i++){
             //this.setCommonBranchesInMesh(circuit, circuit.getMeshes()[i].getCommonBranchesArray());
             console.log(circuit.getMeshes()[i].getCommonBranchesArray());
@@ -1251,6 +1252,172 @@ export class CircuitGenerator {
 
     }
     
+    public setElementsCoordinate(circuit: Circuit): void {
+        //let startPosition: number[] = [0,0];
+        let startX: number;
+        let startY: number;
+        let endX: number;
+        let endY: number;
+        for (let h = 0; h < circuit.getNumberOfMesh(); h++){
+            let startPosition: number[] = [0,0];
+            if (h > 0){
+                if (circuit.getMeshes()[h].getCommonBranchesArray()[1] !== undefined || h === circuit.getNumberOfMesh()-1 || circuit.getMeshes()[h].getCommonBranchesArray().length === 1){
+                    if ((circuit.getMeshes()[h].getCommonBranchesArray()[1] === undefined) || (circuit.getMeshes()[h].getCommonBranchesArray()[0][0] !== circuit.getMeshes()[h].getCommonBranchesArray()[1][0]) || circuit.getMeshes()[h].getCommonBranchesArray().length === 1){
+                        console.log('IF 1');
+                        if (circuit.getMeshes()[h].getCommonBranchesArray()[0][0] === 0){
+                            console.log('IF 11');
+                            startPosition[0] = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[0][2]-1].getBranches()[0].getBranchElements()[0].getCoordinate()[0] + circuit.getMeshes()[h-1].getMeshBranchesSize()[3];
+                            startPosition[1] = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[0][2]-1].getBranches()[0].getBranchElements()[0].getCoordinate()[1];
+                        }
+                        if (circuit.getMeshes()[h].getCommonBranchesArray()[0][0] === 1){
+                            console.log('IF 12');
+                            startPosition[1] = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[0][2]-1].getBranches()[0].getBranchElements()[0].getCoordinate()[1] + circuit.getMeshes()[h].getMeshBranchesSize()[0];
+                            startPosition[0] = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[0][2]-1].getBranches()[0].getBranchElements()[0].getCoordinate()[0];
+                        }
+                        if (circuit.getMeshes()[h].getCommonBranchesArray()[0][0] === 2){
+                            console.log('IF 13');
+                            startPosition[0] = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[0][2]-1].getBranches()[0].getBranchElements()[0].getCoordinate()[0] - circuit.getMeshes()[h].getMeshBranchesSize()[3];
+                            startPosition[1] = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[0][2]-1].getBranches()[0].getBranchElements()[0].getCoordinate()[1];
+                        }
+                        if (circuit.getMeshes()[h].getCommonBranchesArray()[0][0] === 3){
+                            console.log('IF 14');
+                            startPosition[1] = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[0][2]-1].getBranches()[0].getBranchElements()[0].getCoordinate()[1] - circuit.getMeshes()[h-1].getMeshBranchesSize()[0];
+                            startPosition[0] = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[0][2]-1].getBranches()[0].getBranchElements()[0].getCoordinate()[0];
+                        }
+                    } else
+                    if (circuit.getMeshes()[h].getCommonBranchesArray()[0][0] === circuit.getMeshes()[h].getCommonBranchesArray()[1][0]){
+                        console.log('IF 2');
+                        startPosition = [0,0];
+                        if (circuit.getMeshes()[h].getCommonBranchesArray()[0][0] === 0){
+                            let maxY: number = -Infinity;
+                            for (let i = 0; i < circuit.getMeshes()[h].getCommonBranchesArray().length; i++){
+                                if (circuit.getMeshes()[h].getCommonBranchesArray()[i][0] === 0){
+                                    for (let j = 0; j < circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches().length; j++){
+                                        if (circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getType() === 2){
+                                            for (let k = 0; k < circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements().length; k++){
+                                                if (circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements()[k].getCoordinate()[3] >= maxY){
+                                                    maxY = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements()[k].getCoordinate()[3];
+                                                    startPosition[0] = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements()[k].getCoordinate()[2];
+                                                    console.log('IF 21');
+                                                    console.log('maxY: '+maxY);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    startPosition[1] = maxY;
+                                }
+                            }
+                        }
+                        if (circuit.getMeshes()[h].getCommonBranchesArray()[0][0] === 1){
+                            let maxY: number = -Infinity;
+                            let minX: number = Infinity;
+                            for (let i = 0; i < circuit.getMeshes()[h].getCommonBranchesArray().length; i++){
+                                if (circuit.getMeshes()[h].getCommonBranchesArray()[i][0] === 1){
+                                    for (let j = 0; j < circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches().length; j++){
+                                        if (circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getType() === 3){
+                                            for (let k = 0; k < circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements().length; k++){
+                                                if (circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements()[k].getCoordinate()[2] <= minX){
+                                                    minX = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements()[k].getCoordinate()[2];
+                                                    startPosition[1] = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements()[k].getCoordinate()[3];
+                                                    console.log('IF 22');
+                                                    console.log('minX: '+minX);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    startPosition[0] = minX;
+                                    startPosition[1] = circuit.getMeshes()[h].getMeshBranchesSize()[0];
+                                }
+                            }
+                        }
+                        if (circuit.getMeshes()[h].getCommonBranchesArray()[0][0] === 2){
+                            let maxY: number = -Infinity;
+                            let minX: number = Infinity;
+                            for (let i = 0; i < circuit.getMeshes()[h].getCommonBranchesArray().length; i++){
+                                if (circuit.getMeshes()[h].getCommonBranchesArray()[i][0] === 2){
+                                    for (let j = 0; j < circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches().length; j++){
+                                        if (circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getType() === 0){
+                                            for (let k = 0; k < circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements().length; k++){
+                                                if (circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements()[k].getCoordinate()[1] >= maxY){
+                                                    maxY = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements()[k].getCoordinate()[1];
+                                                    startPosition[0] = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements()[k].getCoordinate()[0];
+                                                    console.log('IF 23');
+                                                    console.log('maxY: '+maxY);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    startPosition[1] = maxY;
+                                    startPosition[0] = circuit.getMeshes()[h].getMeshBranchesSize()[3];
+                                }
+                            }
+                        }
+                        if (circuit.getMeshes()[h].getCommonBranchesArray()[0][0] === 3){
+                            let maxY: number = -Infinity;
+                            let minX: number = Infinity;
+                            for (let i = 0; i < circuit.getMeshes()[h].getCommonBranchesArray().length; i++){
+                                if (circuit.getMeshes()[h].getCommonBranchesArray()[i][0] === 3){
+                                    for (let j = 0; j < circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches().length; j++){
+                                        if (circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getType() === 1){
+                                            for (let k = 0; k < circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements().length; k++){
+                                                if (circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements()[k].getCoordinate()[0] <= minX){
+                                                    minX = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements()[k].getCoordinate()[0];
+                                                    startPosition[1] = circuit.getMeshes()[circuit.getMeshes()[h].getCommonBranchesArray()[i][2]-1].getBranches()[j].getBranchElements()[k].getCoordinate()[1];
+                                                    console.log('IF 24');
+                                                    console.log('minX: '+minX);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    startPosition[0] = minX;
+                                    //startPosition[1] = circuit.getMeshes()[h].getMeshBranchesSize()[0];
+                                }
+                            }
+                        }
+                    }
+                }
+            } 
+            for (let i = 0; i < circuit.getMeshes()[h].getBranches().length; i++){
+                for (let j = 0; j < circuit.getMeshes()[h].getBranches()[i].getBranchElements().length; j++){
+                    //if (h === 0){
+                        if (circuit.getMeshes()[h].getBranches()[i].getType() === 0){
+                            startX = startPosition[0];
+                            startY = startPosition[1];
+                            endX = startPosition[0];
+                            endY = startPosition[1] - circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getElementSize();
+                            circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].setCoordinate(startX,startY,endX,endY);
+                            startPosition = [endX,endY];
+                        }
+                        if (circuit.getMeshes()[h].getBranches()[i].getType() === 1){
+                            startX = startPosition[0];
+                            startY = startPosition[1];
+                            endX = startPosition[0] + circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getElementSize();
+                            endY = startPosition[1];
+                            circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].setCoordinate(startX,startY,endX,endY);
+                            startPosition = [endX,endY];
+                        }
+                        if (circuit.getMeshes()[h].getBranches()[i].getType() === 2){
+                            startX = startPosition[0];
+                            startY = startPosition[1];
+                            endX = startPosition[0];
+                            endY = startPosition[1] + circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getElementSize();
+                            circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].setCoordinate(startX,startY,endX,endY);
+                            startPosition = [endX,endY];
+                        }
+                        if (circuit.getMeshes()[h].getBranches()[i].getType() === 3){
+                            startX = startPosition[0];
+                            startY = startPosition[1];
+                            endX = startPosition[0] - circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getElementSize();
+                            endY = startPosition[1];
+                            circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].setCoordinate(startX,startY,endX,endY);
+                            startPosition = [endX,endY];
+                        }
+                    //} 
+                }
+            }
+            
+        }
+    }
     /**
      * A generalt aramkor a www.falstad.com oldalhoz megfelelo txt formatumba exportalasa a teszteles megkonnyitesere.
      */
@@ -1264,20 +1431,20 @@ export class CircuitGenerator {
             if (err) {
                 return console.error(err);
             }});
-        this.fs.appendFile('proba.txt', '$ 1 0.000005 10.20027730826997 50 5 43 \n',  function(err) {
+        this.fs.appendFile('proba.txt', '$ 1 0.000005 10.20027730826997 50 5 43\n',  function(err) {
             if (err) {
                 return console.error(err);
             }});
-        /*for (let h = 0; h < circuit.getNumberOfMesh(); h++){
+        for (let h = 0; h < circuit.getNumberOfMesh(); h++){
             for (let i = 0;  i < circuit.getMeshes()[h].getBranches().length; i++){
                 for (let j = 0; j < circuit.getMeshes()[h].getBranches()[i].getBranchElements().length; j++){
-                    elementSize = branchSize/circuit.getMeshes()[h].getBranches()[i].getBranchElements().length;
+                    let coordinate: number[] = circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getCoordinate();
                     if (circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getId() === 'W'){
-                        if (h === 0){
-                            if (i === 0){
 
-                            }
-                        }
+                        this.fs.appendFile('proba.txt', 'w '+coordinate[0]+' '+coordinate[1]+' '+coordinate[2]+' '+coordinate[3]+' 0\n' ,  function(err) {
+                            if (err) {
+                                return console.error(err);
+                            }});
                     }
                     if (circuit.getMeshes()[h].getBranches()[i].getBranchElements()[j].getId() === 'R'){
                         
@@ -1287,11 +1454,11 @@ export class CircuitGenerator {
                     }
                 }
             }
-            this.fs.appendFile('proba.txt', 'I am cool!: '+h+ '\n' ,  function(err) {
+            /*this.fs.appendFile('proba.txt', 'I am cool!: '+h+ '\n' ,  function(err) {
                 if (err) {
                     return console.error(err);
-                }});
-        }*/
+                }});*/
+        }
         
     }
     
