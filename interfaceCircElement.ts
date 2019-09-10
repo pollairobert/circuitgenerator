@@ -18,4 +18,5 @@ export interface CircuitElements {
     getCoordinate(): number[];
     setElementSize(size: number): void;
     getElementSize(): number;
+    deleteCoordinateArray(): void;
 }

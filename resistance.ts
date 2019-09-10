@@ -43,7 +43,10 @@ export class Resistance implements CircuitElements {
         throw new Error("Method not implemented.");
     }
     public setCoordinate(startX: number, startY: number, endX: number, endY: number): void {
-        this.coordinate.push(startX,startY,endX,endY);
+        this.coordinate.push(Math.round(startX),Math.round(startY),Math.round(endX),Math.round(endY));
+    }
+    public deleteCoordinateArray(): void{
+        this.coordinate = [];
     }
     public setElementSize(size: number): void {
         this.elementSize = size;

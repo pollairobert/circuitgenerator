@@ -16,7 +16,7 @@ let can: CircuitAnalyzer = new CircuitAnalyzer();
 can.setQuestionOrVoltmeterResistance(10000000);
 can.setConnectedVoltagesourceValue(12);
 can.setConnectedVoltagesourceResistance(10);
-let type = 10;
+let type = 3;
 let x: number[] = [];
 //console.log(x.length);
 //x = [2,3,4,5,6,34,-3,43,-34];
@@ -27,7 +27,23 @@ console.log(y);
 console.log(c.removeElementInAnyArray(y,x));*/
 
 let circ: Circuit = c.generateCircuit(type);
-c.exportCircuitToText(circ);
+//c.exportCircuitToText(circ);
+for(let i = 0; i < circ.getMeshes().length; i++ ){
+    console.log();
+    console.log((i+1)+'. HUROK');
+    for (let j = 0; j < circ.getMeshes()[i].getBranches().length; j++){
+        console.log();
+        console.log('BranchType: '+circ.getMeshes()[i].getBranches()[j].getType());
+        for (let k = 0; k < circ.getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
+            console.log();
+            console.log('ELEMENT: ');
+            console.log(circ.getMeshes()[i].getBranches()[j].getBranchElements()[k]);
+        }
+    }
+}
+c.setCircuitElementCoordinatesArrayToFalstadExport(circ);
+c.exportToFalstadTxt(c.getCircuitCoordinates())
+//c.generateFalstadLink(circ);
 if (type <=3.1){
 can.analyzeCircuit(circ);
 
@@ -290,7 +306,7 @@ console.log(c.getCircuit().getNumbOfVoltSource());
 console.log(c.getCircuit().getNumbOfCommonBranc());*/
 }
 console.log(circ.getParameters());
-
+c.generateFalstadLink(circ);
 /*for (let i = 0; i < randomFor; i++){
     randomFor = c.randomIntNumber(10,i);
     console.log(i);
