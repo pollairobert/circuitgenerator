@@ -14,7 +14,6 @@ export class Circuit {
     private numbOfResistance: number;
     private numbOfCurrentSource: number;
     private numbOfVoltageSource: number;
-    private numbOfCommonBranch: number; // meg kerdeses, hogy kell-e
     private circuitParameters: number[];
     
     /**
@@ -37,7 +36,6 @@ export class Circuit {
         this.numbOfResistance = parameters[1];
         this.numbOfCurrentSource = parameters[2];
         this.numbOfVoltageSource = parameters[3];
-        this.numbOfCommonBranch = parameters[4];
         this.circuitParameters = parameters;
     }
     public setMeshes(mesh: Mesh): void {
@@ -70,9 +68,6 @@ export class Circuit {
     private cloneNumbOfVoltageSource(num: number): void {
         this.numbOfVoltageSource = num;
     }
-    private cloneNumbOfCommonBranch(num: number): void {
-        this.numbOfCommonBranch = num;
-    }
     public cloneCircuit(circ: Circuit): Circuit {
         //var circuitClone: Circuit = new Circuit(circ.getNumberOfMesh(),circ.getNumbOfRes(),circ.getNumbOfCurrSource(),circ.getNumbOfVoltSource(),circ.getNumbOfCommonBranc());
         var circuitClone: Circuit = new Circuit(this.circuitParameters);
@@ -85,7 +80,6 @@ export class Circuit {
         circuitClone.cloneNumbOfRes(circ.getNumbOfRes());
         circuitClone.cloneNumbOfCurrentSource(circ.getNumbOfCurrSource());
         circuitClone.cloneNumbOfVoltageSource(circ.getNumbOfVoltSource());
-        circuitClone.cloneNumbOfCommonBranch(circ.getNumbOfCommonBranc());
         return circuitClone;
     }
     public setNumberOfMesh(number: number): void {
@@ -111,9 +105,6 @@ export class Circuit {
     }
     public getNumbOfCurrSource(): number{
         return this.numbOfCurrentSource;
-    }
-    public getNumbOfCommonBranc(): number{
-        return this.numbOfCommonBranch;
     }
     public getParameters(): Object{
         return this.circuitParameters;

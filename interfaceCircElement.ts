@@ -11,6 +11,7 @@ export interface CircuitElements {
     getVoltage(): number;
     getDirection(): boolean;
     cloneElements(element: CircuitElements): CircuitElements;
+    replaceWire(): void;
     setCurrent(cur: number): void;
     setResistance(res: number): void;
     setVoltage(vol: number): void;
@@ -18,4 +19,5 @@ export interface CircuitElements {
     getCoordinate(): number[];
     setElementSize(size: number): void;
     getElementSize(): number;
+    deleteCoordinateArray(): void;
 }
