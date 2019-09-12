@@ -35,7 +35,7 @@ let circ: Circuit = c.generateCircuit(type);
     }
 }*/
 c.setCircuitElementCoordinatesArrayToFalstadExport(circ);
-c.exportToFalstadTxt(c.getCircuitCoordinatesToFalstad())
+//c.exportToFalstadTxt(c.getCircuitCoordinatesToFalstad())
 
 if (type <=6){
     can.analyzeCircuit(circ);
