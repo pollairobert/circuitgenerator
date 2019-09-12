@@ -31,6 +31,9 @@ export class Wire implements CircuitElements {
     public setCoordinate(startX: number, startY: number, endX: number, endY: number): void {
         this.coordinate.push(Math.round(startX),Math.round(startY),Math.round(endX),Math.round(endY));
     }
+    public replaceWire(): void {
+        this.id = 'W';
+    }
     public deleteCoordinateArray(): void{
         this.coordinate = [];
     }

@@ -151,6 +151,9 @@ export class Branch {
     public deleteLastBranchElement(): void {
         this.branchElements.pop();
     }
+    public deleteAllBranchElements(): void {
+        this.branchElements = [];
+    }
     public cloneBranch(branch: Branch): Branch{
         var branchClone: Branch = new Branch(branch.getType(),(branch.getMeshNumber()-1));   
         branchClone.cloneMeshNumber(branch.getMeshNumber());

@@ -51,6 +51,9 @@ export class Resistance implements CircuitElements {
     public setElementSize(size: number): void {
         this.elementSize = size;
     }
+    public replaceWire(): void {
+        this.id = 'W';
+    }
     public getElementSize(): number {
         return this.elementSize;
     }
