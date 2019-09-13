@@ -13,7 +13,7 @@ import * as math from 'mathjs';
 let c: CircuitGenerator = new CircuitGenerator();
 let can: CircuitAnalyzer = new CircuitAnalyzer();
 
-can.setQuestionOrVoltmeterResistance(10000000);
+can.setQuestionOrVoltmeterResistance(1500);
 can.setConnectedVoltagesourceValue(12);
 can.setConnectedVoltagesourceResistance(10);
 
@@ -153,12 +153,15 @@ if (type <=7){
 
 
     console.log();
-    console.log('Az aramkor Thevenin ellenalasa: '+circ.getThevRes().toFixed(6)+ ' Ohm');
-    console.log('Az aramkor Thevenin helyettesito feszultsege: '+circ.getThevVolt().toFixed(6)+ ' V');
+    //console.log('Az aramkor Thevenin ellenalasa: '+circ.getThevRes().toFixed(6)+ ' Ohm');
+    console.log('Az aramkor Thevenin ellenalasa: '+can.getResultOfTheveninResistance().toFixed(6)+ ' Ohm');
+    //console.log('Az aramkor Thevenin helyettesito feszultsege: '+circ.getThevVolt().toFixed(6)+ ' V');
+    console.log('Az aramkor Thevenin helyettesito feszultsege: '+can.getResultOfTheveninVoltage().toFixed(6)+ ' V');
 
     //console.log('A keresett ellenallas arama: '+c.getQuestionResCurrent().toFixed(4)+ ' A');
     if (can.getQuestionRes() !== undefined){
-        console.log('A mert feszultseg: '+can.getQuestionResVoltage().toFixed(6)+ ' V');
+        console.log('A mert feszultseg, vagy a keresett ellenallas feszultsege: '+can.getQuestionResVoltage().toFixed(6)+ ' V');
+        console.log('A keresett ellenallason folyo aram: '+can.getQuestionResCurrent().toFixed(8)+ ' A');
     }
     if (can.getOutputVoltageWithConnectedVoltageSource() !== undefined){
         console.log('A '+ can.getConnectedVoltagesourceValue()+ ' V-os es ' +can.getConnectedVoltagesourceResistance()+ ' Ohm belso ellenallasu feszgen csatlakoztatasa eseten:');
@@ -169,9 +172,13 @@ if (type <=7){
 if (type > 4){
     can.analyzeCircuit(circ);
 
-    console.log('Az aramkor Thevenin ellenalasa: '+circ.getThevRes().toFixed(6)+ ' Ohm');
-    console.log('Az aramkor Thevenin helyettesito feszultsege: '+circ.getThevVolt().toFixed(6)+ ' V');
+    //console.log('Az aramkor Thevenin ellenalasa: '+circ.getThevRes().toFixed(6)+ ' Ohm');
+    console.log('Az aramkor Thevenin ellenalasa: '+can.getResultOfTheveninResistance().toFixed(6)+ ' Ohm');
+    //console.log('Az aramkor Thevenin helyettesito feszultsege: '+circ.getThevVolt().toFixed(6)+ ' V');
+    console.log('Az aramkor Thevenin helyettesito feszultsege: '+can.getResultOfTheveninVoltage().toFixed(6)+ ' V');
 }
 console.log(circ.getParameters());
+console.log(c.getCircuitCoordinatesToFalstad());
+
 c.generateFalstadLink(circ);
 console.log(c.percentRandom(10));

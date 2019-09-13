@@ -129,7 +129,9 @@ export class CircuitAnalyzer {
      */
     public finalCalculateOfTheveninSubstitutes(circuit: Circuit): void {
         let tempRes: number;
+        this.resultOfTheveninResistance = this.calculateCircuitResultingResistance(circuit);
         circuit.setThevRes(this.calculateCircuitResultingResistance(circuit));
+        this.resultOfTheveninVoltage = this.resultOfTheveninResistance * this.calculateTh2PoleBranchCurrent(circuit)
         circuit.setThevVolt(circuit.getThevRes()*this.calculateTh2PoleBranchCurrent(circuit));
         
         if (this.questionOrVoltmeterResistance !== undefined){
@@ -307,6 +309,12 @@ export class CircuitAnalyzer {
     }
     public getCircuitResultingResistance(): number {
         return this.circuitResultingResistance;
+    }
+    public getResultOfTheveninResistance(): number {
+        return this.resultOfTheveninResistance;
+    }
+    public getResultOfTheveninVoltage(): number {
+        return this.resultOfTheveninVoltage;
     }
     public getQuestionResVoltage(): number {
         return this.questionOrVoltmeterResistanceVoltage;

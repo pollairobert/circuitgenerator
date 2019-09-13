@@ -25,6 +25,7 @@ export class CircuitGenerator {
     public generateCircuit(type: number): Circuit{
         let circuit: Circuit;
         circuit = this.buildFinalCircuit(new Circuit(this.circuitParameterLimits(type)),type);
+        this.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
         return circuit;
     }
     /**
@@ -89,17 +90,17 @@ export class CircuitGenerator {
                 break;
             }
             case 4: {
-                parameters = [this.randomIntNumber(7,7),
+                parameters = [this.randomIntNumber(2,2),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
-                              this.randomIntNumber(5,3)];
+                              this.randomIntNumber(2,1)];
                 break;
             }
             case 5: {
-                parameters = [this.randomIntNumber(7,7),
+                parameters = [this.randomIntNumber(3,3),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
-                              this.randomIntNumber(5,3)];
+                              this.randomIntNumber(3,1)];
                 break;
             }
             case 6: {
@@ -1070,7 +1071,7 @@ export class CircuitGenerator {
                                     percent = 0;
                                 }
                                 if (percent != 0){
-                                    percent += 30;
+                                    percent += 40;
                                 }
                             } else if (commBrArray[0][0] !== branches[i].getType() && (type === 5 ? true : h < circuit.getNumberOfMesh()-1)){
                                 
@@ -1543,7 +1544,7 @@ export class CircuitGenerator {
             }
         }
     }
-    public generateFalstadLink(circuit: Circuit):void{
+    public generateFalstadLink(circuit: Circuit):string{
         let meshes: Mesh[] = circuit.getMeshes();
         let link: string = 'https://www.falstad.com/circuit/circuitjs.html?cct=$+1+0.000005+10.20027730826997+50+5+43';
         for (let h = 0; h < circuit.getNumberOfMesh(); h++){
@@ -1582,6 +1583,7 @@ export class CircuitGenerator {
         }
         link +='%0A';
         console.log(link);
+        return link;
     }
     
     /**
