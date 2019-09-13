@@ -9,11 +9,6 @@ import { Mesh, meshCounter } from "./mesh";
 import { Circuit } from "./circuit";
 import * as math from 'mathjs';
 
-/**
- * A dokumencacioban szereplo strukturaju egyenaramu halozatot reprezentalo aramkor analiziset vegzi el,
- * a Thevenin helyettesito kep figyelembe vetelevel. 
- * Egyelore csak passziv halozat analizisere alkalmas, azon belul is csak ellenallast es csak feszgent tartalmazora.
- */
 export class CircuitAnalyzer {
     private circuit: Circuit;
     private circuitCurrentVector: math.MathType;
@@ -23,12 +18,14 @@ export class CircuitAnalyzer {
     private questionOrVoltmeterResistance: number ;
     private questionOrVoltmeterResistanceCurrent: number;
     private questionOrVoltmeterResistanceVoltage: number;
+    private resultOfTheveninResistance: number;
+    private resultOfTheveninVoltage: number;
 
     private connectedVoltagesourceValue: number;
     private connectedVoltagesourceInsideResistance: number;
     private outpuVoltageWithconnectedVoltagesource: number;
     
-    /**
+     /**
      * Kivulrol ezt a metodust kell hivni az aramkor analizalasahoz, ez a belepesi pontja az osztalynak.
      * @param circuit aramkor obj.
      */
@@ -72,11 +69,10 @@ export class CircuitAnalyzer {
                 if (i === j){
                     resistanceMatrix.subset(math.index(i, j),circuit.getMeshes()[i].getMeshResistance());
                 } else {
-                    let branches: Branch[] = circuit.getMeshes()[j].getBranches();
-                    for (let k = 0; k < branches.length; k++){
-                        if (branches[k].getCommon() > circuit.getMeshes()[j].getMeshNumber()){
-                            if ((branches[k].getCommon()-circuit.getMeshes()[j].getMeshNumber()) === circuit.getMeshes()[i].getMeshNumber()){
-                                resistanceMatrix.subset(math.index(i, j),(branches[k].getBranchResistance()*-1));
+                    for (let k = 0; k < circuit.getMeshes()[j].getBranches().length; k++){
+                        if (circuit.getMeshes()[j].getBranches()[k].getCommon() > circuit.getMeshes()[j].getMeshNumber()){
+                            if ((circuit.getMeshes()[j].getBranches()[k].getCommon()-circuit.getMeshes()[j].getMeshNumber()) === circuit.getMeshes()[i].getMeshNumber()){
+                                resistanceMatrix.subset(math.index(i, j),(circuit.getMeshes()[j].getBranches()[k].getBranchResistance()*-1));
                             }
                         }
                     }   
@@ -98,28 +94,25 @@ export class CircuitAnalyzer {
         let th2PoleBranchType: number;
         let th2PoleNumberOfBranch: number;
         let commonAndTh2Pole: number;
-        let cloneCircuit: Circuit = circuit.cloneCircuit(circuit);
+         let cloneCircuit: Circuit = circuit.cloneCircuit(circuit);
         
         for (let i = 0; i < cloneCircuit.getNumberOfMesh(); i++){
-            let clMeshes: Mesh[] = cloneCircuit.getMeshes();
-            let branches: Branch[] = clMeshes[i].getBranches();
-            if (clMeshes[i].getMeshVoltage() !== 0){
-                clMeshes[i].clearMeshVoltage();
+            if (cloneCircuit.getMeshes()[i].getMeshVoltage() !== 0){
+                cloneCircuit.getMeshes()[i].clearMeshVoltage();
             }
-            for (let j = 0; j < branches.length; j++){
-                if (branches[j].getTh2Pole()){
-                    let elements: CircuitElements[] = branches[j].getBranchElements();
-                    if (branches[j].getCommon() !== clMeshes[i].getMeshNumber()){
-                        commonAndTh2Pole = branches[j].getCommon();
+            for (let j = 0; j < cloneCircuit.getMeshes()[i].getBranches().length; j++){
+                if (cloneCircuit.getMeshes()[i].getBranches()[j].getTh2Pole()){
+                    if (cloneCircuit.getMeshes()[i].getBranches()[j].getCommon() !== cloneCircuit.getMeshes()[i].getMeshNumber()){
+                        commonAndTh2Pole = cloneCircuit.getMeshes()[i].getBranches()[j].getCommon();
                     }
-                    for (let k = 0; k < elements.length; k++){
-                        if (elements[k].getId() === 'R'){
-                            this.questionOrVoltmeterResistance = elements[k].getResistance();
+                    for (let k = 0; k < cloneCircuit.getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
+                        if (cloneCircuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'R'){
+                            this.questionOrVoltmeterResistance = cloneCircuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getResistance();
                             
                         }
                     }
                     
-                    th2PoleBranchType = branches[j].getType();
+                    th2PoleBranchType = cloneCircuit.getMeshes()[i].getBranches()[j].getType();
                     th2PoleNumberOfBranch = j;
                     th2PoleMeshNumber = i+1;
                 }
@@ -149,7 +142,7 @@ export class CircuitAnalyzer {
     /**
      * Ellenallas szamolasahoz metodus Ohm torvenye alapjan. 
      * @param voltage feszultseg ertek
-     * @param current aram ertek
+     * @param current aram ertek 
      */
     public calculateResultingResistance(voltage: number, current: number):number{
         return voltage/current;
@@ -169,10 +162,9 @@ export class CircuitAnalyzer {
         let th2PoleCurrent: number;
         let currentVector: math.MathType;
         if (commonAndTh2Pole === undefined && th2PoleBranchType !== undefined && th2PoleNumberOfBranch !== undefined && th2PoleMeshNumber !== undefined){
-            let branches: Branch[] = circuit.getMeshes()[th2PoleMeshNumber-1].getBranches();
-            branches.splice(th2PoleNumberOfBranch,1,new Branch(th2PoleBranchType,th2PoleMeshNumber-1));
-            branches[th2PoleNumberOfBranch].setBranchElements(new VoltageSource(10,false));
-            branches[th2PoleNumberOfBranch].setTh2Pole(true);
+            circuit.getMeshes()[th2PoleMeshNumber-1].getBranches().splice(th2PoleNumberOfBranch,1,new Branch(th2PoleBranchType,th2PoleMeshNumber-1));
+            circuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setBranchElements(new VoltageSource(10,false));
+            circuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setTh2Pole(true);
             let mesh : Mesh =  circuit.getMeshes()[th2PoleMeshNumber-1];
             mesh.setMeshVoltage(mesh.getBranches()[th2PoleNumberOfBranch]);
             currentVector = this.calculateCurrentVector(circuit);
@@ -181,17 +173,17 @@ export class CircuitAnalyzer {
 
             currentVector = this.calculateCurrentVector(circuit);
         }else {
-            let branches: Branch[] = circuit.getMeshes()[th2PoleMeshNumber-1].getBranches();
-            branches.splice(th2PoleNumberOfBranch,1,new Branch(th2PoleBranchType,th2PoleMeshNumber-1));
-            branches[th2PoleNumberOfBranch].setCommon((commonAndTh2Pole - th2PoleMeshNumber));
-            branches[th2PoleNumberOfBranch].setBranchElements(new VoltageSource(10,false));
-            branches[th2PoleNumberOfBranch].setTh2Pole(true);
+            
+            circuit.getMeshes()[th2PoleMeshNumber-1].getBranches().splice(th2PoleNumberOfBranch,1,new Branch(th2PoleBranchType,th2PoleMeshNumber-1));
+            circuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setCommon((commonAndTh2Pole - th2PoleMeshNumber));
+            circuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setBranchElements(new VoltageSource(10,false));
+            circuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].setTh2Pole(true);
             let mesh : Mesh =  circuit.getMeshes()[th2PoleMeshNumber-1];
             mesh.setMeshVoltage(mesh.getBranches()[th2PoleNumberOfBranch]);
             for (let i = 0; i < circuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1].getBranches().length; i++){
-                let currentMesh : Mesh =  circuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1];
-                if (currentMesh.getBranches()[i].getCommon() === commonAndTh2Pole) {
-                    currentMesh.getBranches()[i].setBranchElements(this.copyCommonElement(circuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].getBranchElements()[0]));
+                if (circuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1].getBranches()[i].getCommon() === commonAndTh2Pole) {
+                    circuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1].getBranches()[i].setBranchElements(this.copyCommonElement(circuit.getMeshes()[th2PoleMeshNumber-1].getBranches()[th2PoleNumberOfBranch].getBranchElements()[0]));
+                    let mesh : Mesh =  circuit.getMeshes()[(commonAndTh2Pole - th2PoleMeshNumber)-1];
                     mesh.setMeshVoltage(mesh.getBranches()[i]);
                 }
             }
@@ -199,17 +191,15 @@ export class CircuitAnalyzer {
         }
         
         for (let i = 0; i < circuit.getNumberOfMesh(); i++){
-            let branches: Branch[] = circuit.getMeshes()[i].getBranches();
-            for (let j = 0; j < branches.length; j++){
-                let elements: CircuitElements[] = branches[j].getBranchElements();
-                branches[j].setCurrent(currentVector);
-                if (branches[j].getTh2Pole()){
-                    th2PoleCurrent = branches[j].getCurrent();
+            for (let j = 0; j < circuit.getMeshes()[i].getBranches().length; j++){
+                circuit.getMeshes()[i].getBranches()[j].setCurrent(currentVector);
+                if (circuit.getMeshes()[i].getBranches()[j].getTh2Pole()){
+                    th2PoleCurrent = circuit.getMeshes()[i].getBranches()[j].getCurrent();
                 }
-                for (let k = 0; k < elements.length; k++){
-                    if (elements[k].getId() === 'R'){
-                        elements[k].setCurrent(branches[j].getCurrent());
-                        elements[k].setVoltage(0);
+                for (let k = 0; k < circuit.getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
+                    if (circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'R'){
+                        circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].setCurrent(circuit.getMeshes()[i].getBranches()[j].getCurrent());
+                        circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].setVoltage(0);
                     }
                 }
             }
@@ -220,9 +210,9 @@ export class CircuitAnalyzer {
     /**
      * A meromuszeres es a keresett ellenallasos feladattipushoz szukseges metodus, mely a mar megkapott thevenin helyettesites ertekeivel
      * egy szimpla egyszeru feszoszto keplettel kiszamolja a keresett ertekeket.
-     * @param thRes 
-     * @param thVoltage 
-     * @param questRes 
+     * @param thRes Thevenin helyettesito ellenallas
+     * @param thVoltage Thevenin helyettesito feszultseg
+     * @param questRes Keresett ellenallas, vagy a meromuszer belso ellenallasa.
      */
     public calculateQuestionResistancCurrentAndVoltage(thRes: number, thVoltage: number, questRes: number): void {
         this.questionOrVoltmeterResistanceVoltage = thVoltage * (questRes/(questRes+thRes));
@@ -231,33 +221,31 @@ export class CircuitAnalyzer {
 
     /**
      * A generalt halozathoz csatlakoztatott masik feszgen (ismert V es belso R) hatasa utan kialakult kapocsfeszultseget szamolja ki 
-     * @param theveninvoltage 
-     * @param theveninresistance 
-     * @param connvoltage 
-     * @param connresistance 
+     * @param theveninvoltage Thevenin helyettesito feszultseg
+     * @param theveninresistance Thevenin helyettesito ellenallas
+     * @param connvoltage Csatlakoztatott feszgen feszultsege
+     * @param connresistance Csatlakoztatott feszgen belso ellenallasa
      */
     public calculateConectedVoltagsourceAndInsideResistance(theveninvoltage: number, theveninresistance: number, connvoltage: number, connresistance: number): number {
         let connectedCircuit: Circuit = new Circuit([2,0,0,0,0]/*this.circuitParameterLimits(1)*/);
-        let meshes: Mesh[] = connectedCircuit.getMeshes();
         for (let h = 0; h < connectedCircuit.getNumberOfMesh(); h++) {
             connectedCircuit.setMeshes(new Mesh());
-
             for (let i = 0; i < 4; i++){
-                meshes[h].setBranches(new Branch(i,h));
+                connectedCircuit.getMeshes()[h].setBranches(new Branch(i,h));
             }
         }
-        meshes[0].getBranches()[0].setBranchElements(new VoltageSource(math.abs(theveninvoltage),(theveninvoltage < 0 ? true : false)));
-        meshes[0].getBranches()[1].setBranchElements(new Resistance(theveninresistance));
-        meshes[1].getBranches()[2].setBranchElements(new VoltageSource(connvoltage,true));
-        meshes[1].getBranches()[1].setBranchElements(new Resistance(connresistance));
-        meshes[0].getBranches()[2].setCommon(2);
-        meshes[1].getBranches()[0].setCommon(1);
-        meshes[0].getBranches()[2].setTh2Pole(true);
+        connectedCircuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(math.abs(theveninvoltage),(theveninvoltage < 0 ? true : false)));
+        connectedCircuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(theveninresistance));
+        connectedCircuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(connvoltage,true));
+        connectedCircuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(connresistance));
+        connectedCircuit.getMeshes()[0].getBranches()[2].setCommon(2);
+        connectedCircuit.getMeshes()[1].getBranches()[0].setCommon(1);
+        connectedCircuit.getMeshes()[0].getBranches()[2].setTh2Pole(true);
 
 
-        for (let i = 0; i < meshes.length; i++){
-            for(let j = 0; j < meshes[i].getBranches().length; j++){
-                let mesh : Mesh =  meshes[i];
+        for (let i = 0; i < connectedCircuit.getMeshes().length; i++){
+            for(let j = 0; j < connectedCircuit.getMeshes()[i].getBranches().length; j++){
+                let mesh : Mesh =  connectedCircuit.getMeshes()[i];
                 mesh.setMeshVoltage(mesh.getBranches()[j]);
                 mesh.setMeshResistance(mesh.getBranches()[j]);
             }

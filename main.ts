@@ -17,7 +17,7 @@ can.setQuestionOrVoltmeterResistance(10000000);
 can.setConnectedVoltagesourceValue(12);
 can.setConnectedVoltagesourceResistance(10);
 
-let type = 4;
+let type = 5;
 
 let circ: Circuit = c.generateCircuit(type);
 
@@ -37,7 +37,7 @@ let circ: Circuit = c.generateCircuit(type);
 c.setCircuitElementCoordinatesArrayToFalstadExport(circ);
 //c.exportToFalstadTxt(c.getCircuitCoordinatesToFalstad())
 
-if (type <=6){
+if (type <=7){
     can.analyzeCircuit(circ);
 
     for (let i = 0; i < circ.getMeshes().length; i++){
@@ -165,6 +165,12 @@ if (type <=6){
         console.log('   A halozat kapocsfeszultseges a keresett pontok kozott: ' +can.getOutputVoltageWithConnectedVoltageSource());
     }
 
+}
+if (type > 4){
+    can.analyzeCircuit(circ);
+
+    console.log('Az aramkor Thevenin ellenalasa: '+circ.getThevRes().toFixed(6)+ ' Ohm');
+    console.log('Az aramkor Thevenin helyettesito feszultsege: '+circ.getThevVolt().toFixed(6)+ ' V');
 }
 console.log(circ.getParameters());
 c.generateFalstadLink(circ);
