@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+      <title>Thevenin online generator</title>
+      <meta charset="utf-8">
+      <!--<script src="jquery-3.4.1.min.js"></script>-->
+      <script
+			  src="https://code.jquery.com/jquery-3.4.1.js"
+			  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+			  crossorigin="anonymous"></script>
+      <script src="scripts/circuitjQuery.js" ></script>
+      
+	</head>
+	
+	<body>
+        <h1>Circuit Generator to the Thevenin Theorem</h1>
+        
+        
+          Task type (difficulty):
+          <select name="typeselect" size=”1”>
+            <option value="1" selected>1</option>
+            <option value="1.1">2</option>
+            <option value="2">3</option>
+            <option value="2.1" >4</option>
+            <option value="3" >5</option>
+            <option value="3.1" >6</option>
+            <option value="4" >7</option>
+            <option value="5" >8</option>
+         </select>
+         <button id="generate">Generate task</button>
+         
+        <br>
+        <input id="inputtest" type = "text">
+        <button id="test2">click</button>
+        <hr/>
+        <div id="result"></div>
+        <div id="userresult">
+            Thevenin resistance: <input type = "text" id = "thres"> <br>
+            Thevenin voltage: <input type = "text" id = "thvolt"><br>
+            <input type = "button" id="test" value = "Check">
+        </div>
+        
+        
+     </body>
+</html>
