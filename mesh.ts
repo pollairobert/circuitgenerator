@@ -6,6 +6,10 @@ import { VoltageSource } from "./voltagesource";
 import { Branch, branchCounter } from "./branch";
 
 export var meshCounter: number = 1;
+export function resetMeshCounter(){
+    meshCounter = 1;
+}
+
 export class Mesh {
     private meshNumber: number;
     private branches: Branch[] = [];

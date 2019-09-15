@@ -4,7 +4,7 @@ $(document).ready(function () {
   $("#userresult").hide();
   //ar select = $("option").val();
   //var generate = 'http://localhost:3000/generate?type='+select;
-  $("#generate").click( function (){
+  $("#generate1").click( function (){
       $("#result").html('');
       var select = $("select").val();
       var generate = 'http://localhost:3000/generate?type='+select;
@@ -17,6 +17,7 @@ $(document).ready(function () {
       xmlHttp.send('');
       //console.log(type);
       console.log(generate);
+      //console.log(xmlHttp.responseText);
       console.log(JSON.parse(xmlHttp.responseText));
       var obj = JSON.parse(xmlHttp.responseText);
       for (let i = 0; i < obj[1].length; i++){
@@ -24,16 +25,48 @@ $(document).ready(function () {
       }
       $("#result").append('<hr/>');
       $("#userresult").show();
-      return xmlHttp.responseText;
+      //return xmlHttp.responseText;
   });
-  $("#test").click (()=> {
-    var url = "http://localhost:3000/test";
+  $("#generate").click(function(){
+    $("#result").html('');
+    var select = $("select").val();
+    var generate = 'http://localhost:3000/generate?type='+select;
+    $.get(generate, function(data, status){
+      console.log(JSON.parse(data));
+      var responsedata = JSON.parse(data);
+      for (let i = 0; i < responsedata[1].length; i++){
+        $("#result").append(responsedata[1][i]+'<br>');
+      }
+      $("#result").append('<hr/>');
+      $("#userresult").show();
+    });
+    $("select").val("1");
+  });
+  $("#check").click (()=> {
+    var url = "http://localhost:3000/check";
     var result = { thres: $("#thres").val(), thvolt: $("#thvolt").val()};
     console.log(result);
     $.post(url,result, (data) => {
-      
-        alert('test ok');
-      
+        var responsedata = JSON.parse(data)
+        if (responsedata.res && responsedata.volt){
+          $("#result").html('');
+          $("#userresult").hide();
+          alert('Correct solution!');
+        } 
+        if (!responsedata.res && responsedata.volt){
+          alert('Inorrect resistance value!');
+          $("#thres").val("");
+        }
+        if (responsedata.res && !responsedata.volt){
+          alert('Inorrect voltage value!');
+          $("#thvolt").val("");
+        }
+        if (!responsedata.res && !responsedata.volt){
+          alert('Inorrect solution!');
+          $("#thres").val("");
+          $("#thvolt").val("");
+        }
+        
     });
       /*var test = $("#inputtest").val();
       var url = 'http://localhost:3000/test';

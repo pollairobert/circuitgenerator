@@ -4,7 +4,7 @@ import { Resistance } from "./resistance";
 import { CurrentSource } from "./currentsource";
 import { VoltageSource } from "./voltagesource";
 import { Branch, branchCounter } from "./branch";
-import { Mesh, meshCounter } from "./mesh";
+import { Mesh } from "./mesh";
 import { Circuit } from "./circuit";
 import * as math from 'mathjs';
 import * as fs from 'fs';
@@ -17,12 +17,15 @@ export class CircuitGenerator {
     private fs = require('fs');
     private circuitCoordinatesToFalstad: string[] = []; 
     
-    
+    constructor(){
+        console.log('letrehoztak az generatort');
+    }
     /**
      * Aramkor generalasaert felelos. Ezzel a metodussal kezdodik a teljes halozat generalasaert felelos tobbi metodus meghivasa
      * @param type aramkor tipusa adott struktura alapjan 
      */
     public generateCircuit(type: number): Circuit{
+        //console.log('meghivtak a generalosfugvt');
         let circuit: Circuit;
         circuit = this.buildFinalCircuit(new Circuit(this.circuitParameterLimits(type)),type);
         this.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
@@ -90,14 +93,14 @@ export class CircuitGenerator {
                 break;
             }
             case 4: {
-                parameters = [this.randomIntNumber(15,15),
+                parameters = [this.randomIntNumber(4,4),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(5,3)];
                 break;
             }
             case 5: {
-                parameters = [this.randomIntNumber(10,10),
+                parameters = [this.randomIntNumber(4,4),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(8,6)];
@@ -117,7 +120,7 @@ export class CircuitGenerator {
                               this.randomIntNumber(2,2)];
                 break;
             }
-            case 6: {
+            case 9: {
                 break;
             }
         }
@@ -1144,20 +1147,20 @@ export class CircuitGenerator {
                         }
                     }
                 }
-                console.log('temparray:');
-                console.log(tempArray);
+                //console.log('temparray:');
+                //console.log(tempArray);
                 randomChoise = this.randomChoiseInAnyArray(tempArray);
-                console.log('randomChoise:');
-                console.log(randomChoise);
+                //console.log('randomChoise:');
+                //console.log(randomChoise);
                 //for (let h = 0; h < circuit.getNumberOfMesh(); h++) {
                     //let elementH = meshes[h];
                     for (let i = 0; i < meshes[randomChoise[3]-1].getBranches().length; i++){
                         let branch = meshes[randomChoise[3]-1].getBranches()[i];
-                        console.log(branch.getCommon());
-                        console.log(branch.getType());
+                        //console.log(branch.getCommon());
+                        //console.log(branch.getType());
                         if (branch.getType() === randomChoise[0]){
                             branch.setTh2Pole(true);
-                            console.log(branch);
+                            //console.log(branch);
                         }
                     }
                 //}
@@ -1363,7 +1366,7 @@ export class CircuitGenerator {
                                 }
                             }
                             startPosition[1] = maxY;
-                            console.log('startPosition: '+startPosition);
+                            //console.log('startPosition: '+startPosition);
                         }
                         if (commBrArray[0][0] === 1){
                             let maxY: number = -Infinity;
@@ -1388,7 +1391,7 @@ export class CircuitGenerator {
                             }
                             startPosition[0] = minX;
                             startPosition[1] += meshes[h].getMeshBranchesSize()[0];
-                            console.log('startPosition: '+startPosition);
+                            //console.log('startPosition: '+startPosition);
                         }
                         if (commBrArray[0][0] === 2){
                             let maxY: number = -Infinity;
@@ -1413,7 +1416,7 @@ export class CircuitGenerator {
                             }
                             startPosition[1] = maxY;
                             startPosition[0] -= meshes[h].getMeshBranchesSize()[3];
-                            console.log('startPosition: '+startPosition);
+                            //console.log('startPosition: '+startPosition);
                         }
                         if (commBrArray[0][0] === 3){
                             let maxY: number = -Infinity;
@@ -1437,7 +1440,7 @@ export class CircuitGenerator {
                                 }
                             }
                             startPosition[0] = minX;
-                            console.log('startPosition: '+startPosition);
+                            //console.log('startPosition: '+startPosition);
                         }
                     }
                 }

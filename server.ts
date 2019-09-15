@@ -1,19 +1,21 @@
 ﻿import { CircuitGenerator } from './circuitgenerator';
 import { Circuit } from './circuit';
 import { CircuitAnalyzer } from './circuitanalyzer';
+import { Main } from './main';
+import * as math from 'mathjs';
 
 const path = require('path');
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser')
-const generator: CircuitGenerator = new CircuitGenerator();
+//const generator: CircuitGenerator = new CircuitGenerator();
 //const analyzer: CircuitAnalyzer = new CircuitAnalyzer();
 
 
-let circuitCoordinateArray: string[];
-let link: string;
-let results = {};
-let type: number;
+//let circuitCoordinateArray: string[];
+//let link: string;
+let results;
+//let type: number;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(express.static('scripts'));
@@ -24,25 +26,40 @@ app.get('/scripts/circuitjQuery.js', (req,res)=> {
     res.sendFile(path.join(__dirname + '/scripts/circuitjQuery.js'));
 });
 app.get('/generate', function (req, res) {
-    let analyzer = new CircuitAnalyzer();
-    let circuit: Circuit;
+    //let generator: CircuitGenerator = new CircuitGenerator();
+    //let analyzer = new CircuitAnalyzer();
+    //let circuit: Circuit;
+    let circuitCoordinateArray: string[];
+    let link: string;
+    let main = new Main();
+    console.log(main);
+    let type: number;
     type = req.query.type;
     console.log(type);
-    circuit = generator.generateCircuit(+type);
-    circuitCoordinateArray = [];
-    link = generator.generateFalstadLink(circuit);
-    circuitCoordinateArray = generator.getCircuitCoordinatesToFalstad();
+    main.start(+type);
+    //circuit = generator.generateCircuit(+type);
+    //circuitCoordinateArray = [];
+    link = main.getFalstadLink();
+    circuitCoordinateArray = main.getCircuitCoordinateArray();
+    results = main.getResults();
     var response = {
         1: circuitCoordinateArray,
         2: link,
         3: Math.random()
     };
-    analyzer.analyzeCircuit(circuit);
-    
+    //analyzer.analyzeCircuit(circuit);
+    //let results = {
+    //    thres: analyzer.getResultOfTheveninResistance(),
+     //   thvolt: analyzer.getResultOfTheveninVoltage()
+    //}
     //let response = coord;
-    console.log(response);
+    console.log(results);
+    //console.log(response);
     //console.log(typeof(type));
+    //main = undefined;
+    console.log(main);
     res.send(JSON.stringify(response));
+    
 });
 
 app.get('/result',function(req,res) {
@@ -61,23 +78,33 @@ app.get('/result',function(req,res) {
     res.end(JSON.stringify(response));*/
 });
 
-app.post('/test', (req, res) => {
-    let analyzer = new CircuitAnalyzer();
-    //analyzer.analyzeCircuit(circuit);
-    let results = {
-        thres: analyzer.getResultOfTheveninResistance(),
-        thvolt: analyzer.getResultOfTheveninVoltage()
-    }
-    var posttest1 = req.body.thres;
-    var posttest2 = req.body.thvolt;
-
-    console.log(posttest1+ ' '+posttest2);
-    console.log(results);
-    let response = results;
-    res.end(JSON.stringify(response));
+app.post('/check', (req, res) => {
+    
+    var userThres: boolean = compareResults(+req.body.thres, +results.thres);
+    var userThvolt: boolean = compareResults(+req.body.thvolt, +results.thvolt);;
+    //console.log(posttest1+ ' '+posttest2);
+    
+    let response = {
+        res: userThres,
+        volt: userThvolt
+    };
+    console.log(response);
+    res.send(JSON.stringify(response));
+    //res.send(true);
     //circuit = undefined;
-    analyzer = undefined;
+    //analyzer = undefined;
 });
+
+function compareResults(userCalc: number, circuitResult: number){
+    let resultTolerance: number[] = [+circuitResult.toFixed(3) - 0.005,+circuitResult.toFixed(3) + 0.005];
+    console.log(resultTolerance);
+    //userCalc.toFixed(3);
+    if (+userCalc.toFixed(3) >= resultTolerance[0] && +userCalc.toFixed(3) <= resultTolerance[1]){
+        return true;
+    } else {
+        return false;
+    }
+}
 
 var server=app.listen(3000,function() {
     console.log('Listening....')
