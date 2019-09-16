@@ -25,13 +25,13 @@ app.get('/generate', function (req, res) {
     let circuitCoordinateArray: string[];
     let link: string;
     let main = new Main();
-    //console.log(req.query.id);
+    console.log('req.query.id: '+req.query.id);
     let type: number;
     let checkID: number;
     type = req.query.type;
     //checkID = req.query.id;
     
-    if (req.query.id === ""){
+    if (req.query.id === undefined){
         console.log(req.query.id);
         //deleteData(req.query.id);
         main.start(+type);
@@ -47,6 +47,7 @@ app.get('/generate', function (req, res) {
         addDatatoJSONfile(main.getResults(),id);
         res.send(JSON.stringify(response));
     } else {
+        deleteDatatoJSONfile(req.query.id);
         console.log(req.query.id);
         main.start(+type);
         link = main.getFalstadLink();
@@ -58,7 +59,7 @@ app.get('/generate', function (req, res) {
             link: link,
             id: id
         };
-        deleteDatatoJSONfile(req.query.id);
+        
         addDatatoJSONfile(main.getResults(),id);
         res.send(JSON.stringify(response));
         console.log('nem megoldott feladat, ujrageneralas tortent');
@@ -104,7 +105,7 @@ function compareResults(userCalc: number, circuitResult: number){
 function addDatatoJSONfile(pushData,id){
     console.log()
     if (!fs.existsSync('generateLOG.json')){
-        fs.writeFile('generateLOG.json','{}', (err) => {
+        fs.writeFileSync('generateLOG.json','{}', (err) => {
             if (err) {
                 return console.error(err);
             }
@@ -120,7 +121,7 @@ function addDatatoJSONfile(pushData,id){
     let pushlogData = JSON.stringify(resultLOG, null, 2);
     
 
-    fs.writeFile('generateLOG.json',pushlogData, (err) => {
+    fs.writeFileSync('generateLOG.json',pushlogData, (err) => {
         if (err) {
             return console.error(err);
         }
@@ -129,14 +130,10 @@ function addDatatoJSONfile(pushData,id){
 }
 function deleteDatatoJSONfile(id: string){
     let generateLOG = fs.readFileSync('generateLOG.json');
-    if (generateLOG[0] === undefined){
-        console.log('Ures file volt');
-        generateLOG = '{}';
-    }
     let resultLOG = JSON.parse(generateLOG);
     delete resultLOG[id];
     let refreshlogData = JSON.stringify(resultLOG, null, 2);
-    fs.writeFile('generateLOG.json',refreshlogData, (err) => {
+    fs.writeFileSync('generateLOG.json',refreshlogData, (err) => {
         if (err) {
             return console.error(err);
         }
@@ -152,7 +149,7 @@ function deleteData(id: string){
     let resultLOG = JSON.parse(generateLOG);
     delete resultLOG[id];
     let refreshlogData = JSON.stringify(resultLOG, null, 2);
-    fs.writeFile('generateLOG.json',refreshlogData, (err) => {
+    fs.writeFileSync('generateLOG.json',refreshlogData, (err) => {
         if (err) {
             return console.error(err);
         }

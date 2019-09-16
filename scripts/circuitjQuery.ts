@@ -5,12 +5,41 @@ const host = "http://localhost:3000";
 $(document).ready(function () {
   $("#userresult").hide();
   $("#generate").click(function(){
-    if (!$("#userresult").is(":hidden")){
+    let select = $("select").val();
+    let checkID = $("#randomID").val()
+    let generate = host+'/generate?type='+select;
+    if ($("#userresult").is(":hidden")){
+      $("#result").html('');
+      $.get(generate, function(data, status){
+        console.log(JSON.parse(data));
+        let responsedata = JSON.parse(data);
+        let falstadlink = '<a href="'+responsedata.link+'" target="_blank">Falstad link</a>';
+        $("#result").html(falstadlink);
+        $("#result").append('<hr/>');
+        $("#randomID").val(responsedata.id);
+        $("#userresult").show();
+      });
+      $("select").val("1");
       //console.log('elso generalas');
+      
+    } else {
       let confirmation = confirm('Are you sure?');
       if (confirmation){
-        let checkID = $("#randomID").val()
-        console.log('Uj generalas, elsobni valo id: '+checkID);
+        //let checkID = $("#randomID").val()
+        console.log('Uj generalas, eldobni valo id: '+checkID);
+        $("#result").html('');
+        $.get(generate+'&id='+checkID, function(data, status, err){
+          console.log(status);
+          console.log(err);
+          console.log(JSON.parse(data));
+          let responsedata = JSON.parse(data);
+          let falstadlink = '<a href="'+responsedata.link+'" target="_blank">Falstad link</a>';
+          $("#result").html(falstadlink);
+          $("#result").append('<hr/>');
+          $("#randomID").val(responsedata.id);
+          $("#userresult").show();
+        });
+        $("select").val("1");
       }else {
         console.log('Marad');
       }
@@ -36,23 +65,8 @@ $(document).ready(function () {
         $("select").val("1");
       }
     } else {*/
-      if ($('#result').is(':empty')){
-        console.log(typeof($("#result").val()));
-      }
-      $("#result").html('');
-      let select = $("select").val();
-      let checkID = $("#randomID").val()
-      let generate = host+'/generate?type='+select+'&id='+checkID;
-      $.get(generate, function(data, status){
-        console.log(JSON.parse(data));
-        let responsedata = JSON.parse(data);
-        let falstadlink = '<a href="'+responsedata.link+'" target="_blank">Falstad link</a>';
-        $("#result").html(falstadlink);
-        $("#result").append('<hr/>');
-        $("#randomID").val(responsedata.id);
-        $("#userresult").show();
-      });
-      $("select").val("1");
+      
+     
     //}
     
   });
