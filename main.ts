@@ -40,16 +40,17 @@ export class Main {
             }
         }*/
         cg.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
-        //c.exportToFalstadTxt(cg.getCircuitCoordinatesToFalstad())
+        //cg.exportToFalstadTxt(cg.getCircuitCoordinatesToFalstad())
         this.circuitCoordinateArray = cg.getCircuitCoordinatesToFalstad();
         this.falstadLink = cg.generateFalstadLink(circuit);
         can.analyzeCircuit(circuit);
         this.results = {
-            thres: can.getResultOfTheveninResistance(),
-            thvolt: can.getResultOfTheveninVoltage()
+            "thres": Number(can.getResultOfTheveninResistance()),
+            "thvolt": Number(can.getResultOfTheveninVoltage()),
+            "timestamp": new Date()
         }
         
-        console.log(this.results);
+        //console.log(this.results);
         if (type <=0){
             
 
@@ -182,7 +183,7 @@ export class Main {
             }
 
         }
-        if (type >= 0){
+        if (type <= 0){
             //can.analyzeCircuit(circuit);
 
             //console.log('Az aramkor Thevenin ellenalasa: '+circuit.getThevRes().toFixed(6)+ ' Ohm');
@@ -190,7 +191,7 @@ export class Main {
             //console.log('Az aramkor Thevenin helyettesito feszultsege: '+circuit.getThevVolt().toFixed(6)+ ' V');
             console.log('Az aramkor Thevenin helyettesito feszultsege: '+can.getResultOfTheveninVoltage().toFixed(6)+ ' V');
         }
-        console.log(circuit.getParameters());
+        //console.log(circuit.getParameters());
         //console.log(cg.getCircuitCoordinatesToFalstad());
         
         resetMeshCounter();

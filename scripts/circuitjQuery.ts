@@ -1,57 +1,75 @@
 ﻿//import * as $ from 'jquery';
-
+//const host = "http://www.stud.u-szeged.hu/Pollai.Robert"
+const host = "http://localhost:3000";
+//const host = "http://192.168.1.12:3000";
 $(document).ready(function () {
   $("#userresult").hide();
-  //ar select = $("option").val();
-  //var generate = 'http://localhost:3000/generate?type='+select;
-  $("#generate1").click( function (){
-      $("#result").html('');
-      var select = $("select").val();
-      var generate = 'http://localhost:3000/generate?type='+select;
-      var xmlHttp = new XMLHttpRequest();
-      xmlHttp.open( "GET", generate, false ); 
-      //var type = {'tasktype': select};
-      
-      //xmlHttp.setRequestHeader("Content-Type", "application/json");
-      //type = JSON.stringify(type);
-      xmlHttp.send('');
-      //console.log(type);
-      console.log(generate);
-      //console.log(xmlHttp.responseText);
-      console.log(JSON.parse(xmlHttp.responseText));
-      var obj = JSON.parse(xmlHttp.responseText);
-      for (let i = 0; i < obj[1].length; i++){
-        $("#result").append(obj[1][i]+'<br>');
-      }
-      $("#result").append('<hr/>');
-      $("#userresult").show();
-      //return xmlHttp.responseText;
-  });
   $("#generate").click(function(){
-    $("#result").html('');
-    var select = $("select").val();
-    var generate = 'http://localhost:3000/generate?type='+select;
-    $.get(generate, function(data, status){
-      console.log(JSON.parse(data));
-      var responsedata = JSON.parse(data);
-      for (let i = 0; i < responsedata[1].length; i++){
-        $("#result").append(responsedata[1][i]+'<br>');
+    if (!$("#userresult").is(":hidden")){
+      //console.log('elso generalas');
+      let confirmation = confirm('Are you sure?');
+      if (confirmation){
+        let checkID = $("#randomID").val()
+        console.log('Uj generalas, elsobni valo id: '+checkID);
+      }else {
+        console.log('Marad');
       }
-      $("#result").append('<hr/>');
-      $("#userresult").show();
-    });
-    $("select").val("1");
+    }
+      /*let confirmation = confirm('Are you sure?');
+      if (confirmation){
+        if ($('#result').is(':empty')){
+          console.log(typeof($("#result").val()));
+        }
+        $("#result").html('');
+        let select = $("select").val();
+        let checkID = $("#randomID").val()
+        let generate = host+'/generate?type='+select+'&id='+checkID;
+        $.get(generate, function(data, status){
+          console.log(JSON.parse(data));
+          let responsedata = JSON.parse(data);
+          let falstadlink = '<a href="'+responsedata.link+'" target="_blank">Falstad link</a>';
+          $("#result").html(falstadlink);
+          $("#result").append('<hr/>');
+          $("#randomID").val(responsedata.id);
+          $("#userresult").show();
+        });
+        $("select").val("1");
+      }
+    } else {*/
+      if ($('#result').is(':empty')){
+        console.log(typeof($("#result").val()));
+      }
+      $("#result").html('');
+      let select = $("select").val();
+      let checkID = $("#randomID").val()
+      let generate = host+'/generate?type='+select+'&id='+checkID;
+      $.get(generate, function(data, status){
+        console.log(JSON.parse(data));
+        let responsedata = JSON.parse(data);
+        let falstadlink = '<a href="'+responsedata.link+'" target="_blank">Falstad link</a>';
+        $("#result").html(falstadlink);
+        $("#result").append('<hr/>');
+        $("#randomID").val(responsedata.id);
+        $("#userresult").show();
+      });
+      $("select").val("1");
+    //}
+    
   });
   $("#check").click (()=> {
-    var url = "http://localhost:3000/check";
-    var result = { thres: $("#thres").val(), thvolt: $("#thvolt").val()};
+    let url = host + "/check";
+    let result = { thres: $("#thres").val(), thvolt: $("#thvolt").val(), id: $("#randomID").val()};
+    
     console.log(result);
     $.post(url,result, (data) => {
-        var responsedata = JSON.parse(data)
+        let responsedata = JSON.parse(data)
         if (responsedata.res && responsedata.volt){
           $("#result").html('');
           $("#userresult").hide();
           alert('Correct solution!');
+          $("#thres").val("");
+          $("#thvolt").val("");
+          $("#randomID").val("");
         } 
         if (!responsedata.res && responsedata.volt){
           alert('Inorrect resistance value!');
@@ -66,21 +84,6 @@ $(document).ready(function () {
           $("#thres").val("");
           $("#thvolt").val("");
         }
-        
     });
-      /*var test = $("#inputtest").val();
-      var url = 'http://localhost:3000/test';
-      var xmlHttp = new XMLHttpRequest();
-      xmlHttp.open( "POST", url, false );
-      //test = {'test': test};
-      xmlHttp.send(JSON.stringify(test));
-      return xmlHttp.responseText;*/
   });
-  //var select = $("option").val();
-  //var generate = 'http://localhost:3000/generate';
-  /*$("button").click(function () {
-      //$("p").hide();
-      console.log('click');
-  });*/
-  // jQuery methods go here...
 });

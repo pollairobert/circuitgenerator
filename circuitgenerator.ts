@@ -17,9 +17,6 @@ export class CircuitGenerator {
     private fs = require('fs');
     private circuitCoordinatesToFalstad: string[] = []; 
     
-    constructor(){
-        console.log('letrehoztak az generatort');
-    }
     /**
      * Aramkor generalasaert felelos. Ezzel a metodussal kezdodik a teljes halozat generalasaert felelos tobbi metodus meghivasa
      * @param type aramkor tipusa adott struktura alapjan 
@@ -378,7 +375,7 @@ export class CircuitGenerator {
             this.setElementsCoordinate(circuit);
         }
         
-        for (let i = 0; i < circuit.getNumberOfMesh(); i++){
+        /*for (let i = 0; i < circuit.getNumberOfMesh(); i++){
             let branches: Branch[] = meshes[i].getBranches();
             //this.setCommonBranchesInMesh(circuit, meshes[i].getCommonBranchesArray());
             console.log(meshes[i].getCommonBranchesArray());
@@ -387,7 +384,7 @@ export class CircuitGenerator {
             //for (let j = 0; j < branches.length; j++){
                 //console.log(branches[j].getBranchElements());
             //}
-        }
+        }*/ 
         return circuit;
     }
 
@@ -1586,7 +1583,7 @@ export class CircuitGenerator {
             }
         }
         link +='%0A';
-        console.log(link);
+        //console.log(link);
         return link;
     }
     

@@ -25,15 +25,11 @@ export class CircuitAnalyzer {
     private connectedVoltagesourceInsideResistance: number;
     private outpuVoltageWithconnectedVoltagesource: number;
     
-    constructor(){
-        console.log('letrehoztak az analizatort');
-    }
      /**
      * Kivulrol ezt a metodust kell hivni az aramkor analizalasahoz, ez a belepesi pontja az osztalynak.
      * @param circuit aramkor obj.
      */
     public analyzeCircuit(circuit: Circuit): void{
-        console.log('Meghivva az aramkor analizalo');
         this.circuit = circuit;
         this.finalCalculateOfTheveninSubstitutes(this.circuit);
     }
@@ -94,7 +90,6 @@ export class CircuitAnalyzer {
      * @param circuit aramkor objektumot var
      */
     public calculateCircuitResultingResistance(circuit: Circuit): number {
-        console.log('   ->meghivva az aramkor eredo ellenallas szamolas');
         let th2PoleMeshNumber: number;
         let th2PoleBranchType: number;
         let th2PoleNumberOfBranch: number;
@@ -107,9 +102,6 @@ export class CircuitAnalyzer {
             }
             for (let j = 0; j < cloneCircuit.getMeshes()[i].getBranches().length; j++){
                 if (cloneCircuit.getMeshes()[i].getBranches()[j].getTh2Pole()){
-                    console.log('    kulso 2polust tartalmazo ag common erteke: '+cloneCircuit.getMeshes()[i].getBranches()[j].getCommon());
-                    console.log('    kulso 2polust tartalmazo hurok szama: '+cloneCircuit.getMeshes()[i].getMeshNumber());
-
                     if (cloneCircuit.getMeshes()[i].getBranches()[j].getCommon() !== cloneCircuit.getMeshes()[i].getMeshNumber()){
                         commonAndTh2Pole = cloneCircuit.getMeshes()[i].getBranches()[j].getCommon();
                     }
@@ -126,7 +118,6 @@ export class CircuitAnalyzer {
                 }
             }
         }
-        console.log('       -> most hivodik meg a 2 polusnal szamolando aramhoz tartozo fgv')
         return this.calculateResultingResistance(10,this.calculateTh2PoleBranchCurrent(cloneCircuit,commonAndTh2Pole,th2PoleBranchType,th2PoleNumberOfBranch,th2PoleMeshNumber,this.questionOrVoltmeterResistance));
         
     }
@@ -137,7 +128,6 @@ export class CircuitAnalyzer {
      * @param circuit aramkor objektumot var
      */
     public finalCalculateOfTheveninSubstitutes(circuit: Circuit): void {
-        console.log('analyzeCircuit -> finalCalculateOfTheveninSubstitutes');
         let tempRes: number;
         this.resultOfTheveninResistance = this.calculateCircuitResultingResistance(circuit);
         circuit.setThevRes(this.resultOfTheveninResistance);
@@ -171,11 +161,6 @@ export class CircuitAnalyzer {
      * @param th2PoleMeshNumber 2 polsut tartalmazo branch ebben a szamu mesh-ben van
      */
     public calculateTh2PoleBranchCurrent(circuit: Circuit, commonAndTh2Pole?: number, th2PoleBranchType?:number, th2PoleNumberOfBranch?: number, th2PoleMeshNumber?: number, quesRes?:number): number {
-        console.log('         -> ebben a metodusban van a gond, nezzuk a kapott parametereket:');
-        console.log('           commonAndTh2Pole -> '+commonAndTh2Pole);
-        console.log('           th2PoleBranchType -> '+th2PoleBranchType);
-        console.log('           th2PoleNumberOfBranch -> '+th2PoleNumberOfBranch);
-        console.log('           th2PoleMeshNumber -> '+th2PoleMeshNumber);
         let th2PoleCurrent: number;
         let currentVector: math.MathType;
         if (commonAndTh2Pole === undefined && th2PoleBranchType !== undefined && th2PoleNumberOfBranch !== undefined && th2PoleMeshNumber !== undefined){
