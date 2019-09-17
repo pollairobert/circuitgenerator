@@ -11,8 +11,8 @@ const app = express();
 const bodyParser = require('body-parser')
 
 let fs = require('fs');
-let chekTime = 10*1000;
-let globalMain: Main;
+let chekTime = 30*60*1000;
+//let globalMain: Main;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(express.static('scripts'));
@@ -26,7 +26,7 @@ app.get('/generate', function (req, res) {
     let circuitCoordinateArray: string[];
     let link: string;
     let main = new Main();
-    globalMain = main;
+    //globalMain = main;
     console.log('req.query.id: '+req.query.id);
     let type: number;
     let checkID: number;
@@ -187,7 +187,7 @@ function checkSolving(){
                 difference = timeDifference(new Date(),new Date(resultLOG[key].timestamp));
                 console.log(key+': '+difference[0]+ ' day '+difference[1]+ ' hour '+difference[2]+ ' minute '+difference[3]+ ' sec.');
                 //console.log(typeof(key))
-                if (difference[0] > 0 || difference[1] > 0 || difference[2] >= 5){
+                if (difference[0] > 0 || difference[1] > 0 || difference[2] >= 30 /*|| difference[3] > 0 */){
                     console.log('van torolni vali');
                     deleted = true;
                     deleteDatatoJSONfile(key);

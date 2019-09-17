@@ -15,19 +15,19 @@
 	
 	<body>
     <!--<h1>Circuit Generator to the Thevenin Theorem</h1>-->
-    <h2>Áramkör generatetor a Thevenin tétel alkalmazásához</h2>
+    <h1>Áramkör generatetor a Thevenin tétel alkalmazásához</h1>
     
     <!--Task type (difficulty):-->
     Nehézségi szint:
     <select name="typeselect" size=”1”>
-      <option value="1" selected>1</option>
-      <option value="1.1">2</option>
-      <option value="2">3</option>
-      <option value="2.1" >4</option>
-      <option value="3" >5</option>
-      <option value="3.1" >6</option>
-      <option value="4" >7</option>
-      <option value="5" >8</option>
+      <option value="1" selected>Egyszerű fesz.osztó</option>
+      <option value="1.1">Egyszerű fesz.osztó (2 generátor)</option>
+      <option value="2" >Kettős fesz.osztó</option>
+      <option value="3" >Kettős fesz.osztó (2 generátor)</option>
+      <option value="3.1" >Kettős fesz.osztó (3 generátor)</option>
+      <option value="4" >KÜLSŐ 2 pólus felőli helyettesítés (Random hálózat)</option>
+      <option value="5" >BELSŐ 2 pólus felőli helyettesítés (Random hálózat)</option>
+      <option value="6" >Ellenálláson eső fesz. és folyó áram megadása (Random hálózat) </option>
     </select>
     <button id="generate">Hálózat generálása</button>
       
@@ -48,7 +48,18 @@
         <!--<input type = "button" id="check" value = "Check">-->
         <input type = "button" id="check" value = "Ellenőrzés">
     </div>
-    
+    <div id="userresult2">
+      <!--Thevenin resistance: <input type = "text" id = "thres" value=""> <br>
+      Thevenin voltage: <input type = "text" id = "thvolt" value=""><br>-->
+      Ellenálláson folyó áram: <input type = "text" id = "resCurrent" value=""> <br>
+      Ellenálláson eső feszültseg: <input type = "text" id = "resVolt" value="">
+      <!--ID-->
+      <input type = "text" id = "randomID2" value="" hidden><br>
+      <!--Timer-->
+      <span id="timecount2"></span><br>
+      <!--<input type = "button" id="check" value = "Check">-->
+      <input type = "button" id="check2" value = "Ellenőrzés">
+  </div>
     
   </body>
 </html>

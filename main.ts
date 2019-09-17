@@ -23,8 +23,16 @@ export class Main {
         //can.setConnectedVoltagesourceResistance(10);
 
         //let type = 5;
-
-        let circuit: Circuit = cg.generateCircuit(type);
+        let temptype = type;
+        if (type === 2){
+            temptype = cg.randomChoiseTwoNumber(2,2.1);
+            //type = cg.randomChoiseTwoNumber(temp,3);
+        }
+        if (type === 6){
+            temptype = cg.randomChoiseTwoNumber(4,5);
+            can.setQuestionOrVoltmeterResistance(1500);
+        }
+        let circuit: Circuit = cg.generateCircuit(temptype);
 
         /*for(let i = 0; i < circuit.getMeshes().length; i++ ){
             console.log();
@@ -39,18 +47,32 @@ export class Main {
                 }
             }
         }*/
+        
         cg.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
         //cg.exportToFalstadTxt(cg.getCircuitCoordinatesToFalstad())
         this.circuitCoordinateArray = cg.getCircuitCoordinatesToFalstad();
         this.falstadLink = cg.generateFalstadLink(circuit);
         can.analyzeCircuit(circuit);
-        this.results = {
-            "thres": Number(can.getResultOfTheveninResistance()),
-            "thvolt": Number(can.getResultOfTheveninVoltage()),
-            "timestamp": new Date()
+        if (type < 6){
+            this.results = {
+                "thres": Number(can.getResultOfTheveninResistance()),
+                "thvolt": Number(can.getResultOfTheveninVoltage()),
+                "timestamp": new Date()
+            }
+        } else {
+
+            this.results = {
+                "resCurrent": Number(can.getQuestionResCurrent()),
+                "resVolt": Number(can.getQuestionResVoltage()),
+                "timestamp": new Date()
+            }
         }
-        
-        //console.log(this.results);
+        if (can.getQuestionRes() !== undefined){
+            console.log('A keresett ellenallas feszultsege: '+can.getQuestionResVoltage()+ ' V');
+            console.log('A keresett ellenallason folyo aram: '+can.getQuestionResCurrent()+ ' A');
+        }
+        console.log(this.falstadLink);
+        console.log(this.results);
         if (type <=0){
             
 
@@ -197,6 +219,7 @@ export class Main {
         resetMeshCounter();
         //console.log(cg.percentRandom(10));
     }
+
     public getResults():any{
         return this.results;
     }
