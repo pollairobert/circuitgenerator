@@ -11,7 +11,8 @@ const app = express();
 const bodyParser = require('body-parser')
 
 let fs = require('fs');
-let chekTime = 5*60*1000;
+let chekTime = 10*1000;
+let globalMain: Main;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(express.static('scripts'));
@@ -25,6 +26,7 @@ app.get('/generate', function (req, res) {
     let circuitCoordinateArray: string[];
     let link: string;
     let main = new Main();
+    globalMain = main;
     console.log('req.query.id: '+req.query.id);
     let type: number;
     let checkID: number;
@@ -86,6 +88,7 @@ app.post('/check', (req, res) => {
     console.log(id);
     let response = searchResults(+req.body.thres,+req.body.thvolt,id);
     if (response.res && response.volt){
+        //response.link = globalMain.getFalstadLink();
         deleteDatatoJSONfile(id);
         console.log('data removed');
     }
@@ -165,41 +168,55 @@ function searchResults(usrThres, usrThvolt,id){
     let userThvolt: boolean = compareResults(usrThvolt, +resultLOG[id].thvolt);
     return {
         res: userThres,
-        volt: userThvolt
+        volt: userThvolt,
+        link: undefined
     };
 }
 function checkSolving(){
     let generateLOG = fs.readFileSync('generateLOG.json');
     let resultLOG = JSON.parse(generateLOG);
+    let deleted: boolean = false;
     let difference; 
-    console.log('resultLOG elotte: ');
-    console.log(resultLOG);
-    for (let key in resultLOG) {
-        if (resultLOG.hasOwnProperty(key)) {
-            //timeDifference(new Date(),resultLOG[key].timestamp)
-            difference = timeDifference(new Date(),new Date(resultLOG[key].timestamp));
-            console.log(key+': '+difference[0]+ ' day '+difference[1]+ ' hour '+difference[2]+ ' minute '+difference[3]+ ' sec.');
-            console.log(typeof(key))
-            if (difference[0] > 0 || difference[1] > 0 || difference[2] > 10){
-                console.log('van torolni vali');
-                deleteDatatoJSONfile(key);
-                
+    console.log(Object.keys(resultLOG).length);
+    if (Object.keys(resultLOG).length > 0){
+        console.log('resultLOG elotte: ');
+        console.log(resultLOG);
+        for (let key in resultLOG) {
+            if (resultLOG.hasOwnProperty(key)) {
+                //timeDifference(new Date(),resultLOG[key].timestamp)
+                difference = timeDifference(new Date(),new Date(resultLOG[key].timestamp));
+                console.log(key+': '+difference[0]+ ' day '+difference[1]+ ' hour '+difference[2]+ ' minute '+difference[3]+ ' sec.');
+                //console.log(typeof(key))
+                if (difference[0] > 0 || difference[1] > 0 || difference[2] >= 5){
+                    console.log('van torolni vali');
+                    deleted = true;
+                    deleteDatatoJSONfile(key);
+                    
+                }
+                //console.log(key+': '+timeDifference(new Date(),new Date(resultLOG[key].timestamp)));
+    
             }
-            //console.log(key+': '+timeDifference(new Date(),new Date(resultLOG[key].timestamp)));
-
         }
+        //console.log(resultLOG);
+        if (deleted){
+            console.log('resultLOG utana: ');
+            setTimeout(() =>{
+                let refreshlogData = JSON.stringify(resultLOG, null, 2);
+                fs.writeFileSync('generateLOG.json',refreshlogData, (err) => {
+                    if (err) {
+                        return console.error(err);
+                    }
+                });
+            },200);
+            console.log('Idokorlaton tuli feladatok torolve!')
+        } else {
+            console.log('Minden feladat aktiv');
+        }
+    } else {
+        console.log('Kiadott feladatok listaja ures!');
     }
-    console.log('resultLOG utana: ');
-    console.log(resultLOG);
-    setTimeout(() =>{
-        let refreshlogData = JSON.stringify(resultLOG, null, 2);
-        fs.writeFileSync('generateLOG.json',refreshlogData, (err) => {
-            if (err) {
-                return console.error(err);
-            }
-        });
-    },100);
-    console.log('Idokorlaton tuli feladatok torolve!')
+    
+    
 }
 function timeDifference(date1,date2) {
     let difference = date1 - date2;
