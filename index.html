@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<!--
+The MIT License
+
+Copyright 2019 Robert Pollai <pollairobert at gmail.com>, University of Szeged, Department of Technical Informatics.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+<html>
+	<head>
+    <!--<title>Thevenin online generator</title>-->
+    <title>Thevenin online generátor</title>
+      <meta charset="utf-8">
+      <!--<script src="jquery-3.4.1.min.js"></script>-->
+      <script
+			  src="https://code.jquery.com/jquery-3.4.1.js"
+			  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+			  crossorigin="anonymous"></script>
+      <script src="scripts/circuitjQuery.js" ></script>
+      
+	</head>
+	
+	<body>
+    <!--<h1>Circuit Generator to the Thevenin Theorem</h1>-->
+    <h1>Áramkör generátor a Thevenin tétel alkalmazásához</h1>
+    
+    <!--Task type (difficulty):-->
+    Nehézségi szint:
+    <select size=”1”>
+      <option value="1" selected>Egyszerű fesz.osztó</option>
+      <option value="1.1">Egyszerű fesz.osztó (2 generátor)</option>
+      <option value="2" >Kettős fesz.osztó</option>
+      <option value="3" >Kettős fesz.osztó (2 generátor)</option>
+      <option value="3.1" >Kettős fesz.osztó (3 generátor)</option>
+      <option value="4" >KÜLSŐ 2 pólus felőli helyettesítés (Random hálózat)</option>
+      <option value="5" >BELSŐ 2 pólus felőli helyettesítés (Random hálózat)</option>
+      <option value="6" >Ellenálláson eső fesz. és folyó áram megadása (Random hálózat) </option>
+    </select>
+    <button id="generate" >Hálózat generálása</button>
+    <button id="generateTask6" hidden>Hálózat generálása</button>  
+    <br>
+    
+    <hr/>
+    <div id="result"></div>
+    <div id="generateConfirm"></div>
+    <div id="userresult">
+        <!--Thevenin resistance: <input type = "text" id = "thres" value=""> <br>
+        Thevenin voltage: <input type = "text" id = "thvolt" value=""><br>-->
+        <span id="thevTaskRes">Thevenin ellenállás (<b style="color:red;">Ohm</b>): </span><input type = "text" id = "thres" value=""><span id="resultTHRes" hidden></span><br>
+        <span id="thevTaskVolt"></span><input type = "text" id = "thvolt" value=""><span id="resultTHVolt" hidden></span>
+        <!--ID-->
+        <input type = "text" id = "randomID" value="" hidden><br>
+        <!--Timer-->
+        <span id="timecount"></span><br>
+        <!--<input type = "button" id="check" value = "Check">-->
+        <input type = "button" id="check" value = "Ellenőrzés">
+    </div>
+    <div id="userresult2">
+      <!--Thevenin resistance: <input type = "text" id = "thres" value=""> <br>
+      Thevenin voltage: <input type = "text" id = "thvolt" value=""><br>-->
+      <span id="resTaskCurrent"></span><input type = "text" id = "resCurrent" value=""> <span id="resultAmp" hidden></span><br>
+      <span id="resTaskVolt"></span><input type = "text" id = "resVolt" value=""><span id="resultVolt" hidden></span>
+      <!--ID-->
+      <input type = "text" id = "randomID2" value="" hidden><br>
+      <!--Timer-->
+      <span id="timecount2"></span><br>
+      <!--<input type = "button" id="check" value = "Check">-->
+      <input type = "button" id="check2" value = "Ellenőrzés">
+  </div>
+    
+  </body>
+</html>

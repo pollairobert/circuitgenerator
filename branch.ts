@@ -114,6 +114,10 @@ export class Branch {
     public setTh2Pole(pole: boolean): void {
         this.thevenin2pole = pole;
     }
+    /**
+     * Beallitja az agnak a kozossegi erteket ugy, hogy a csatlakozo ag hurokszamat hozzaadja a sajatjahoz
+     * @param meshNum a csatlakozo hurok szama
+     */
     public setCommon(meshNum: number): void{
         this.common += meshNum;
     }

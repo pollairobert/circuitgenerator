@@ -4,7 +4,7 @@ import { Resistance } from "./resistance";
 import { CurrentSource } from "./currentsource";
 import { VoltageSource } from "./voltagesource";
 import { Branch, branchCounter } from "./branch";
-import { Mesh, meshCounter } from "./mesh";
+import { Mesh } from "./mesh";
 
 export class Circuit {
     private meshes: Mesh[] = [];

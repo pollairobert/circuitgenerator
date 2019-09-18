@@ -4,168 +4,134 @@ import { Resistance } from "./resistance";
 import { CurrentSource } from "./currentsource";
 import { VoltageSource } from "./voltagesource";
 import { Branch, branchCounter } from "./branch";
-import { Mesh, meshCounter } from "./mesh";
+import { meshCounter, resetMeshCounter } from "./mesh";
 import { Circuit } from "./circuit";
 import { CircuitGenerator } from './circuitgenerator';
 import { CircuitAnalyzer } from './circuitanalyzer';
 import * as math from 'mathjs';
 
-let c: CircuitGenerator = new CircuitGenerator();
-let can: CircuitAnalyzer = new CircuitAnalyzer();
+export class Main {
+    private results: any;
+    private circuitCoordinateArray: string[];
+    private falstadLink: string;
+    private voltegePrefix: string;
+    private currentPrefix: string;
+    public start(type: number){
+        let cg: CircuitGenerator = new CircuitGenerator();
+        let can: CircuitAnalyzer = new CircuitAnalyzer();
 
-can.setQuestionOrVoltmeterResistance(10000000);
-can.setConnectedVoltagesourceValue(12);
-can.setConnectedVoltagesourceResistance(10);
+        //can.setQuestionOrVoltmeterResistance(1500);
+        //can.setConnectedVoltagesourceValue(12);
+        //can.setConnectedVoltagesourceResistance(10);
 
-let type = 4;
-
-let circ: Circuit = c.generateCircuit(type);
-
-/*for(let i = 0; i < circ.getMeshes().length; i++ ){
-    console.log();
-    console.log((i+1)+'. HUROK');
-    for (let j = 0; j < circ.getMeshes()[i].getBranches().length; j++){
-        console.log();
-        console.log('BranchType: '+circ.getMeshes()[i].getBranches()[j].getType());
-        for (let k = 0; k < circ.getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
-            console.log();
-            console.log('ELEMENT: ');
-            console.log(circ.getMeshes()[i].getBranches()[j].getBranchElements()[k]);
+        //let type = 5;
+        let temptype = type;
+        if (type === 2){
+            temptype = cg.randomChoiseTwoNumber(2,2.1);
+            //type = cg.randomChoiseTwoNumber(temp,3);
         }
-    }
-}*/
-c.setCircuitElementCoordinatesArrayToFalstadExport(circ);
-//c.exportToFalstadTxt(c.getCircuitCoordinatesToFalstad())
+        if (type === 6){
+            temptype = cg.randomChoiseTwoNumber(4,5);
+            can.setQuestionOrVoltmeterResistance(680000);
+        }
+        let circuit: Circuit = cg.generateCircuit(temptype);
 
-if (type <=6){
-    can.analyzeCircuit(circ);
-
-    for (let i = 0; i < circ.getMeshes().length; i++){
-        console.log('A(z) '+circ.getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
-        console.log('   Mesh ellenallasa (matrixhoz, a benne levo ellenallasok osszege): '+circ.getMeshes()[i].getMeshResistance());
-        console.log('   Mesh feszultsege (vektorhoz, generator ertekek elojelhelyes osszege): '+circ.getMeshes()[i].getMeshVoltage());
-        console.log('   Mesh-ben levo Branch-ek: ');
-        console.log();
-
-        for (let j = 0; j < circ.getMeshes()[i].getBranches().length; j++){
-            let type;
-            switch (circ.getMeshes()[i].getBranches()[j].getType()){
-                case 0:{
-                    type='↑';
-                    break;
-                }
-                case 1:{
-                    type='→';
-                    break;
-                }
-                case 2:{
-                    type='↓';
-                    break;
-                }
-                case 3:{
-                    type='←';
-                    break;
-                }
-            }
-            console.log('       '+j+'.(branches tomb indexe) Branch iranya (ez a felvett hurokarammal egyezik): '+type);
-            if (circ.getMeshes()[i].getBranches()[j].getTh2Pole()){
-                console.log('           *****************************************');
-                console.log('           *ENNEK A BRANCH-NEK A KET VEGE A 2 POLUS*');
-                console.log('           *****************************************');
-            }
-            console.log('           Arama: '+circ.getMeshes()[i].getBranches()[j].getCurrent());
-            console.log('           Common (kozossegi) erteke: '+circ.getMeshes()[i].getBranches()[j].getCommon());
-            if (circ.getMeshes()[i].getBranches()[j].getCommon() > circ.getMeshes()[i].getMeshNumber()){
-                let commMesh = circ.getMeshes()[i].getBranches()[j].getCommon()-circ.getMeshes()[i].getMeshNumber();
-                console.log('           A(z) '+commMesh+ '. hurokkal kozos Branch.');
-            }
-            if (circ.getMeshes()[i].getBranches()[j].getBranchElements()[0] !== undefined){
-                console.log('           Szama: '+circ.getMeshes()[i].getBranches()[j].getBranchNumber());
-                console.log('           Ellenallasa (benne levo ellenallasok osszege): '+circ.getMeshes()[i].getBranches()[j].getBranchResistance());
-                console.log('           Feszultsege (generator ertekek elojelhelyes osszege): '+circ.getMeshes()[i].getBranches()[j].getBranchVoltage());
-                console.log('           Aramkori elemei: ');
+        /*for(let i = 0; i < circuit.getMeshes().length; i++ ){
+            console.log();
+            console.log((i+1)+'. HUROK');
+            for (let j = 0; j < circuit.getMeshes()[i].getBranches().length; j++){
                 console.log();
-                for (let k = 0; k < circ.getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
-                    if (circ.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'R'){
-                        console.log('               Ellenallas: '+circ.getMeshes()[i].getBranches()[j].getBranchElements()[k].getResistance()+ ' Ohm');
-                        console.log('                   Arama: '+circ.getMeshes()[i].getBranches()[j].getBranchElements()[k].getCurrent());
-                        console.log('                   Feszultesege: '+circ.getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage());
-                    }
-                    if (circ.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'V'){
-                        let direction;
-                        if (circ.getMeshes()[i].getBranches()[j].getBranchElements()[k].getDirection()){
-                            switch (circ.getMeshes()[i].getBranches()[j].getType()){
-                                case 0:{
-                                    direction='↑';
-                                    break;
-                                }
-                                case 1:{
-                                    direction='→';
-                                    break;
-                                }
-                                case 2:{
-                                    direction='↓';
-                                    break;
-                                }
-                                case 3:{
-                                    direction='←';
-                                    break;
-                                }
-                            }
-                        } else {
-                            switch (circ.getMeshes()[i].getBranches()[j].getType()){
-                                case 0:{
-                                    direction = '↓';
-                                    break;
-                                }
-                                case 1:{
-                                    direction='←';
-                                    break;
-                                }
-                                case 2:{
-                                    direction='↑';
-                                    break;
-                                }
-                                case 3:{
-                                    direction='→';
-                                    break;
-                                }
-                            }
-                        }
-
-                        console.log('               Feszultseggenerator: '+math.abs(circ.getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage())+ ' V, '+direction);
-                        console.log('                   Arama: '+circ.getMeshes()[i].getBranches()[j].getBranchElements()[k].getCurrent());
-                    }
-                    if (circ.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'C'){
-                        
-                    }
-                    
+                console.log('BranchType: '+circuit.getMeshes()[i].getBranches()[j].getType());
+                for (let k = 0; k < circuit.getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
+                    console.log();
+                    console.log('ELEMENT: ');
+                    console.log(circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k]);
                 }
             }
-            
-            
-            
-            console.log();
+        }*/
+        
+        cg.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
+        //cg.exportToFalstadTxt(cg.getCircuitCoordinatesToFalstad())
+        this.circuitCoordinateArray = cg.getCircuitCoordinatesToFalstad();
+        this.falstadLink = cg.generateFalstadLink(circuit);
+        can.analyzeCircuit(circuit);
+        if (type < 6){
+            this.scanPrefix(Math.abs(can.getResultOfTheveninVoltage()),"V")
+            this.results = {
+                "thres": Number(can.getResultOfTheveninResistance()),
+                "thvolt": Math.abs(Number(can.getResultOfTheveninVoltage())),
+                "timestamp": new Date(),
+            }
+        } else {
+            this.scanPrefix(Math.abs(can.getQuestionResCurrent()),"A");
+            this.scanPrefix(Math.abs(can.getQuestionResVoltage()),"V")
+            this.results = {
+                "resCurrent": Math.abs(Number(can.getQuestionResCurrent())),
+                "resVolt": Math.abs(Number(can.getQuestionResVoltage())),
+                "timestamp": new Date()
+            }
         }
-        console.log();
+        //this.scanPrefix(can.getQuestionResCurrent(),"A");
+        console.log('Prefix Current: '+ this.currentPrefix);
+        console.log('Prefix Voltage: '+ this.voltegePrefix);
+        //this.scanPrefix(can.getQuestionResCurrent(),"V");
+        if (can.getQuestionRes() !== undefined){
+            console.log('A keresett ellenallas feszultsege: '+can.getQuestionResVoltage()+ ' V');
+            console.log('A keresett ellenallason folyo aram: '+can.getQuestionResCurrent()+ ' A');
+        }
+        console.log(this.falstadLink);
+        console.log(this.results);
+        
+        if (type <= 0){
+            //can.analyzeCircuit(circuit);
+
+            //console.log('Az aramkor Thevenin ellenalasa: '+circuit.getThevRes().toFixed(6)+ ' Ohm');
+            console.log('Az aramkor Thevenin ellenalasa: '+can.getResultOfTheveninResistance().toFixed(6)+ ' Ohm');
+            //console.log('Az aramkor Thevenin helyettesito feszultsege: '+circuit.getThevVolt().toFixed(6)+ ' V');
+            console.log('Az aramkor Thevenin helyettesito feszultsege: '+can.getResultOfTheveninVoltage().toFixed(6)+ ' V');
+        }
+        //console.log(circuit.getParameters());
+        //console.log(cg.getCircuitCoordinatesToFalstad());
+        
+        resetMeshCounter();
+        //console.log(cg.percentRandom(10));
     }
 
-
-
-    console.log();
-    console.log('Az aramkor Thevenin ellenalasa: '+circ.getThevRes().toFixed(6)+ ' Ohm');
-    console.log('Az aramkor Thevenin helyettesito feszultsege: '+circ.getThevVolt().toFixed(6)+ ' V');
-
-    //console.log('A keresett ellenallas arama: '+c.getQuestionResCurrent().toFixed(4)+ ' A');
-    if (can.getQuestionRes() !== undefined){
-        console.log('A mert feszultseg: '+can.getQuestionResVoltage().toFixed(6)+ ' V');
+    public scanPrefix(ciruitresult: number, typeOfValue: string): void{
+        let prefix: string = "";
+        let prefixNumb: number = ciruitresult * 1000;
+        if (prefixNumb < 1000 && prefixNumb > 1){
+            prefix = "m";
+        } 
+        if (prefixNumb < 1 && prefixNumb > 0.001){
+            prefix = "u";
+        } 
+        if (prefixNumb < 0.001 && prefixNumb > 0.000001){
+            prefix = "n";
+        }
+        if (prefixNumb < 0.000001 && prefixNumb > 0.000000001){
+            prefix = "p";
+        }  
+        if (typeOfValue === "V"){
+            this.voltegePrefix = prefix;
+        }
+        if (typeOfValue === "A"){
+            this.currentPrefix = prefix;
+        }
     }
-    if (can.getOutputVoltageWithConnectedVoltageSource() !== undefined){
-        console.log('A '+ can.getConnectedVoltagesourceValue()+ ' V-os es ' +can.getConnectedVoltagesourceResistance()+ ' Ohm belso ellenallasu feszgen csatlakoztatasa eseten:');
-        console.log('   A halozat kapocsfeszultseges a keresett pontok kozott: ' +can.getOutputVoltageWithConnectedVoltageSource());
+    public getVoltagePrefix(): string{
+        return this.voltegePrefix;
     }
-
+    public getCurrentPrefix(): string{
+        return this.currentPrefix;
+    }
+    public getResults():any{
+        return this.results;
+    }
+    public getCircuitCoordinateArray(): string[]{
+        return this.circuitCoordinateArray;
+    }
+    public getFalstadLink(): string{
+        return this.falstadLink;
+    }
 }
-console.log(circ.getParameters());
-c.generateFalstadLink(circ);
-console.log(c.percentRandom(10));
