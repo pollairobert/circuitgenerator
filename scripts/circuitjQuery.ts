@@ -14,25 +14,38 @@ $(document).ready(function () {
     alert( $(this).find(":selected").val() );
   });*/
   
-  console.log(prefixes);
+  
+  
+  //console.log(prefixes);
   $("#userresult").hide();
   $("#userresult2").hide();
-  let options = ['Egyszerű feszültségosztó',
-      'Egyszerű feszültségosztó (2 generátor)',
-      'Kettős feszültségosztó',
-      'Kettős feszültségosztó (2 generátor)',
-      'Kettős feszültségosztó (3 generátor)',
-      'KÜLSŐ 2 pólus felőli helyettesítés (Random hálózat)',
-      'BELSŐ 2 pólus felőli helyettesítés (Random hálózat)',
-      'Ellenálláson eső feszültség és a rajta folyó áram megadása (Random hálózat)'
-    ];
   let falstadlink;
   $("#generate").click(function(){
     let select = $("select").val();
+    let decriptSelect = "type"+select;
+    console.log(decriptSelect);
     //console.log($('select').text());
     //let falstadlink;
     let selectedTask;
     let checkID;
+    let title;
+    let descript;
+    $.ajax({
+      dataType: 'json',
+      url: 'descript/description.json',
+      success: (data)=>{
+        //let result = JSON.stringify(data)
+        console.log(data[decriptSelect]);
+        title = Object.keys(data[decriptSelect])[0];
+        console.log(title);
+        descript = data[decriptSelect][title];
+        console.log(descript);
+        let idx2 = Object.keys(data[decriptSelect]);
+        console.log(Object.keys(data[decriptSelect]));
+        
+      }
+    });
+    
     $("#resultAmp").hide();
     $("#resultVolt").hide();
     $("#resultTHRes").hide();
@@ -41,42 +54,7 @@ $(document).ready(function () {
     $("#thvolt").val("");
     $("#resCurrent").val("");
     $("#resVolt").val("");
-    switch (select){
-      case '1': {
-        selectedTask = options[0];
-        break;
-      }
-      case '1.1': {
-        selectedTask = options[1];
-        break;
-      }
-      case '2': {
-        selectedTask = options[2];
-        break;
-      }
-      case '3': {
-        selectedTask = options[3];
-        break;
-      }
-      case '3.1': {
-        selectedTask = options[4];
-        break;
-      }
-      case '4': {
-        selectedTask = options[5];
-        break;
-      }
-      case '5': {
-        selectedTask = options[6];
-        break;
-      }
-      case '6': {
-        selectedTask = options[7];
-        break;
-      }
-    }
     let generate = host+'/generate?type='+select;
-    console.log(select);
     if (($("#userresult").is(":hidden") && $("#userresult2").is(":hidden"))  || timeout){
       //clearInterval(timer);
       if (select === "6"){
@@ -96,18 +74,15 @@ $(document).ready(function () {
       timeout = false;
       $("#result").html('');
       $.get(generate, function(data, status){
-        console.log('GET ben prefixes: '+prefixes);
-        console.log(status);
         console.log(JSON.parse(data));
         let responsedata = JSON.parse(data);
         prefixes = [];
-        prefixes.push(responsedata.voltPrefix, responsedata.currentPrefix);
-        console.log('GET ben prefixes - ertekadas utan: '+prefixes);
+        prefixes.push(responsedata.voltPrefix, responsedata.currentPrefix, responsedata.ohmPrefix);
         falstadlink = '<b><a href="'+responsedata.link+'" target="_blank">Falstad</a></b>';
         //fslink = falstadlink;
         //$("#result").html(falstadlink);
-        
-        $("#result").append("<h2>"+selectedTask+"</h2>");
+        $("#result").append("<h2>"+title+"</h2>");
+        $("#result").append("<p>"+descript+"</p>");
         $("#result").append('<hr/>');
         $("#result").append("<h1>Ide jon majd a megjelenitese a halozatnak (CANVAS?)</h1>");
         $("#result").append('<hr/>');
@@ -123,6 +98,7 @@ $(document).ready(function () {
           $("#userresult").show();
           $("#randomID").val(responsedata.id);
           $("#thevTaskVolt").html("Thevenin feszültség (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
+          $("#thevTaskRes").html("Thevenin ellenállás (<b style=\"color:red;\">"+prefixes[2]+"Ohm</b>): ");
           //prefixes = undefined;
         }
         startTimer(select, falstadlink);
@@ -163,18 +139,16 @@ $(document).ready(function () {
         console.log('Uj generalas, eldobni valo id: '+checkID);
         $("#result").html('');
         $.get(generate+'&id='+checkID, function(data, status, err){
-          console.log('GET ben prefixes: '+prefixes);
-          console.log(status);
-          //console.log(err);
           console.log(JSON.parse(data));
           let responsedata = JSON.parse(data);
           prefixes = [];
-          prefixes.push(responsedata.voltPrefix, responsedata.currentPrefix);
-          console.log('GET ben prefixes - ertekadas utan: '+prefixes);
+          prefixes.push(responsedata.voltPrefix, responsedata.currentPrefix, responsedata.ohmPrefix);
           falstadlink = '<b><a href="'+responsedata.link+'" target="_blank">Falstad</a></b>';
           
           //$("#result").html(falstadlink);
-          $("#result").append("<h2>"+selectedTask+"</h2>");
+          $("#result").append("<h2>"+title+"</h2>");
+          $("#result").append("<p>"+descript+"</p>");
+        
           $("#result").append('<hr/>');
           $("#result").append("<h1>Ide jon majd a megjelenitese a halozatnak (CANVAS?)</h1>");
           
@@ -191,6 +165,7 @@ $(document).ready(function () {
             $("#userresult2").hide();
             $("#randomID").val(responsedata.id);
             $("#thevTaskVolt").html("Thevenin feszültség (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
+            $("#thevTaskRes").html("Thevenin ellenállás (<b style=\"color:red;\">"+prefixes[2]+"Ohm</b>): ");
           }
           startTimer(select, falstadlink);
         });
@@ -219,8 +194,14 @@ $(document).ready(function () {
   });
   $("#check").click (()=> {
     let url = host + "/check";
-    let result = { thres: $("#thres").val(), thvolt: $("#thvolt").val(), id: $("#randomID").val(), voltPrefix: prefixes[0], currentPrefix: prefixes[1]};
+    let result = { thres: $("#thres").val(), 
+                   thvolt: $("#thvolt").val(), 
+                   id: $("#randomID").val(), 
+                   voltPrefix: prefixes[0], 
+                   currentPrefix: prefixes[1], 
+                   ohmPrefix: prefixes[2]};
     
+    console.log('result kliens oldali checkben');
     console.log(result);
     $.post(url,result, (data) => {
         console.log(data);
@@ -228,10 +209,10 @@ $(document).ready(function () {
         
         if (responsedata.res && responsedata.volt){
           //let falstadlink = '<a href="'+responsedata.link+'" target="_blank">Falstad</a>';
-          console.log(falstadlink);
-          $("#result").html('');
+          //console.log(falstadlink);
+          //$("#result").html('');
           //$("#result").html("<h3>Check the right solution on the "+falstadlink+" page</h3>");
-          $("#result").html("<h3>Feladat megoldásának ellenőrzése a "+falstadlink+" oldalán.</h3>");
+          $("#result").append("<h3>Feladat megoldásának ellenőrzése a "+falstadlink+" oldalán.</h3>");
           clearInterval(timer);
           timeout = true;
           //$("#userresult").hide();
@@ -270,7 +251,12 @@ $(document).ready(function () {
   });
   $("#check2").click (()=> {
     let url = host + "/check2";
-    let result = { resVolt: $("#resVolt").val(), resCurrent: $("#resCurrent").val(), id: $("#randomID2").val(), voltPrefix: prefixes[0], currentPrefix: prefixes[1]};
+    let result = { resVolt: $("#resVolt").val(), 
+                   resCurrent: $("#resCurrent").val(), 
+                   id: $("#randomID2").val(), 
+                   voltPrefix: prefixes[0], 
+                   currentPrefix: prefixes[1], 
+                   ohmPrefix: prefixes[2]};
     
     console.log(result);
     $.post(url,result, (data) => {
@@ -279,10 +265,10 @@ $(document).ready(function () {
         
         if (responsedata.current && responsedata.volt){
           //let falstadlink = '<a href="'+responsedata.link+'" target="_blank">Falstad</a>';
-          console.log(falstadlink);
-          $("#result").html('');
+          //console.log(falstadlink);
+          //$("#result").html('');
           //$("#result").html("<h3>Check the right solution on the "+falstadlink+" page</h3>");
-          $("#result").html("<h3>Feladat megoldásának ellenőrzése a "+falstadlink+" oldalán.</h3>");
+          $("#result").append("<h3>Feladat megoldásának ellenőrzése a "+falstadlink+" oldalán.</h3>");
           clearInterval(timer);
           timeout = true;
           //$("#userresult2").hide();
@@ -324,7 +310,7 @@ $(document).ready(function () {
 function startTimer(type,fslink){
   //console.log(fslink);
   let countdownMin = 0;
-  let countdownSec = 59;
+  let countdownSec = 15;
   if (type === "6"){
     $("#check2").prop("disabled", false);
     $('#timecount2').text(countdownMin+' m '+countdownSec+ " s ");
@@ -360,7 +346,7 @@ function startTimer(type,fslink){
         //$("#resultTHRes").show();
         //$("#resultTHVolt").show();
       }
-      $("#result").html("<h3>Hálózat megtekintése a "+fslink+" oldalán.</h3>");
+      $("#result").append("<h3>Hálózat megtekintése a "+fslink+" oldalán.</h3>");
       timeout = true;
     }
     if (type === "6"){
@@ -373,14 +359,12 @@ function startTimer(type,fslink){
   
 }
 function timeOutResult(id, type){
-  let reqURL =  host+'/timeout?id='+id+'&voltPrefix='+prefixes[0]+'&currentPrefix='+prefixes[1]+'&type='+type;
-  let result = { id: id, voltPrefix: prefixes[0], currentPrefix: prefixes[1], type: type};
+  let reqURL =  host+'/timeout?id='+id+'&voltPrefix='+prefixes[0]+'&currentPrefix='+prefixes[1]+'&type='+type+'&resPrefix='+prefixes[2];
+  let result = { id: id, voltPrefix: prefixes[0], currentPrefix: prefixes[1], type: type, resPrefix: prefixes[2]};
   //console.log(reqURL);
   $.post(reqURL, result, function(data, status, err){
     //let result = { id: id, voltPrefix: prefixes[0], currentPrefix: prefixes[1], type: type};
     //console.log(reqURL);
-    console.log(status);
-    console.log(err);
     let responsedata = JSON.parse(data);
     
     if (type === "6"){

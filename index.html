@@ -33,6 +33,8 @@ THE SOFTWARE.
 			  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
 			  crossorigin="anonymous"></script>
       <script src="scripts/circuitjQuery.js" ></script>
+      <script src="descript/description.json" type="application/json"></script>
+
       
 	</head>
 	
@@ -54,6 +56,7 @@ THE SOFTWARE.
     </select>
     <button id="generate" >Hálózat generálása</button>
     <button id="generateTask6" hidden>Hálózat generálása</button>  
+    <button id="click" >test</button>  
     <br>
     
     <hr/>
@@ -62,7 +65,7 @@ THE SOFTWARE.
     <div id="userresult">
         <!--Thevenin resistance: <input type = "text" id = "thres" value=""> <br>
         Thevenin voltage: <input type = "text" id = "thvolt" value=""><br>-->
-        <span id="thevTaskRes">Thevenin ellenállás (<b style="color:red;">Ohm</b>): </span><input type = "text" id = "thres" value=""><span id="resultTHRes" hidden></span><br>
+        <span id="thevTaskRes"></span><input type = "text" id = "thres" value=""><span id="resultTHRes" hidden></span><br>
         <span id="thevTaskVolt"></span><input type = "text" id = "thvolt" value=""><span id="resultTHVolt" hidden></span>
         <!--ID-->
         <input type = "text" id = "randomID" value="" hidden><br>

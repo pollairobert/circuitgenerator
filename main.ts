@@ -16,6 +16,7 @@ export class Main {
     private falstadLink: string;
     private voltegePrefix: string;
     private currentPrefix: string;
+    private ohmPrefix: string;
     public start(type: number){
         let cg: CircuitGenerator = new CircuitGenerator();
         let can: CircuitAnalyzer = new CircuitAnalyzer();
@@ -56,7 +57,8 @@ export class Main {
         this.falstadLink = cg.generateFalstadLink(circuit);
         can.analyzeCircuit(circuit);
         if (type < 6){
-            this.scanPrefix(Math.abs(can.getResultOfTheveninVoltage()),"V")
+            this.scanPrefix(Math.abs(can.getResultOfTheveninVoltage()),"V");
+            this.scanPrefix(Math.abs(can.getResultOfTheveninResistance()),"Ohm");
             this.results = {
                 "thres": Number(can.getResultOfTheveninResistance()),
                 "thvolt": Math.abs(Number(can.getResultOfTheveninVoltage())),
@@ -64,7 +66,7 @@ export class Main {
             }
         } else {
             this.scanPrefix(Math.abs(can.getQuestionResCurrent()),"A");
-            this.scanPrefix(Math.abs(can.getQuestionResVoltage()),"V")
+            this.scanPrefix(Math.abs(can.getQuestionResVoltage()),"V");
             this.results = {
                 "resCurrent": Math.abs(Number(can.getQuestionResCurrent())),
                 "resVolt": Math.abs(Number(can.getQuestionResVoltage())),
@@ -74,6 +76,7 @@ export class Main {
         //this.scanPrefix(can.getQuestionResCurrent(),"A");
         console.log('Prefix Current: '+ this.currentPrefix);
         console.log('Prefix Voltage: '+ this.voltegePrefix);
+        console.log('Prefix Ohm: '+ this.ohmPrefix);
         //this.scanPrefix(can.getQuestionResCurrent(),"V");
         if (can.getQuestionRes() !== undefined){
             console.log('A keresett ellenallas feszultsege: '+can.getQuestionResVoltage()+ ' V');
@@ -100,6 +103,12 @@ export class Main {
     public scanPrefix(ciruitresult: number, typeOfValue: string): void{
         let prefix: string = "";
         let prefixNumb: number = ciruitresult * 1000;
+        if (prefixNumb < 1000000000 && prefixNumb > 10000000){
+            prefix = "k";
+        } 
+        if (prefixNumb < 1000000000000 && prefixNumb > 1000000000){
+            prefix = "M";
+        } 
         if (prefixNumb < 1000 && prefixNumb > 1){
             prefix = "m";
         } 
@@ -118,12 +127,18 @@ export class Main {
         if (typeOfValue === "A"){
             this.currentPrefix = prefix;
         }
+        if (typeOfValue === "Ohm"){
+            this.ohmPrefix = prefix;
+        }
     }
     public getVoltagePrefix(): string{
         return this.voltegePrefix;
     }
     public getCurrentPrefix(): string{
         return this.currentPrefix;
+    }
+    public getOhmPrefix(): string{
+        return this.ohmPrefix;
     }
     public getResults():any{
         return this.results;
