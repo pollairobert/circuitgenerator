@@ -1,0 +1,35 @@
+﻿{
+    "type1": {
+        "Egyszerű feszültségosztó": 
+            "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+            
+    },
+    "type1.1": {
+        "Egyszerű feszültségosztó (2 generátor)": 
+            "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+    },
+    "type2": {
+        "Kettős feszültségosztó": 
+            "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+    },
+    "type3": {
+        "Kettős feszültségosztó (2 generátor)": 
+            "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+    },
+    "type3.1": {
+        "Kettős feszültségosztó (3 generátor)": 
+            "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+    },
+    "type4": {
+        "A hálózat KÜLSŐ 2 pólus felőli helyettesítése (Random hálózat)": 
+            "Old meg az A - B pontok közötti összetett hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+    },
+    "type5": {
+        "A hálózat BELSŐ 2 pólus felőli helyettesítése (Random hálózat)": 
+            "Old meg az A - B pontok közötti összetett hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+    },
+    "type6": {
+        "Ellenálláson eső feszültség és a rajta folyó áram megadása (Random hálózat)": 
+            "Thevenin helyettesítés segíségével határozd meg a jelölt ellenalláson folyó áramot, valamint annak feszültségét!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+    }
+}

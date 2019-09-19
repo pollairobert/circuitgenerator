@@ -28,6 +28,8 @@ import { CircuitAnalyzer } from './circuitanalyzer';
 import { Main } from './main';
 import * as math from 'mathjs';
 import { finished } from 'stream';
+import { Serverfunction } from './scripts/serverfunction';
+
 
 const path = require('path');
 const express = require('express');
@@ -36,14 +38,16 @@ const bodyParser = require('body-parser')
 
 let fs = require('fs');
 let chekTime = 60*1000;
-//let globalMain: Main;
-if (!fs.existsSync('generateLOG.json')){
+let serverFunction: Serverfunction = new Serverfunction();
+serverFunction.checkExistTaskLOGfile();
+/*if (!fs.existsSync('generateLOG.json')){
     fs.writeFileSync('generateLOG.json','{}', (err) => {
         if (err) {
             return console.error(err);
         }
     });
-}
+}*/
+serverFunction.intervalTimer();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(express.static('scripts'));
@@ -52,6 +56,9 @@ app.get('/', (req,res)=> {
 });
 app.get('/scripts/circuitjQuery.js', (req,res)=> {
     res.sendFile(path.join(__dirname + '/scripts/circuitjQuery.js'));
+});
+app.get('/descript/description.json', (req,res)=> {
+    res.sendFile(path.join(__dirname + '/descript/description.json'));
 });
 app.get('/generate', function (req, res) {
     let circuitCoordinateArray: string[];
@@ -63,17 +70,20 @@ app.get('/generate', function (req, res) {
     let checkID: number;
     let voltPrefix: string;
     let currentPrefix: string;
+    let ohmPrefix: string;
     type = req.query.type;
     //checkID = req.query.id;
     
     if (req.query.id === undefined){
-        console.log(req.query.id);
+        console.log('req.query.id: '+req.query.id);
         //deleteData(req.query.id);
         main.start(+type);
         link = main.getFalstadLink();
         circuitCoordinateArray = main.getCircuitCoordinateArray();
         voltPrefix = main.getVoltagePrefix();
         currentPrefix = main.getCurrentPrefix();
+        ohmPrefix = main.getOhmPrefix();
+        console.log('ohmPrefix: '+ohmPrefix);
         //let id = Math.random();
         let id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         let response = {
@@ -81,18 +91,23 @@ app.get('/generate', function (req, res) {
             link: link,
             id: id,
             voltPrefix: voltPrefix,
-            currentPrefix: currentPrefix
+            currentPrefix: currentPrefix,
+            ohmPrefix: ohmPrefix
         };
-        addDatatoJSONfile(main.getResults(),id);
+        console.log('response: ');
+        console.log(response);
+        serverFunction.addDatatoJSONfile(main.getResults(),id);
         res.send(JSON.stringify(response));
     } else {
-        deleteDatatoJSONfile(req.query.id);
-        console.log(req.query.id);
+        serverFunction.deleteDatatoJSONfile(req.query.id);
+        console.log('req.query.id: '+req.query.id);
         main.start(+type);
         link = main.getFalstadLink();
         circuitCoordinateArray = main.getCircuitCoordinateArray();
         voltPrefix = main.getVoltagePrefix();
         currentPrefix = main.getCurrentPrefix();
+        ohmPrefix = main.getOhmPrefix();
+        console.log('ohmPrefix: '+ohmPrefix);
         //let id = Math.random();
         let id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         let response = {
@@ -100,38 +115,27 @@ app.get('/generate', function (req, res) {
             link: link,
             id: id,
             voltPrefix: voltPrefix,
-            currentPrefix: currentPrefix
+            currentPrefix: currentPrefix,
+            ohmPrefix: ohmPrefix
         };
-        
-        addDatatoJSONfile(main.getResults(),id);
+        console.log('response: ');
+        console.log(response);
+        serverFunction.addDatatoJSONfile(main.getResults(),id);
         res.send(JSON.stringify(response));
         console.log('nem megoldott feladat, ujrageneralas tortent');
     }
-    //console.log(type);
-    /*main.start(+type);
-    link = main.getFalstadLink();
-    circuitCoordinateArray = main.getCircuitCoordinateArray();
-    //let id = Math.random();
-    let id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    let response = {
-        array: circuitCoordinateArray,
-        link: link,
-        id: id
-    };
-    addDatatoJSONfile(main.getResults(),id);
-    res.send(JSON.stringify(response));*/
-    
-    
 });
 
 app.post('/check', (req, res) => {
     let id = req.body.id;
-    console.log(id);
+    //console.log(id);
 
-    let response = searchResults(id,+req.body.thvolt,+req.body.thres,undefined, req.body.voltPrefix, undefined);
+    let response = serverFunction.searchResults(id,+req.body.thvolt,+req.body.thres,undefined, req.body.voltPrefix, undefined, req.body.ohmPrefix);
+    console.log('response - check ben: ');
+    console.log(response);
     if (response.res && response.volt){
         //response.link = globalMain.getFalstadLink();
-        deleteDatatoJSONfile(id);
+        serverFunction.deleteDatatoJSONfile(id);
         console.log('data removed');
     }
     //console.log(response);
@@ -141,10 +145,10 @@ app.post('/check', (req, res) => {
 app.post('/check2', (req, res) => {
     let id = req.body.id;
     console.log(id);
-    let response = searchResults(id,+req.body.resVolt,undefined,+req.body.resCurrent,req.body.voltPrefix,req.body.currentPrefix);
+    let response = serverFunction.searchResults(id,+req.body.resVolt,undefined,+req.body.resCurrent,req.body.voltPrefix,req.body.currentPrefix,undefined);
     if (response.res && response.volt){
         //response.link = globalMain.getFalstadLink();
-        deleteDatatoJSONfile(id);
+        serverFunction.deleteDatatoJSONfile(id);
         console.log('data removed');
     }
     //console.log(response);
@@ -153,18 +157,11 @@ app.post('/check2', (req, res) => {
 });
 app.post('/timeout', (req, res) => {
     let id = req.query.id;
-    let response = timeOutResult(id, req.query.voltPrefix,req.query.currentPrefix, req.query.type );
+    let response = serverFunction.timeOutResult(id, req.query.voltPrefix,req.query.currentPrefix, req.query.type, req.query.resPrefix );
     res.send(JSON.stringify(response));
 });
-function addDatatoJSONfile(pushData,id){
+/*function addDatatoJSONfile(pushData,id){
     console.log()
-    /*if (!fs.existsSync('generateLOG.json')){
-        fs.writeFileSync('generateLOG.json','{}', (err) => {
-            if (err) {
-                return console.error(err);
-            }
-        });
-    }*/
     let generateLOG = fs.readFileSync('generateLOG.json');
     if (generateLOG[0] === undefined){
         console.log('Ures file volt');
@@ -309,11 +306,11 @@ function checkSolving(){
             if (resultLOG.hasOwnProperty(key)) {
                 difference = timeDifference(new Date(),new Date(resultLOG[key].timestamp));
                 console.log(key+': '+difference[0]+ ' day '+difference[1]+ ' hour '+difference[2]+ ' minute '+difference[3]+ ' sec.');
-                if (difference[0] > 0 || difference[1] > 0 || difference[2] > 1 /*|| difference[3] > 30 */ ){
+                if (difference[0] > 0 || difference[1] > 0 || difference[2] > 1 || difference[3] > 30  ){
                     console.log('van torolni vali');
                     deleted = true;
                     delete resultLOG[key];
-                    //deleteDatatoJSONfile(key);
+                    //serverFunction.deleteDatatoJSONfile(key);
                 }
             }
         }
@@ -354,8 +351,8 @@ function timeDifference(date1,date2) {
 
     //return daysDifference+ ' day '+hoursDifference+ ' hour '+minutesDifference+ ' minute '+secondsDifference+ ' sec.';
     return [daysDifference, hoursDifference, minutesDifference, secondsDifference];
-}
-setInterval(checkSolving, chekTime);
+}*/
+//setInterval(this.checkSolving, chekTime);
 let port = process.env.PORT || 3000;
 let server=app.listen(port,function() {
     console.log('Listening to '+port+' port');
