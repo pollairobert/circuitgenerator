@@ -17,6 +17,7 @@ export class Main {
     private voltegePrefix: string;
     private currentPrefix: string;
     private ohmPrefix: string;
+    private measurementVoltPrefix: string;
     public start(type: number){
         let cg: CircuitGenerator = new CircuitGenerator();
         let can: CircuitAnalyzer = new CircuitAnalyzer();
@@ -27,6 +28,7 @@ export class Main {
 
         //let type = 5;
         let temptype = type;
+        let measurementError: number[] = [];
         if (type === 2){
             temptype = cg.randomChoiseTwoNumber(2,2.1);
             //type = cg.randomChoiseTwoNumber(temp,3);
@@ -34,6 +36,10 @@ export class Main {
         if (type === 6){
             temptype = cg.randomChoiseTwoNumber(4,5);
             can.setQuestionOrVoltmeterResistance(680000);
+        }
+        if (type === 7){
+            temptype = cg.randomChoiseTwoNumber(4,5);
+            can.setQuestionOrVoltmeterResistance(2000000);
         }
         let circuit: Circuit = cg.generateCircuit(temptype);
 
@@ -56,6 +62,13 @@ export class Main {
         this.circuitCoordinateArray = cg.getCircuitCoordinatesToFalstad();
         this.falstadLink = cg.generateFalstadLink(circuit);
         can.analyzeCircuit(circuit);
+        if (type === 7){
+            console.log("can.getQuestionResVoltage(): "+can.getQuestionResVoltage())
+            console.log("can.getResultOfTheveninVoltage(): "+can.getResultOfTheveninVoltage())
+            measurementError = this.calculateMeasurementError(can.getQuestionResVoltage(),can.getResultOfTheveninVoltage());
+            //console.log
+        }
+        console.log("can.getQuestionRes(): "+can.getQuestionRes())
         if (type < 6){
             this.scanPrefix(Math.abs(can.getResultOfTheveninVoltage()),"V");
             this.scanPrefix(Math.abs(can.getResultOfTheveninResistance()),"Ohm");
@@ -70,28 +83,31 @@ export class Main {
             this.results = {
                 "resCurrent": Math.abs(Number(can.getQuestionResCurrent())),
                 "resVolt": Math.abs(Number(can.getQuestionResVoltage())),
-                "timestamp": new Date()
+                "absError": Number(measurementError[0]),
+                "relativeError": Number(measurementError[1]),
+                "timestamp": new Date(),
+                
             }
         }
         //this.scanPrefix(can.getQuestionResCurrent(),"A");
-        console.log('Prefix Current: '+ this.currentPrefix);
-        console.log('Prefix Voltage: '+ this.voltegePrefix);
-        console.log('Prefix Ohm: '+ this.ohmPrefix);
+        //console.log('Prefix Current: '+ this.currentPrefix);
+        //console.log('Prefix Voltage: '+ this.voltegePrefix);
+        //console.log('Prefix Ohm: '+ this.ohmPrefix);
         //this.scanPrefix(can.getQuestionResCurrent(),"V");
         if (can.getQuestionRes() !== undefined){
             console.log('A keresett ellenallas feszultsege: '+can.getQuestionResVoltage()+ ' V');
             console.log('A keresett ellenallason folyo aram: '+can.getQuestionResCurrent()+ ' A');
         }
-        console.log(this.falstadLink);
+        //console.log(this.falstadLink);
         console.log(this.results);
         
-        if (type <= 0){
+        if (type >= 0){
             //can.analyzeCircuit(circuit);
 
             //console.log('Az aramkor Thevenin ellenalasa: '+circuit.getThevRes().toFixed(6)+ ' Ohm');
-            console.log('Az aramkor Thevenin ellenalasa: '+can.getResultOfTheveninResistance().toFixed(6)+ ' Ohm');
+            console.log('Az aramkor Thevenin ellenalasa: '+can.getResultOfTheveninResistance()+ ' Ω');
             //console.log('Az aramkor Thevenin helyettesito feszultsege: '+circuit.getThevVolt().toFixed(6)+ ' V');
-            console.log('Az aramkor Thevenin helyettesito feszultsege: '+can.getResultOfTheveninVoltage().toFixed(6)+ ' V');
+            console.log('Az aramkor Thevenin helyettesito feszultsege: '+can.getResultOfTheveninVoltage()+ ' V');
         }
         //console.log(circuit.getParameters());
         //console.log(cg.getCircuitCoordinatesToFalstad());
@@ -99,7 +115,13 @@ export class Main {
         resetMeshCounter();
         //console.log(cg.percentRandom(10));
     }
-
+    public calculateMeasurementError(measuredVoltage: number, realVoltage: number): number[]{
+        let measurementErr: number[] = [];
+        let absolutError: number = Math.abs(measuredVoltage) - Math.abs(realVoltage);
+        let relativeError: number = (Math.abs(absolutError)/Math.abs(measuredVoltage))*100;
+        measurementErr.push(Math.abs(absolutError),relativeError);
+        return measurementErr;
+    }
     public scanPrefix(ciruitresult: number, typeOfValue: string): void{
         let prefix: string = "";
         let prefixNumb: number = ciruitresult * 1000;
@@ -113,7 +135,7 @@ export class Main {
             prefix = "m";
         } 
         if (prefixNumb < 1 && prefixNumb > 0.001){
-            prefix = "u";
+            prefix = "µ";
         } 
         if (prefixNumb < 0.001 && prefixNumb > 0.000001){
             prefix = "n";
@@ -130,6 +152,9 @@ export class Main {
         if (typeOfValue === "Ohm"){
             this.ohmPrefix = prefix;
         }
+        if (typeOfValue === "Volt"){
+            this.measurementVoltPrefix = prefix;
+        }
     }
     public getVoltagePrefix(): string{
         return this.voltegePrefix;
@@ -139,6 +164,9 @@ export class Main {
     }
     public getOhmPrefix(): string{
         return this.ohmPrefix;
+    }
+    public getMeasurementVoltPrefix(): string{
+        return this.measurementVoltPrefix;
     }
     public getResults():any{
         return this.results;

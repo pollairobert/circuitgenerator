@@ -72,6 +72,7 @@ app.get('/generate', function (req, res) {
     let currentPrefix: string;
     let ohmPrefix: string;
     type = req.query.type;
+    console.log('req.query.type: '+type);
     //checkID = req.query.id;
     
     if (req.query.id === undefined){
@@ -94,8 +95,8 @@ app.get('/generate', function (req, res) {
             currentPrefix: currentPrefix,
             ohmPrefix: ohmPrefix
         };
-        console.log('response: ');
-        console.log(response);
+        //console.log('response: ');
+        //console.log(response);
         serverFunction.addDatatoJSONfile(main.getResults(),id);
         res.send(JSON.stringify(response));
     } else {
@@ -118,8 +119,8 @@ app.get('/generate', function (req, res) {
             currentPrefix: currentPrefix,
             ohmPrefix: ohmPrefix
         };
-        console.log('response: ');
-        console.log(response);
+        //console.log('response: ');
+        //console.log(response);
         serverFunction.addDatatoJSONfile(main.getResults(),id);
         res.send(JSON.stringify(response));
         console.log('nem megoldott feladat, ujrageneralas tortent');

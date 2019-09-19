@@ -43,20 +43,21 @@ THE SOFTWARE.
     <h1>Áramkör generátor a Thevenin tétel alkalmazásához</h1>
     
     <!--Task type (difficulty):-->
-    Nehézségi szint:
+    <span>Feladattípus: </span> 
     <select size=”1”>
       <option value="1" selected>Egyszerű fesz.osztó</option>
       <option value="1.1">Egyszerű fesz.osztó (2 generátor)</option>
       <option value="2" >Kettős fesz.osztó</option>
       <option value="3" >Kettős fesz.osztó (2 generátor)</option>
       <option value="3.1" >Kettős fesz.osztó (3 generátor)</option>
-      <option value="4" >KÜLSŐ 2 pólus felőli helyettesítés (Random hálózat)</option>
-      <option value="5" >BELSŐ 2 pólus felőli helyettesítés (Random hálózat)</option>
+      <option value="4" >KÜLSŐ 2 pólus közötti helyettesítés (Random hálózat)</option>
+      <option value="5" >BELSŐ 2 pólus közötti helyettesítés (Random hálózat)</option>
       <option value="6" >Ellenálláson eső fesz. és folyó áram megadása (Random hálózat) </option>
+      <option value="7" >Mérési hiba megadása (Random hálózat) </option>
     </select>
     <button id="generate" >Hálózat generálása</button>
-    <button id="generateTask6" hidden>Hálózat generálása</button>  
-    <button id="click" >test</button>  
+    <button id="generateTask7" hidden>Hálózat generálása 7</button>  
+    <button id="click" >click</button> 
     <br>
     
     <hr/>
@@ -86,6 +87,18 @@ THE SOFTWARE.
       <!--<input type = "button" id="check" value = "Check">-->
       <input type = "button" id="check2" value = "Ellenőrzés">
   </div>
+  <div id="userresult3">
+    <!--Thevenin resistance: <input type = "text" id = "thres" value=""> <br>
+    Thevenin voltage: <input type = "text" id = "thvolt" value=""><br>-->
+    <span id="voltMeterTaskAbs">Relativ hiba: </span><input type = "text" id = "absValue" value=""> <span id="resultAbs" hidden></span><br>
+    <span id="voltMeterTaskRel">Abszolút hiba: </span><input type = "text" id = "relValue" value=""><span id="resultRel" hidden></span>
+    <!--ID-->
+    <input type = "text" id = "randomID3" value="" hidden><br>
+    <!--Timer-->
+    <span id="timecount3"></span><br>
+    <!--<input type = "button" id="check" value = "Check">-->
+    <input type = "button" id="check3" value = "Ellenőrzés">
+</div>
     
   </body>
 </html>

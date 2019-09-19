@@ -21,15 +21,19 @@
             "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
     },
     "type4": {
-        "A hálózat KÜLSŐ 2 pólus felőli helyettesítése (Random hálózat)": 
+        "A hálózat KÜLSŐ 2 pólus közötti helyettesítése (Random hálózat)": 
             "Old meg az A - B pontok közötti összetett hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
     },
     "type5": {
-        "A hálózat BELSŐ 2 pólus felőli helyettesítése (Random hálózat)": 
+        "A hálózat BELSŐ 2 pólus közötti helyettesítése (Random hálózat)": 
             "Old meg az A - B pontok közötti összetett hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
     },
     "type6": {
         "Ellenálláson eső feszültség és a rajta folyó áram megadása (Random hálózat)": 
             "Thevenin helyettesítés segíségével határozd meg a jelölt ellenalláson folyó áramot, valamint annak feszültségét!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+    },
+    "type7": {
+        "Mérési hiba megadása (Random hálózat)": 
+            "Adott egy 2 MΩ belső ellenállású feszültségmérő. Mekkora lesz az abszolút és relatív mérési hiba, ha az alábbi hálózat  A - B pontján mérjük meg a feszültséget?<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
     }
 }
