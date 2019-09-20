@@ -76,20 +76,19 @@ app.get('/generate', function (req, res) {
     console.log(type);
     //checkID = req.query.id;
     
-    if (req.query.id === undefined){
-        console.log('req.query.id: '+req.query.id);
+    if (req.query.id !== undefined){
+        serverFunction.deleteDatatoJSONfile(req.query.id);
+        console.log('nem megoldott feladat, ujrageneralas tortent');
+    }
+        //console.log('req.query.id: '+req.query.id);
         //deleteData(req.query.id);
         main.start(type);
         link = main.getFalstadLink();
         circuitCoordinateArray = main.getCircuitCoordinateArray();
-        //if (type === 7){
-         //   voltPrefix = main.getMeasurementVoltPrefix();
-        //} else {
-            voltPrefix = main.getVoltagePrefix();
-        //}
+        voltPrefix = main.getVoltagePrefix();
         currentPrefix = main.getCurrentPrefix();
         ohmPrefix = main.getOhmPrefix();
-        console.log('voltPrefix: '+voltPrefix);
+        //console.log('voltPrefix: '+voltPrefix);
         //let id = Math.random();
         let id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         let response = {
@@ -104,16 +103,16 @@ app.get('/generate', function (req, res) {
         //console.log(response);
         serverFunction.addDatatoJSONfile(main.getResults(),id);
         res.send(JSON.stringify(response));
-    } else {
-        serverFunction.deleteDatatoJSONfile(req.query.id);
-        console.log('req.query.id: '+req.query.id);
+    //} else {
+        /*serverFunction.deleteDatatoJSONfile(req.query.id);
+        //console.log('req.query.id: '+req.query.id);
         main.start(+type);
         link = main.getFalstadLink();
         circuitCoordinateArray = main.getCircuitCoordinateArray();
         voltPrefix = main.getVoltagePrefix();
         currentPrefix = main.getCurrentPrefix();
         ohmPrefix = main.getOhmPrefix();
-        console.log('ohmPrefix: '+ohmPrefix);
+        //console.log('ohmPrefix: '+ohmPrefix);
         //let id = Math.random();
         let id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         let response = {
@@ -127,9 +126,9 @@ app.get('/generate', function (req, res) {
         //console.log('response: ');
         //console.log(response);
         serverFunction.addDatatoJSONfile(main.getResults(),id);
-        res.send(JSON.stringify(response));
-        console.log('nem megoldott feladat, ujrageneralas tortent');
-    }
+        res.send(JSON.stringify(response));*/
+        
+    //}
 });
 
 app.post('/check', (req, res) => {
@@ -150,8 +149,8 @@ app.post('/check', (req, res) => {
 });
 app.post('/check2', (req, res) => {
     let id = req.body.id;
-    console.log('req.body.voltPrefix: '+req.body.voltPrefix);
-    let response = serverFunction.searchResults(id,Math.abs(+req.body.thvolt),undefined,Math.abs(+req.body.resCurrent),req.body.voltPrefix,req.body.currentPrefix,undefined);
+    console.log('req.body.thvolt: '+req.body.thvolt);
+    let response = serverFunction.searchResults(id,Math.abs(+req.body.resVolt),undefined,Math.abs(+req.body.resCurrent),req.body.voltPrefix,req.body.currentPrefix,undefined);
     console.log(response);
     
     if (response.current && response.volt){
@@ -165,7 +164,7 @@ app.post('/check2', (req, res) => {
 app.post('/timeout', (req, res) => {
     let id = req.query.id;
     let response = serverFunction.timeOutResult(id, req.query.voltPrefix,req.query.currentPrefix, req.query.type, req.query.resPrefix );
-    serverFunction.deleteDatatoJSONfile(id);
+    //serverFunction.deleteDatatoJSONfile(id);
     res.send(JSON.stringify(response));
 });
 /*function addDatatoJSONfile(pushData,id){

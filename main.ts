@@ -27,6 +27,7 @@ export class Main {
         //can.setConnectedVoltagesourceResistance(22000);
 
         //let type = 5;
+        let typeArray: number[] = [2, 3, 3.1, 4, 5];
         let temptype = type;
         let measurementError: number[] = [];
         if (type === 2){
@@ -34,15 +35,18 @@ export class Main {
             //type = cg.randomChoiseTwoNumber(temp,3);
         }
         if (type === 6){
-            temptype = cg.randomChoiseTwoNumber(4,5);
+            temptype = cg.randomChoiseInAnyArray(typeArray);
+            //temptype = cg.randomChoiseTwoNumber(4,5);
             can.setQuestionOrVoltmeterResistance(680000);
         }
         if (type === 7){
-            temptype = cg.randomChoiseTwoNumber(4,5);
+            temptype = cg.randomChoiseInAnyArray(typeArray);
+            //temptype = cg.randomChoiseTwoNumber(4,5);
             can.setQuestionOrVoltmeterResistance(2000000);
         }
         if (type === 8){
-            temptype = cg.randomChoiseTwoNumber(4,5);
+            temptype = cg.randomChoiseInAnyArray(typeArray);
+            //temptype = cg.randomChoiseTwoNumber(4,5);
             can.setConnectedVoltagesourceValue(20);
             can.setConnectedVoltagesourceResistance(22000);
         }
@@ -83,6 +87,12 @@ export class Main {
             this.results = {
                 "thres": Number(can.getResultOfTheveninResistance()),
                 "thvolt": Math.abs(Number(can.getResultOfTheveninVoltage())),
+                "timestamp": new Date(),
+            }
+        } else if (type === 8){
+            this.scanPrefix(Math.abs(can.getOutputVoltageWithConnectedVoltageSource()),"V");
+            this.results = {
+                "terminalVolt": Math.abs(Number(can.getOutputVoltageWithConnectedVoltageSource())),
                 "timestamp": new Date(),
             }
         } else {
