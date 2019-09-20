@@ -11,22 +11,25 @@ let prefixes = [];
 let countdownMin;
 let countdownSec;
 let select;
+let checkID;
+let title;
+let descript;
 $(document).ready(function () {
-  //$('select').on('change', function() {
+  /*$('select').on('change', function() {
     //alert( $(this).find(":selected").val() );
-    /*if ($(this).find(":selected").val() === '7'){
-      $("#generateTask7").show();
+    if ($(this).find(":selected").val() === "8"){
+      $("#generateTask8").show();
       $("#generate").hide();
     } else {
-      $("#generateTask7").hide();
+      $("#generateTask8").hide();
       $("#generate").show();
-    }*/
-  //});
+    }
+  });*/
   
   //console.log(prefixes);
   $("#userresult").hide();
   $("#userresult2").hide();
-  $("#userresult3").hide();
+  $("#userresultVoltSource").hide();
   let falstadlink;
   $("#generate").click(function(){
     select = $("select").val();
@@ -34,113 +37,115 @@ $(document).ready(function () {
     console.log(decriptSelect);
     //console.log($('select').text());
     //let falstadlink;
-    let selectedTask;
-    let checkID;
-    let title;
-    let descript;
     $.ajax({
       dataType: 'json',
       url: 'descript/description.json',
       success: (data)=>{
         //let result = JSON.stringify(data)
-        console.log(data[decriptSelect]);
+        //console.log(data[decriptSelect]);
         title = Object.keys(data[decriptSelect])[0];
-        console.log(title);
+        //console.log(title);
         descript = data[decriptSelect][title];
-        console.log(descript);
+        //console.log(descript);
         let idx2 = Object.keys(data[decriptSelect]);
-        console.log(Object.keys(data[decriptSelect]));
+        //console.log(Object.keys(data[decriptSelect]));
       }
     });
     //("#resultAbs").hide();
     //$("#resultRel").hide();
 
-    $("#resultAmp").hide();
-    $("#resultVolt").hide();
+    ///$("#resultAmp").hide();
+    //$("#resultVolt").hide();
     
-    $("#resultTHRes").hide();
-    $("#resultTHVolt").hide();
+    //$("#resultTHRes").hide();
+    //$("#resultTHVolt").hide();
     
-    $("#thres").val("");
-    $("#thvolt").val("");
+    //$(":input").val("");
     
-    $("#resCurrent").val("");
-    $("#resVolt").val("");
+    //$("#thres").val("");
+    //$("#thvolt").val("");
+    
+    //$("#resCurrent").val("");
+    //$("#resVolt").val("");
 
     //$("#absValue").val("");
     //$("#relValue").val("");
     let generate = host+'/generate?type='+select;
-    if (($("#userresult").is(":hidden") && $("#userresult2").is(":hidden"))  || timeout){
+    if (($("#userresult").is(":hidden") && $("#userresult2").is(":hidden") && $("#userresultVoltSource").is(":hidden"))  || timeout){
+      console.log("ELSO GENERALAS");
       //clearInterval(timer);
-      if (select === "6" || select === "7"){
-        $("#userresult").hide();
-        //$("#userresult3").hide();
-
-        $("#resCurrent").show();
-        $("#resVolt").show();
-        $("#check2").show();
-        $("#timecount2").show();
-
-      } /*else if (select === "7"){
-        $("#userresult").hide();
-        $("#userresult2").hide();
-
-        $("#userresult3").show();
-
-        $("#absValue").show();
-        $("#relValue").show();
-        $("#check3").show();
-        $("#timecount3").show();
-      }*/ else {
-        $("#userresult2").hide();
+      /*if (select === "6" || select === "7"){
+        $("#userresult2").show();
         //$("#userresult").hide();
+        //$("#userresultVoltSource").hide();
+        
+        //$("#resCurrent").show();
+        //$("#resVolt").show();
+        //$("#check2").show();
+        //$("#timecount2").show();
 
-        $("#thres").show();
-        $("#thvolt").show();
-        $("#check").show();
-        $("#timecount").show();
-      }
-      timeout = false;
+      }else if(select === "8"){
+        $("#userresultVoltSource").show();
+        //$("#userresult").hide();
+        //$("#userresult2").hide();
+        
+      } else {
+        $("#userresult").show();
+        //$("#userresult2").hide();
+        //$("#userresultVoltSource").hide();
+
+        //$("#thres").show();
+        //$("#thvolt").show();
+        //$("#check").show();
+        //$("#timecount").show();
+      }*/
+      
+      //timeout = false;
       $("#result").html('');
       $("#content").html('');
       $("#timeoutorsolve").html('');
       $.get(generate, function(data, status){
         console.log(JSON.parse(data));
         let responsedata = JSON.parse(data);
+
+        checkID = responsedata.id;
+
         prefixes = [];
         prefixes.push(responsedata.voltPrefix, responsedata.currentPrefix, responsedata.ohmPrefix);
         falstadlink = '<b><a href="'+responsedata.link+'" target="_blank">Falstad</a></b>';
         //fslink = falstadlink;
         //$("#result").html(falstadlink);
-        $("#content").append("<h2>"+title+"</h2>");
+        /*$("#content").append("<h2>"+title+"</h2>");
         $("#content").append("<p>"+descript+"</p>");
         $("#result").append('<hr/>');
         $("#result").append("<h1>Ide jon majd a megjelenitese a halozatnak (CANVAS?)</h1>");
-        $("#result").append('<hr/>');
+        $("#result").append('<hr/>');*/
         //$("#randomID").val(responsedata.id);
-        if (select === "6" || select === "7"){
-          $("#userresult2").show();
-          $("#randomID2").val(responsedata.id);
-          if (select === "7"){
+        //if (select === "6" || select === "7"){
+          //$("#userresult2").show();
+          //$("#randomID2").val(responsedata.id);
+         /* if (select === "7"){
             $("#resTaskCurrent").html("Abszolút hiba nagysága (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
-              $("#resTaskVolt").html("Relatív hiba nagysága (<b style=\"color:red;\">%</b>): ");
+            $("#resTaskVolt").html("Relatív hiba nagysága (<b style=\"color:red;\">%</b>): ");
           } else {
             $("#resTaskCurrent").html("Ellenálláson folyó áram (<b style=\"color:red;\">"+prefixes[1]+"A</b>): ");
             $("#resTaskVolt").html("Ellenálláson eső feszültseg (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
-          }
+          }*/
           
-        } else {
-          $("#userresult").show();
+        //} else if (select === "8") {
+          //$("#randomID3").val(responsedata.id);
+        //}else {
+          /*$("#userresult").show();
           $("#randomID").val(responsedata.id);
           $("#thevTaskVolt").html("Thevenin feszültség (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
-          $("#thevTaskRes").html("Thevenin ellenállás (<b style=\"color:red;\">"+prefixes[2]+"Ω</b>): ");
+          $("#thevTaskRes").html("Thevenin ellenállás (<b style=\"color:red;\">"+prefixes[2]+"Ω</b>): ");*/
           //prefixes = undefined;
-        }
-        startTimer(select, falstadlink);
+        //}
+        startTimer(select, falstadlink, responsedata, prefixes);
       });
       $("select").val("1");
     } else {
-      if (select === "6" || select === "7"){
+      /*if (select === "6" || select === "7"){
         if ($("#userresult").is(":hidden")){
           checkID = $("#randomID2").val();
         } else {
@@ -152,6 +157,8 @@ $(document).ready(function () {
         $("#check2").show();
         $("#timecount2").show();
         //checkID = $("#randomID").val()
+      } if (select === "8") {
+
       } else {
         if ($("#userresult2").is(":hidden")){
           checkID = $("#randomID").val();
@@ -163,50 +170,90 @@ $(document).ready(function () {
         $("#thvolt").show();
         $("#check").show();
         $("#timecount").show();
-      }
+      }*/
       //let confirmation = confirm('Are you sure?');
       let confirmation = confirm('Biztos szeretnél újat generálni?');
       if (confirmation){
         //clearInterval(timer);
         //let checkID = $("#randomID").val()
         console.log('Uj generalas, eldobni valo id: '+checkID);
-        $("#resTaskCurrent").html("");
-        $("#resTaskVolt").html("");
+        //$("#resTaskCurrent").html("");
+        //$("#resTaskVolt").html("");
+        //$("#resTaskVolt").html("");
+        
+        //$("#userresult2").hide();
+        //$("#userresult").hide();
+        //$("#userresultVoltSource").hide();
+
+        /*if (select === "6" || select === "7"){
+          $("#userresult2").show();
+          //$("#userresult").hide();
+          //$("#userresultVoltSource").hide();
+          
+          //$("#resCurrent").show();
+          //$("#resVolt").show();
+          //$("#check2").show();
+          //$("#timecount2").show();
+  
+        }else if(select === "8"){
+          $("#userresultVoltSource").show();
+          //$("#userresult").hide();
+          //$("#userresult2").hide();
+          
+        } else {
+          $("#userresult").show();
+          //$("#userresultVoltSource").hide();
+  
+         // $("#thres").show();
+          //$("#thvolt").show();
+          //$("#check").show();
+          //$("#timecount").show();
+        }*/
+        
+        timeout = false;
+
         $("#result").html('');
         $("#content").html('');
         $.get(generate+'&id='+checkID, function(data, status, err){
           console.log(JSON.parse(data));
           let responsedata = JSON.parse(data);
+          checkID = responsedata.id;
           prefixes = [];
           prefixes.push(responsedata.voltPrefix, responsedata.currentPrefix, responsedata.ohmPrefix);
           falstadlink = '<b><a href="'+responsedata.link+'" target="_blank">Falstad</a></b>';
-          $("#content").append("<h2>"+title+"</h2>");
+          /*$("#content").append("<h2>"+title+"</h2>");
           $("#content").append("<p>"+descript+"</p>");
-        
           $("#result").append('<hr/>');
           $("#result").append("<h1>Ide jon majd a megjelenitese a halozatnak (CANVAS?)</h1>");
-          
-          $("#result").append('<hr/>');
+          $("#result").append('<hr/>');*/
           //$("#randomID").val(responsedata.id);
-          if (select === "6" || select === "7"){
-            $("#userresult2").show();
-            $("#userresult").hide();
-            $("#randomID2").val(responsedata.id);
-            if (select === "7"){
-              $("#resTaskCurrent").html("Abszolút hiba nagysága (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
-              $("#resTaskVolt").html("Relatív hiba nagysága (<b style=\"color:red;\">%</b>): ");
-            } else {
-              $("#resTaskCurrent").html("Ellenálláson folyó áram (<b style=\"color:red;\">"+prefixes[1]+"A</b>): ");
-              $("#resTaskVolt").html("Ellenálláson eső feszültseg (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
-            }
-          } else {
-            $("#userresult").show();
-            $("#userresult2").hide();
-            $("#randomID").val(responsedata.id);
-            $("#thevTaskVolt").html("Thevenin feszültség (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
-            $("#thevTaskRes").html("Thevenin ellenállás (<b style=\"color:red;\">"+prefixes[2]+"Ω</b>): ");
-          }
-          startTimer(select, falstadlink);
+          //if (select === "6" || select === "7"){
+            //$("#userresult2").show();
+            //$("#userresult").hide();
+            //$("#userresultVoltSource").hide();
+            //$("#randomID2").val(responsedata.id);
+            //if (select === "7"){
+              //$("#resTaskCurrent").html("Abszolút hiba nagysága (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
+              //$("#resTaskVolt").html("Relatív hiba nagysága (<b style=\"color:red;\">%</b>): ");
+            //} else {
+              //$("#resTaskCurrent").html("Ellenálláson folyó áram (<b style=\"color:red;\">"+prefixes[1]+"A</b>): ");
+              //$("#resTaskVolt").html("Ellenálláson eső feszültseg (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
+            //}
+          //} else if (select === "8") {
+            //$("#randomID3").val(responsedata.id);
+            //$("#userresultVoltSource").show();
+            //$("#userresult2").hide();
+            //$("#userresultVoltSource").hide();
+          //} else {
+            //$("#userresult").show();
+            //$("#userresult2").hide();
+            //$("#userresultVoltSource").hide();
+            //$("#randomID").val(responsedata.id);
+            //$("#thevTaskVolt").html("Thevenin feszültség (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
+            //$("#thevTaskRes").html("Thevenin ellenállás (<b style=\"color:red;\">"+prefixes[2]+"Ω</b>): ");
+          //}
+          //startTimer(select, falstadlink);
+          startTimer(select, falstadlink, responsedata, prefixes);
         });
         $("select").val("1");
       }else {
@@ -362,19 +409,59 @@ $(document).ready(function () {
   });
   
 });
-function startTimer(type,fslink){
+function startTimer(type,fslink,responsedata?, prefixes?){
   //console.log(fslink);
   countdownMin = 0;
-  countdownSec = 15;
+  countdownSec = 5;
+  $("#result").html('');
+  $("#content").html('');
+  $("#timeoutorsolve").html('');
+  $(".usrinput").show();
+  $(".result").hide();
+  $("#content").append("<h2>"+title+"</h2>");
+  $("#content").append("<p>"+descript+"</p>");
+  $("#result").append('<hr/>');
+  $("#result").append("<h1>Ide jon majd a megjelenitese a halozatnak (CANVAS?)</h1>");
+  $("#result").append('<hr/>');
   if (type === "6" || type === "7"){
+    $("#userresult2").show();
+    $("#resCurrent").show();
+    $("#resVolt").show();
+    $("#userresult").hide();
+    $("#userresultVoltSource").hide();
     $("#check2").prop("disabled", false);
     $('#timecount2').text(countdownMin+' m '+countdownSec+ " s ");
+    $("#randomID2").val(responsedata.id);
+    if (select === "7"){
+      $("#resTaskCurrent").html("Abszolút hiba nagysága (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
+      $("#resTaskVolt").html("Relatív hiba nagysága (<b style=\"color:red;\">%</b>): ");
+    } else {
+      $("#resTaskCurrent").html("Ellenálláson folyó áram (<b style=\"color:red;\">"+prefixes[1]+"A</b>): ");
+      $("#resTaskVolt").html("Ellenálláson eső feszültseg (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
+    }
+  } if (type === "8"){
+    //$("#voltValue").show();
+    $("#userresultVoltSource").show();
+    $("#userresult2").hide();
+    $("#userresult").hide();
+    $("#check3").prop("disabled", false);
+    $('#timecount3').text(countdownMin+' m '+countdownSec+ " s ");
+    $("#randomID3").val(responsedata.id);
   } else {
+    //$("#thres").show();
+    //$("#thvolt").show();
+    $("#userresult").show();
+    $("#userresult2").hide();
+    $("#userresultVoltSource").hide();
     $("#check").prop("disabled", false);
     $('#timecount').text(countdownMin+' m '+countdownSec+ " s ");
+    $("#userresult").show();
+    $("#randomID").val(responsedata.id);
+    $("#thevTaskVolt").html("Thevenin feszültség (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
+    $("#thevTaskRes").html("Thevenin ellenállás (<b style=\"color:red;\">"+prefixes[2]+"Ω</b>): ");
   }
-  $("#check").prop("disabled", false);
-  $('#timecount').text(countdownMin+' m '+countdownSec+ " s ");
+  //$("#check").prop("disabled", false);
+  //$('#timecount').text(countdownMin+' m '+countdownSec+ " s ");
   clearInterval(timer);
   timer = setInterval(() => {
     countdownSec--;
@@ -391,7 +478,10 @@ function startTimer(type,fslink){
         //$("#resultAmp").text('eredmeny').show();
         //$("#resultVolt").text('eredmeny').show();
         timeOutResult($("#randomID2").val(),type)
-      }else{
+      } if (type === "8"){
+        $("#check3").attr("disabled","disabled");
+        $('#voltValue').hide();
+      } else {
         $("#check").attr("disabled","disabled");
         $("#thres").hide();
         $("#thvolt").hide();
@@ -406,7 +496,9 @@ function startTimer(type,fslink){
     }
     if (type === "6" || type === "7"){
       $('#timecount2').text(countdownMin+' m '+countdownSec+ " s ");
-    } else {
+    } if (type === "8"){
+      $('#timecount3').text(countdownMin+' m '+countdownSec+ " s ");
+    }else {
       $('#timecount').text(countdownMin+' m '+countdownSec+ " s ");
     }
     

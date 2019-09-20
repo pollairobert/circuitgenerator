@@ -23,8 +23,8 @@ export class Main {
         let can: CircuitAnalyzer = new CircuitAnalyzer();
 
         //can.setQuestionOrVoltmeterResistance(1500);
-        //can.setConnectedVoltagesourceValue(12);
-        //can.setConnectedVoltagesourceResistance(10);
+        //can.setConnectedVoltagesourceValue(20);
+        //can.setConnectedVoltagesourceResistance(22000);
 
         //let type = 5;
         let temptype = type;
@@ -43,7 +43,7 @@ export class Main {
         }
         if (type === 8){
             temptype = cg.randomChoiseTwoNumber(4,5);
-            can.setConnectedVoltagesourceValue(12);
+            can.setConnectedVoltagesourceValue(20);
             can.setConnectedVoltagesourceResistance(22000);
         }
         let circuit: Circuit = cg.generateCircuit(temptype);
@@ -105,6 +105,9 @@ export class Main {
         if (can.getQuestionRes() !== undefined){
             console.log('A keresett ellenallas feszultsege: '+can.getQuestionResVoltage()+ ' V');
             console.log('A keresett ellenallason folyo aram: '+can.getQuestionResCurrent()+ ' A');
+        }
+        if (can.getOutputVoltageWithConnectedVoltageSource() !== undefined){
+            console.log('   A halozat kapocsfeszultseges a keresett pontok kozott: ' +can.getOutputVoltageWithConnectedVoltageSource());
         }
         //console.log(this.falstadLink);
         console.log(this.results);
