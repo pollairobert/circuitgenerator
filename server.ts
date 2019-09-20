@@ -71,20 +71,25 @@ app.get('/generate', function (req, res) {
     let voltPrefix: string;
     let currentPrefix: string;
     let ohmPrefix: string;
-    type = req.query.type;
-    console.log('req.query.type: '+type);
+    type = +req.query.type;
+    console.log(typeof(type));
+    console.log(type);
     //checkID = req.query.id;
     
     if (req.query.id === undefined){
         console.log('req.query.id: '+req.query.id);
         //deleteData(req.query.id);
-        main.start(+type);
+        main.start(type);
         link = main.getFalstadLink();
         circuitCoordinateArray = main.getCircuitCoordinateArray();
-        voltPrefix = main.getVoltagePrefix();
+        //if (type === 7){
+         //   voltPrefix = main.getMeasurementVoltPrefix();
+        //} else {
+            voltPrefix = main.getVoltagePrefix();
+        //}
         currentPrefix = main.getCurrentPrefix();
         ohmPrefix = main.getOhmPrefix();
-        console.log('ohmPrefix: '+ohmPrefix);
+        console.log('voltPrefix: '+voltPrefix);
         //let id = Math.random();
         let id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         let response = {
@@ -131,7 +136,7 @@ app.post('/check', (req, res) => {
     let id = req.body.id;
     //console.log(id);
 
-    let response = serverFunction.searchResults(id,+req.body.thvolt,+req.body.thres,undefined, req.body.voltPrefix, undefined, req.body.ohmPrefix);
+    let response = serverFunction.searchResults(id,Math.abs(+req.body.thvolt),+req.body.thres,undefined, req.body.voltPrefix, undefined, req.body.ohmPrefix);
     console.log('response - check ben: ');
     console.log(response);
     if (response.res && response.volt){
@@ -145,20 +150,22 @@ app.post('/check', (req, res) => {
 });
 app.post('/check2', (req, res) => {
     let id = req.body.id;
-    console.log(id);
-    let response = serverFunction.searchResults(id,+req.body.resVolt,undefined,+req.body.resCurrent,req.body.voltPrefix,req.body.currentPrefix,undefined);
-    if (response.res && response.volt){
+    console.log('req.body.voltPrefix: '+req.body.voltPrefix);
+    let response = serverFunction.searchResults(id,Math.abs(+req.body.thvolt),undefined,Math.abs(+req.body.resCurrent),req.body.voltPrefix,req.body.currentPrefix,undefined);
+    console.log(response);
+    
+    if (response.current && response.volt){
         //response.link = globalMain.getFalstadLink();
         serverFunction.deleteDatatoJSONfile(id);
         console.log('data removed');
     }
-    //console.log(response);
     //checkSolving();
     res.send(JSON.stringify(response));
 });
 app.post('/timeout', (req, res) => {
     let id = req.query.id;
     let response = serverFunction.timeOutResult(id, req.query.voltPrefix,req.query.currentPrefix, req.query.type, req.query.resPrefix );
+    serverFunction.deleteDatatoJSONfile(id);
     res.send(JSON.stringify(response));
 });
 /*function addDatatoJSONfile(pushData,id){

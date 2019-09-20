@@ -54,6 +54,8 @@ THE SOFTWARE.
       <option value="5" >BELSŐ 2 pólus közötti helyettesítés (Random hálózat)</option>
       <option value="6" >Ellenálláson eső fesz. és folyó áram megadása (Random hálózat) </option>
       <option value="7" >Mérési hiba megadása (Random hálózat) </option>
+      <option value="8" >Feszültséggenerátor beiktatása (Random hálózat) </option>
+
     </select>
     <button id="generate" >Hálózat generálása</button>
     <button id="generateTask7" hidden>Hálózat generálása 7</button>  
@@ -61,8 +63,9 @@ THE SOFTWARE.
     <br>
     
     <hr/>
+    <div id="content"></div>
     <div id="result"></div>
-    <div id="generateConfirm"></div>
+    <div id="timeoutorsolve"></div>
     <div id="userresult">
         <!--Thevenin resistance: <input type = "text" id = "thres" value=""> <br>
         Thevenin voltage: <input type = "text" id = "thvolt" value=""><br>-->

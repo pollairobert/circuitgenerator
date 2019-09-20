@@ -41,6 +41,11 @@ export class Main {
             temptype = cg.randomChoiseTwoNumber(4,5);
             can.setQuestionOrVoltmeterResistance(2000000);
         }
+        if (type === 8){
+            temptype = cg.randomChoiseTwoNumber(4,5);
+            can.setConnectedVoltagesourceValue(12);
+            can.setConnectedVoltagesourceResistance(22000);
+        }
         let circuit: Circuit = cg.generateCircuit(temptype);
 
         /*for(let i = 0; i < circuit.getMeshes().length; i++ ){
@@ -66,7 +71,10 @@ export class Main {
             console.log("can.getQuestionResVoltage(): "+can.getQuestionResVoltage())
             console.log("can.getResultOfTheveninVoltage(): "+can.getResultOfTheveninVoltage())
             measurementError = this.calculateMeasurementError(can.getQuestionResVoltage(),can.getResultOfTheveninVoltage());
-            //console.log
+            this.scanPrefix(measurementError[0],"V");
+            console.log("measurementError:");
+            console.log(measurementError);
+            console.log("this.measurementVoltPrefix: "+this.measurementVoltPrefix);
         }
         console.log("can.getQuestionRes(): "+can.getQuestionRes())
         if (type < 6){
@@ -122,7 +130,7 @@ export class Main {
         measurementErr.push(Math.abs(absolutError),relativeError);
         return measurementErr;
     }
-    public scanPrefix(ciruitresult: number, typeOfValue: string): void{
+    public scanPrefix(ciruitresult: number, typeOfValue: string, type?: number): void{
         let prefix: string = "";
         let prefixNumb: number = ciruitresult * 1000;
         if (prefixNumb < 1000000000 && prefixNumb > 10000000){
