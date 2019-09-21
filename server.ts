@@ -60,6 +60,9 @@ app.get('/scripts/circuitjQuery.js', (req,res)=> {
 app.get('/descript/description.json', (req,res)=> {
     res.sendFile(path.join(__dirname + '/descript/description.json'));
 });
+app.get('/scripts/clientFunction.js', function (req, res) {
+    res.sendFile(path.join(__dirname + '/scripts/clientFunction.js'));
+});
 app.get('/generate', function (req, res) {
     let circuitCoordinateArray: string[];
     let link: string;
