@@ -1,69 +1,143 @@
-﻿function startTimer(type, fslink, responsedata, prefixes) {
-    //console.log(fslink);
+﻿var host = "http://localhost:3000";
+var timer;
+var timeout;
+var setTimer = false;
+var thr;
+var thv;
+var prefixes = {
+    thResPrefix: undefined,
+    thVoltPrefix: undefined,
+    resCurrPrefix: undefined,
+    resVoltPrefix: undefined,
+    absErrorPrefix: undefined,
+    terminalVoltPrefix: undefined
+};
+var countdownMin;
+var countdownSec;
+var select;
+var removeTaskID;
+var title;
+var descript;
+var circuitResults;
+var select;
+var checkingUsrResult1;
+var checkingUsrResult2;
+
+function compareResults(userCalc, circResult){
+    let resultTolerance = [circResult - 0.005, circResult + 0.005];
+    console.log("circuitResults: "+ circResult);
+
+    if (+userCalc >= resultTolerance[0] && +userCalc <= resultTolerance[1]){
+        return true;
+    } else {
+        return false;
+    }
+}
+function setPrefixOfResults(resultObj,type){
+    if (+type > 0 && +type <= 5){
+        scanPrefix(Math.abs(resultObj.thRes),"thResPrefix");
+        scanPrefix(Math.abs(resultObj.thVolt),"thVoltPrefix");
+    }
+    if (+type === 6){
+        scanPrefix(Math.abs(resultObj.resCurrent),"resCurrPrefix");
+        scanPrefix(Math.abs(resultObj.resVolt),"resVoltPrefix");
+    }
+    if (+type === 7){
+        scanPrefix(Math.abs(resultObj.absError),"absErrorPrefix");
+    }
+    if (+type === 8){
+        scanPrefix(Math.abs(resultObj.terminalVolt),"terminalVoltPrefix");
+    }
+}
+function scanPrefix(result, typeOfPrefix){
+    //console.log("circuit result a scanprefixben: "+ result);
+    let prefix = "";
+    let prefixNumb = result * 1000;
+    if (prefixNumb < 1000000000 && prefixNumb > 1000000){
+        prefix = "k";
+    } 
+    if (prefixNumb < 1000000000000 && prefixNumb > 1000000000){
+        prefix = "M";
+    } 
+    if (prefixNumb < 1000 && prefixNumb > 1){
+        prefix = "m";
+    } 
+    if (prefixNumb < 1 && prefixNumb > 0.001){
+        prefix = "µ";
+    } 
+    if (prefixNumb < 0.001 && prefixNumb > 0.000001){
+        prefix = "n";
+    }
+    if (prefixNumb < 0.000001 && prefixNumb > 0.000000001){
+        prefix = "p";
+    }  
+    prefixes[typeOfPrefix] = prefix;
+    
+}
+function setResultWithPrefix(originalResult ,prefix){
+    let result = originalResult;
+    if (prefix ==="m"){
+        result = result * 1000;
+    }
+    if (prefix ==="µ"){
+        result = result * 1000000;
+    }
+    if (prefix ==="n"){
+        result = result * 1000000000;
+    }
+    if (prefix ==="p"){
+        result = result * 1000000000000;
+    }
+    if (prefix ==="k"){
+        result = result / 1000;
+    }
+    if (prefix ==="M"){
+        result = result / 1000000;
+    }
+    return result;
+}
+function startTimerTest(taskType, resultsOfcircuit, prefixObj){
+    console.log("taskType: "+taskType);
+    //taskType = Number(taskType);
     countdownMin = 0;
     countdownSec = 20;
+    $("#checkUsrResult").prop("disabled", false);
     $("#result").html('');
     $("#content").html('');
     $("#timeoutorsolve").html('');
-    $(".usrButton").show();
-    $(".usrCounter").show();
-    $(".usrinput").show();
-    $(".usrinput").val("");
-    $(".result").hide();
+    $("#usrCheck").show();
+    $("#value1").show();
+    $("#value2").show();
+    $("#taskLabel2").show();
+    $(".resultOUT").hide();
+    $("input").val("");
+    $("resultOUT").val("");
+    $("userIN").val("");
     $("#content").append("<h2>" + title + "</h2>");
     $("#content").append("<p>" + descript + "</p>");
     $("#result").append('<hr/>');
     $("#result").append("<h1>Ide jon majd a megjelenitese a halozatnak (CANVAS?)</h1>");
     $("#result").append('<hr/>');
-    if (type === "6" || type === "7") {
-        //console.log("KIBASZOTT 6 vagy 7");
-        $("#userresult2").show();
-        $("#resCurrent").show();
-        $("#resVolt").show();
-        $("#userresult").hide();
-        $("#userresultVoltSource").hide();
-        $("#check2").prop("disabled", false);
-        $('#timecount2').text(countdownMin + ' m ' + countdownSec + " s ");
-        $("#randomID2").val(responsedata.id);
-        if (select === "7") {
-            //console.log("KIBASZOTT 7");
-            $("#resTaskCurrent").html("Abszolút hiba nagysága (<b style=\"color:red;\">" + prefixes[0] + "V</b>): ");
-            $("#resTaskVolt").html("Relatív hiba nagysága (<b style=\"color:red;\">%</b>): ");
-        }
-        else {
-            //console.log("KIBASZOTT 6");
-            $("#resTaskCurrent").html("Ellenálláson folyó áram (<b style=\"color:red;\">" + prefixes[1] + "A</b>): ");
-            $("#resTaskVolt").html("Ellenálláson eső feszültseg (<b style=\"color:red;\">" + prefixes[0] + "V</b>): ");
-        }
+    if (+taskType >0 && +taskType <=5 ){
+        $("#taskLabel1").html("Thevenin feszültség (<b style=\"color:red;\">" + prefixObj.thVoltPrefix + "V</b>): ");
+        $("#taskLabel2").html("Thevenin ellenállás (<b style=\"color:red;\">" + prefixObj.thResPrefix + "Ω</b>): ");
     }
-    else if (type === "8") {
-        //console.log("KIBASZOTT 8");
-        //$("#voltValue").show();
-        $("#userresultVoltSource").show();
-        $("#userresult2").hide();
-        $("#userresult").hide();
-        $("#check3").prop("disabled", false);
-        $('#timecount3').text(countdownMin + ' m ' + countdownSec + " s ");
-        $("#randomID3").val(responsedata.id);
-        $("#voltSourceTask").html("Kapocsfeszültség (<b style=\"color:red;\">" + prefixes[0] + "V</b>): ");
+    if (+taskType === 6){
+        $("#taskLabel1").html("Ellenálláson folyó áram (<b style=\"color:red;\">" + prefixObj.resCurrPrefix + "A</b>): ");
+        $("#taskLabel2").html("Ellenálláson eső feszültseg (<b style=\"color:red;\">" + prefixObj.resVoltPrefix + "V</b>): ");
     }
-    else {
-        //console.log("KIBASZOTT MINDEN MAS");
-        //$("#thres").show();
-        //$("#thvolt").show();
-        $("#userresult").show();
-        $("#userresult2").hide();
-        $("#userresultVoltSource").hide();
-        $("#check").prop("disabled", false);
-        $('#timecount').text(countdownMin + ' m ' + countdownSec + " s ");
-        $("#userresult").show();
-        $("#randomID").val(responsedata.id);
-        $("#thevTaskVolt").html("Thevenin feszültség (<b style=\"color:red;\">" + prefixes[0] + "V</b>): ");
-        $("#thevTaskRes").html("Thevenin ellenállás (<b style=\"color:red;\">" + prefixes[2] + "Ω</b>): ");
+    if (+taskType === 7){
+        $("#taskLabel1").html("Abszolút hiba nagysága (<b style=\"color:red;\">" + prefixObj.absErrorPrefix + "V</b>): ");
+        $("#taskLabel2").html("Relatív hiba nagysága (<b style=\"color:red;\">%</b>): ");
     }
-    //$("#check").prop("disabled", false);
-    //$('#timecount').text(countdownMin+' m '+countdownSec+ " s ");
+    if (+taskType === 8){
+        $("#taskLabel1").html("Kapocsfeszültség (<b style=\"color:red;\">" + prefixObj.terminalVoltPrefix + "V</b>): ");
+        $("#taskLabel2").hide();
+        $("#value2").hide();
+        $("#out2").hide();
+    }
     clearInterval(timer);
+    let linkOfFalstad = '<b><a href="' + resultsOfcircuit.link + '" target="_blank">Falstad</a></b>';
     timer = setInterval(function () {
         countdownSec--;
         if (countdownSec === -1) {
@@ -72,66 +146,60 @@
         }
         if (countdownSec === 0 && countdownMin === 0) {
             clearInterval(timer);
-            if (type === "6" || type === "7") {
-                $("#check2").attr("disabled", "disabled");
-                $("#resCurrent").hide();
-                $("#resVolt").hide();
-                //$("#resultAmp").text('eredmeny').show();
-                //$("#resultVolt").text('eredmeny').show();
-                timeOutResult($("#randomID2").val(), type);
+            $("#timeoutorsolve").append("<h3>Hálózat megtekintése a " + linkOfFalstad + " oldalán.</h3>");
+            $("#checkUsrResult").attr("disabled", "disabled");
+            $(".resultOUT").show();
+            $(".usrIN").hide();
+                
+            if (+taskType >0 && +taskType <=5 ){
+                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thVolt,prefixObj.thVoltPrefix))+"</b>");
+                $("#out2").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thRes,prefixObj.thResPrefix))+"</b>");
             }
-            else if (type === "8") {
-                $("#check3").attr("disabled", "disabled");
-                $('#voltValue').hide();
-                timeOutResult($("#randomID3").val(), type);
+            if (+taskType === 6){
+                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.resCurrent,prefixObj.resCurrPrefix))+"</b>");
+                $("#out2").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.resVolt,prefixObj.resVoltPrefix))+"</b>");
             }
-            else {
-                $("#check").attr("disabled", "disabled");
-                $("#thres").hide();
-                $("#thvolt").hide();
-                timeOutResult($("#randomID").val(), type);
-                //$("#resultTHRes").text('eredmeny').show();
-                //$("#resultTHVolt").text('eredmeny').show();
-                //$("#resultTHRes").show();
-                //$("#resultTHVolt").show();
+            if (+taskType === 7){
+                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.absError,prefixObj.absErrorPrefix))+"</b>");
+                $("#out2").html("<b>" +resultsOfcircuit.relError+"</b>");
             }
-            $("#timeoutorsolve").append("<h3>Hálózat megtekintése a " + fslink + " oldalán.</h3>");
+            if (+taskType === 8){
+                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.terminalVolt,prefixObj.terminalVoltPrefix))+"</b>");
+                $("#out2").hide();
+            }
             timeout = true;
+            timeOutResult("timeout");
         }
-        if (type === "6" || type === "7") {
-            $('#timecount2').text(countdownMin + ' m ' + countdownSec + " s ");
-        }
-        if (type === "8") {
-            $('#timecount3').text(countdownMin + ' m ' + countdownSec + " s ");
-        }
-        else {
-            $('#timecount').text(countdownMin + ' m ' + countdownSec + " s ");
-        }
+        $('#usrTimeCounter').text(countdownMin + ' m ' + countdownSec + " s ");
     }, 1000);
 }
-function timeOutResult(id, type) {
-    var reqURL = host + '/timeout?id=' + id + '&voltPrefix=' + prefixes[0] + '&currentPrefix=' + prefixes[1] + '&type=' + type + '&resPrefix=' + prefixes[2];
-    var result = { id: id, voltPrefix: prefixes[0], currentPrefix: prefixes[1], type: type, resPrefix: prefixes[2] };
-    $(".result").val("");
-    //$("#resultVolt").html("");
-    //console.log(reqURL);
-    $.post(reqURL, result, function (data, status, err) {
-        //let result = { id: id, voltPrefix: prefixes[0], currentPrefix: prefixes[1], type: type};
-        //console.log(reqURL);
-        var responsedata = JSON.parse(data);
-        if (type === "6" || type === "7") {
-            if (type === "7") {
-                $("#resultAmp").html('<b>' + responsedata.resCur + '</b>').show();
-                $("#resultVolt").html('<b>' + responsedata.resVolt + '</b>').show();
-            }
-            else {
-                $("#resultAmp").html('<b>' + responsedata.resCur + '</b>').show();
-                $("#resultVolt").html('<b>' + responsedata.resVolt + '</b>').show();
-            }
-        }
-        else {
-            $("#resultTHRes").html('<b>' + responsedata.circuitTHres + '</b>').show();
-            $("#resultTHVolt").html('<b>' + responsedata.circuitTHvolt + '</b>').show();
+function checkResult(userResult1, userResult2){
+    console.log("userResult1: "+userResult1)
+    console.log("userResult2: "+userResult2)
+    if (+select > 0 && +select <= 5){
+        //console.log("VALAMIJE: "+Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)));
+        checkingUsrResult1 = compareResults(userResult1,+Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)));
+        checkingUsrResult2 = compareResults(userResult2,+Math.abs(setResultWithPrefix(circuitResults.thRes,prefixes.thResPrefix)));
+    }
+    if (+select === 6){
+        checkingUsrResult1 = compareResults(userResult1,+Math.abs(setResultWithPrefix(circuitResults.resCurrent,prefixes.resCurrPrefix)));
+        checkingUsrResult2 = compareResults(userResult2,+Math.abs(setResultWithPrefix(circuitResults.resVolt,prefixes.resVoltPrefix)));
+    }
+    if (+select === 7){
+        checkingUsrResult1 = compareResults(userResult1,+Math.abs(setResultWithPrefix(circuitResults.absError,prefixes.absErrorPrefix)));
+        checkingUsrResult2 = compareResults(userResult2,+circuitResults.relError);
+    }
+    if (+select === 8){
+        checkingUsrResult1 = compareResults(userResult1,+Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)));
+    }
+}
+function timeOutResult(whereCall) {
+    var timeoutURL = host + "/timeout?id=" + removeTaskID;
+    console.log(timeoutURL);
+    $.get(timeoutURL, function (data, status) {
+        console.log(status);
+        if (whereCall === "timeout"){
+            alert("Lejárt az idő! Feladat törölve! ");
         }
     });
 }

@@ -1,350 +1,167 @@
-//import * as $ from 'jquery';
-//const host = "http://www.stud.u-szeged.hu/Pollai.Robert"
-var host = "http://localhost:3000";
-//const host = "http://192.168.1.12:3000";
-var timer;
-var timeout;
-var setTimer = false;
-var thr;
-var thv;
-var prefixes = [];
-var countdownMin;
-var countdownSec;
-var select;
-var checkID;
-var title;
-var descript;
-$(document).ready(function () {
-    /*$('select').on('change', function() {
-      //alert( $(this).find(":selected").val() );
-      if ($(this).find(":selected").val() === "8"){
-        $("#generateTask8").show();
-        $("#generate").hide();
-      } else {
-        $("#generateTask8").hide();
-        $("#generate").show();
-      }
-    });*/
-    //console.log(prefixes);
-    $("#userresult").hide();
-    $("#userresult2").hide();
-    $("#userresultVoltSource").hide();
-    var falstadlink;
-    $("#generate").click(function () {
-        select = $("select").val();
-        var decriptSelect = "type" + select;
-        console.log(decriptSelect);
-        $.ajax({
-            dataType: 'json',
-            url: 'descript/description.json',
-            success: function (data) {
-                title = Object.keys(data[decriptSelect])[0];
-                descript = data[decriptSelect][title];
-            }
-        });
-        var generate = host + '/generate?type=' + select;
-        if (($("#userresult").is(":hidden") && $("#userresult2").is(":hidden") && $("#userresultVoltSource").is(":hidden")) || timeout) {
-            console.log("ELSO GENERALAS");
-            timeout = false;
-            $("#result").html('');
-            $("#content").html('');
-            $("#timeoutorsolve").html('');
-            $.get(generate, function (data, status) {
-                console.log(JSON.parse(data));
-                var responsedata = JSON.parse(data);
-                checkID = responsedata.id;
-                prefixes = [];
-                prefixes.push(responsedata.voltPrefix, responsedata.currentPrefix, responsedata.ohmPrefix);
-                falstadlink = '<b><a href="' + responsedata.link + '" target="_blank">Falstad</a></b>';
-                startTimer(select, falstadlink, responsedata, prefixes);
-            });
-            $("select").val("1");
-        }
-        else {
-            var confirmation = confirm('Biztos szeretnél újat generálni?');
-            if (confirmation) {
-                //clearInterval(timer);
-                //let checkID = $("#randomID").val()
-                console.log('Uj generalas, eldobni valo id: ' + checkID);
-                timeout = false;
-                $("#result").html('');
-                $("#content").html('');
-                $.get(generate + '&id=' + checkID, function (data, status, err) {
-                    console.log(JSON.parse(data));
-                    var responsedata = JSON.parse(data);
-                    checkID = responsedata.id;
-                    prefixes = [];
-                    prefixes.push(responsedata.voltPrefix, responsedata.currentPrefix, responsedata.ohmPrefix);
-                    falstadlink = '<b><a href="' + responsedata.link + '" target="_blank">Falstad</a></b>';
-                    startTimer(select, falstadlink, responsedata, prefixes);
-                });
-                $("select").val("1");
-            }
-            else {
-                console.log('Marad');
-            }
-        }
-    });
-    $("#check").click(function () {
-        var url = host + "/check";
-        var result = { thres: $("#thres").val(),
-            thvolt: $("#thvolt").val(),
-            id: $("#randomID").val(),
-            voltPrefix: prefixes[0],
-            currentPrefix: prefixes[1],
-            ohmPrefix: prefixes[2] };
-        console.log('result kliens oldali checkben');
-        console.log(result);
-        $.post(url, result, function (data) {
-            console.log(data);
-            var responsedata = JSON.parse(data);
-            if (responsedata.res && responsedata.volt) {
-                //let falstadlink = '<a href="'+responsedata.link+'" target="_blank">Falstad</a>';
-                //console.log(falstadlink);
-                //$("#result").html('');
-                //$("#result").html("<h3>Check the right solution on the "+falstadlink+" page</h3>");
-                $("#timeoutorsolve").append("<h3>Feladat megoldásának ellenőrzése a " + falstadlink + " oldalán.</h3>");
-                clearInterval(timer);
-                timeout = true;
-                //$("#userresult").hide();
-                //alert('Correct solution!');
-                $("#thres").hide();
-                $("#thvolt").hide();
-                $("#resultTHRes").html('<b>' + responsedata.circuitTHres + '</b>').show();
-                $("#resultTHVolt").html('<b>' + responsedata.circuitTHvolt + '</b>').show();
-                $("#check").hide();
-                $("#timecount").hide();
-                $("#thres").val("");
-                $("#thvolt").val("");
-                $("#randomID").val("");
-                alert('Helyes megoldás!');
-            }
-            if (!responsedata.res && responsedata.volt) {
-                //alert('Incorrect resistance value!');
-                $("#thres").val("");
-                alert('Rossz ellenállás érték!');
-            }
-            if (responsedata.res && !responsedata.volt) {
-                //alert('Incorrect voltage value!');
-                $("#thvolt").val("");
-                alert('Rossz feszültség érték!');
-            }
-            if (!responsedata.res && !responsedata.volt) {
-                //alert('Incorrect solution!');
-                $("#thres").val("");
-                $("#thvolt").val("");
-                alert('Helytelen megoldás!');
-            }
-        });
-    });
-    $("#check2").click(function () {
-        var url = host + "/check2";
-        var result = { resVolt: $("#resVolt").val(),
-            resCurrent: $("#resCurrent").val(),
-            id: $("#randomID2").val(),
-            voltPrefix: prefixes[0],
-            currentPrefix: prefixes[1],
-            ohmPrefix: prefixes[2]
-        };
-        console.log(result);
-        $.post(url, result, function (data) {
-            console.log(data);
-            var responsedata = JSON.parse(data);
-            if ((responsedata.current && responsedata.volt) || (responsedata.abs && responsedata.rel)) {
-                //let falstadlink = '<a href="'+responsedata.link+'" target="_blank">Falstad</a>';
-                //console.log(falstadlink);
-                //$("#result").html('');
-                //$("#result").html("<h3>Check the right solution on the "+falstadlink+" page</h3>");
-                $("#timeoutorsolve").append("<h3>Feladat megoldásának ellenőrzése a " + falstadlink + " oldalán.</h3>");
-                clearInterval(timer);
-                timeout = true;
-                //$("#userresult2").hide();
-                //alert('Correct solution!');
-                $("#resCurrent").hide();
-                $("#resVolt").hide();
-                if (select === "7") {
-                    $("#resultAmp").html('<b>' + responsedata.absErr + '</b>').show();
-                    $("#resultVolt").html('<b>' + responsedata.relErr + '</b>').show();
-                }
-                else {
-                    $("#resultAmp").html('<b>' + responsedata.resCur + '</b>').show();
-                    $("#resultVolt").html('<b>' + responsedata.resVolt + '</b>').show();
-                }
-                $("#check2").hide();
-                $("#timecount2").hide();
-                $("#resCurrent").val("");
-                $("#resVolt").val("");
-                $("#randomID2").val("");
-                alert('Helyes megoldás!');
-            }
-            if (select === "7") {
-                if (!responsedata.abs && responsedata.rel) {
-                    //alert('Incorrect resistance value!');
-                    $("#resCurrent").val("");
-                    alert('Rossz abszolút hiba érték!');
-                }
-                if (responsedata.abs && !responsedata.rel) {
-                    //alert('Incorrect voltage value!');
-                    $("#resVolt").val("");
-                    alert('Rossz relativ hiba érték!');
-                }
-                if (!responsedata.abs && !responsedata.rel) {
-                    //alert('Incorrect solution!');
-                    $("#resVolt").val("");
-                    $("#resCurrent").val("");
-                    alert('Helytelen megoldás!');
-                }
-            }
-            else {
-                if (!responsedata.current && responsedata.volt) {
-                    //alert('Incorrect resistance value!');
-                    $("#resCurrent").val("");
-                    alert('Rossz áram érték!');
-                }
-                if (responsedata.current && !responsedata.volt) {
-                    //alert('Incorrect voltage value!');
-                    $("#resVolt").val("");
-                    alert('Rossz feszültség érték!');
-                }
-                if (!responsedata.current && !responsedata.volt) {
-                    //alert('Incorrect solution!');
-                    $("#resVolt").val("");
-                    $("#resCurrent").val("");
-                    alert('Helytelen megoldás!');
-                }
-            }
-        });
-    });
-});
-/*function startTimer(type,fslink,responsedata?, prefixes?){
-  //console.log(fslink);
-  countdownMin = 0;
-  countdownSec = 20;
-  $("#result").html('');
-  $("#content").html('');
-  $("#timeoutorsolve").html('');
-  $(".usrButton").show();
-  $(".usrCounter").show();
-  $(".usrinput").show();
-  $(".usrinput").val("");
-  $(".result").hide();
-  $("#content").append("<h2>"+title+"</h2>");
-  $("#content").append("<p>"+descript+"</p>");
-  $("#result").append('<hr/>');
-  $("#result").append("<h1>Ide jon majd a megjelenitese a halozatnak (CANVAS?)</h1>");
-  $("#result").append('<hr/>');
-  if (type === "6" || type === "7"){
-    //console.log("KIBASZOTT 6 vagy 7");
-    $("#userresult2").show();
-    $("#resCurrent").show();
-    $("#resVolt").show();
-    $("#userresult").hide();
-    $("#userresultVoltSource").hide();
-    $("#check2").prop("disabled", false);
-    $('#timecount2').text(countdownMin+' m '+countdownSec+ " s ");
-    $("#randomID2").val(responsedata.id);
-    if (select === "7"){
-      //console.log("KIBASZOTT 7");
-      $("#resTaskCurrent").html("Abszolút hiba nagysága (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
-      $("#resTaskVolt").html("Relatív hiba nagysága (<b style=\"color:red;\">%</b>): ");
-    } else {
-      //console.log("KIBASZOTT 6");
-      $("#resTaskCurrent").html("Ellenálláson folyó áram (<b style=\"color:red;\">"+prefixes[1]+"A</b>): ");
-      $("#resTaskVolt").html("Ellenálláson eső feszültseg (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
-    }
-  } else if (type === "8"){
-    //console.log("KIBASZOTT 8");
-    //$("#voltValue").show();
-    $("#userresultVoltSource").show();
-    $("#userresult2").hide();
-    $("#userresult").hide();
-    $("#check3").prop("disabled", false);
-    $('#timecount3').text(countdownMin+' m '+countdownSec+ " s ");
-    $("#randomID3").val(responsedata.id);
-    $("#voltSourceTask").html("Kapocsfeszültség (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
-  } else {
-    //console.log("KIBASZOTT MINDEN MAS");
-    //$("#thres").show();
-    //$("#thvolt").show();
-    $("#userresult").show();
-    $("#userresult2").hide();
-    $("#userresultVoltSource").hide();
-    $("#check").prop("disabled", false);
-    $('#timecount').text(countdownMin+' m '+countdownSec+ " s ");
-    $("#userresult").show();
-    $("#randomID").val(responsedata.id);
-    $("#thevTaskVolt").html("Thevenin feszültség (<b style=\"color:red;\">"+prefixes[0]+"V</b>): ");
-    $("#thevTaskRes").html("Thevenin ellenállás (<b style=\"color:red;\">"+prefixes[2]+"Ω</b>): ");
+var description = {
+  "type1": {
+      "Egyszerű feszültségosztó": 
+          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          
+  },
+  "type1.1": {
+      "Egyszerű feszültségosztó (2 generátor)": 
+          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+  },
+  "type2": {
+      "Kettős feszültségosztó": 
+          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+  },
+  "type3": {
+      "Kettős feszültségosztó (2 generátor)": 
+          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+  },
+  "type3.1": {
+      "Kettős feszültségosztó (3 generátor)": 
+          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+  },
+  "type4": {
+      "A hálózat KÜLSŐ 2 pólus közötti helyettesítése": 
+          "Old meg az A - B pontok közötti összetett hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+  },
+  "type5": {
+      "A hálózat BELSŐ 2 pólus közötti helyettesítése": 
+          "Old meg az A - B pontok közötti összetett hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+  },
+  "type6": {
+      "Ellenálláson eső feszültség és a rajta folyó áram megadása": 
+          "Thevenin helyettesítés segíségével határozd meg a jelölt ellenalláson folyó áramot, valamint annak feszültségét!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+  },
+  "type7": {
+      "Mérési hiba megadása": 
+          "Adott egy 2 MΩ belső ellenállású feszültségmérő. Mekkora lesz az abszolút és relatív mérési hiba, ha az alábbi hálózat  A - B pontján mérjük meg a feszültséget?<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+  },
+  "type8": {
+      "Megadott belső ellenállású feszültséggenerátor beiktatása": 
+          "Adott az alábbi belső ellenállású és feszültségű generátor. Add meg mekkora lesz az A és B pontok közötti kapocsfeszültség, ha rákötjük a generátort ezen pontokra.<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
   }
-  //$("#check").prop("disabled", false);
-  //$('#timecount').text(countdownMin+' m '+countdownSec+ " s ");
-  clearInterval(timer);
-  timer = setInterval(() => {
-    countdownSec--;
-    if(countdownSec === -1){
-      countdownMin--;
-      countdownSec = 9;
-    }
-    if (countdownSec === 0 && countdownMin === 0){
-      clearInterval(timer);
-      if (type === "6" || type === "7"){
-        $("#check2").attr("disabled","disabled");
-        $("#resCurrent").hide();
-        $("#resVolt").hide();
-        //$("#resultAmp").text('eredmeny').show();
-        //$("#resultVolt").text('eredmeny').show();
-        timeOutResult($("#randomID2").val(),type)
-      } else if (type === "8"){
-        $("#check3").attr("disabled","disabled");
-        $('#voltValue').hide();
-        timeOutResult($("#randomID3").val(),type)
-      } else {
-        $("#check").attr("disabled","disabled");
-        $("#thres").hide();
-        $("#thvolt").hide();
-        timeOutResult($("#randomID").val(),type)
-        //$("#resultTHRes").text('eredmeny').show();
-        //$("#resultTHVolt").text('eredmeny').show();
-        //$("#resultTHRes").show();
-        //$("#resultTHVolt").show();
-      }
-      $("#timeoutorsolve").append("<h3>Hálózat megtekintése a "+fslink+" oldalán.</h3>");
-      timeout = true;
-    }
-    if (type === "6" || type === "7"){
-      $('#timecount2').text(countdownMin+' m '+countdownSec+ " s ");
-    } if (type === "8"){
-      $('#timecount3').text(countdownMin+' m '+countdownSec+ " s ");
-    }else {
-      $('#timecount').text(countdownMin+' m '+countdownSec+ " s ");
-    }
-    
-  }, 1000);
-  
 }
-function timeOutResult(id, type){
-  let reqURL =  host+'/timeout?id='+id+'&voltPrefix='+prefixes[0]+'&currentPrefix='+prefixes[1]+'&type='+type+'&resPrefix='+prefixes[2];
-  let result = { id: id, voltPrefix: prefixes[0], currentPrefix: prefixes[1], type: type, resPrefix: prefixes[2]};
-  $(".result").val("");
-  //$("#resultVolt").html("");
-  //console.log(reqURL);
-  $.post(reqURL, result, function(data, status, err){
-    //let result = { id: id, voltPrefix: prefixes[0], currentPrefix: prefixes[1], type: type};
-    //console.log(reqURL);
-    let responsedata = JSON.parse(data);
-    
-    if (type === "6" || type === "7"){
-      if (type === "7"){
-        $("#resultAmp").html('<b>'+responsedata.resCur+'</b>').show();
-        $("#resultVolt").html('<b>'+responsedata.resVolt+'</b>').show();
-      }else {
-        $("#resultAmp").html('<b>'+responsedata.resCur+'</b>').show();
-        $("#resultVolt").html('<b>'+responsedata.resVolt+'</b>').show();
-      }
-      
+$(document).ready(function () {
+  /*$('select').on('change', function() {
+    //alert( $(this).find(":selected").val() );
+    if ($(this).find(":selected").val() === "8"){
+      $("#generateTask8").show();
+      $("#generate").hide();
     } else {
-      $("#resultTHRes").html('<b>'+responsedata.circuitTHres+'</b>').show();
-      $("#resultTHVolt").html('<b>'+responsedata.circuitTHvolt+'</b>').show();
+      $("#generateTask8").hide();
+      $("#generate").show();
     }
+  });*/
+  //console.log(prefixes);
+  $("#usrCheck").hide();
+  $("#userresult").hide();
+  $("#userresult2").hide();
+  $("#userresultVoltSource").hide();
+  var falstadlink;
+  $("#generate").click(function () {
+      select = $("select").val();
+      var descriptSelect = "type" + select;
+      /*$.ajax({
+          dataType: 'json',
+          url: 'descript/description.json',
+          success: function (data) {
+              title = Object.keys(data[decriptSelect])[0];
+              descript = data[decriptSelect][title];
+          }
+      });*/
+      title = Object.keys(description[descriptSelect])[0];
+      descript = description[descriptSelect][title];
+      var generate;
+      var regenerateTask = false;
+      if ($("#usrCheck").is(":hidden") || timeout){
+          generate = host + '/generate?type=' + select;
+          
+      } else {
+          generate = host + '/generate?type=' + select + '&id=' + removeTaskID;
+          var confirmation = confirm('Biztos szeretnél újat generálni?');
+          if (confirmation) {
+            regenerateTask = true;
+            console.log('Uj generalas, eldobni valo id: ' + removeTaskID);
+          } else {
+            console.log('Marad');
+          }
+      }
+      timeout = false;
+        $.get(generate, function (data, status) {
+          console.log(JSON.parse(data));
+          console.log(generate);
+          circuitResults = JSON.parse(data);
+          removeTaskID = circuitResults.id;
+          setPrefixOfResults(circuitResults,select);
+          console.log(prefixes);
+          startTimerTest(select,circuitResults,prefixes);
+        });
+        $("select").val("1");
+      
   });
-}*/ 
+  $("#checkUsrResult").click(function (e) { 
+    //console.log(circuitResults);
+    //console.log("checktest");
+    var wrongElement1;
+    var wrongElement2;
+    checkResult(+$("#value1").val(),+$("#value2").val());
+    if (+select > 0 && +select <= 5){
+        wrongElement1 = " feszültség ";
+        wrongElement2 = " ellenállás ";
+    }
+    if (+select === 6){
+      wrongElement1 = " áram ";
+      wrongElement2 = " feszültseg ";
+    }
+    if (+select === 7){
+      wrongElement1 = " abszolút hiba ";
+      wrongElement2 = " relatív hiba ";
+    }
+    if (+select === 8){
+      wrongElement1 = " kapocsfeszültség  ";
+      checkingUsrResult2 = true;
+    }
+    if (checkingUsrResult1 && checkingUsrResult2) {
+      let linkOfFalstad = '<b><a href="' + circuitResults.link + '" target="_blank">Falstad</a></b>';
+      $("#timeoutorsolve").html("<h3>Feladat megoldásának ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
+      clearInterval(timer);
+      timeout = true;
+      $(".usrIN").hide();
+      $(".resultOUT").show();
+      $("#checkUsrResult").attr("disabled", "disabled");
+      if (+select >0 && +select <=5 ){
+        $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix))+"</b>");
+        $("#out2").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thRes,prefixes.thResPrefix))+"</b>");
+      }
+      if (+select === 6){
+          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.resCurrent,prefixes.resCurrPrefix))+"</b>");
+          $("#out2").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.resVolt,prefixes.resVoltPrefix))+"</b>");
+      }
+      if (+select === 7){
+          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.absError,prefixes.absErrorPrefix))+"</b>");
+          $("#out2").html("<b>" +circuitResults.relError+"</b>");
+      }
+      if (+select === 8){
+          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix))+"</b>");
+          $("#out2").hide();
+      }
+      timeout = true;
+      timeOutResult(removeTaskID,+select);
+      alert('Helyes megoldás!');
+    }
+    if (!checkingUsrResult1 && checkingUsrResult2) {
+      $("#value1").val("");
+      alert("Rossz"+wrongElement1+"érték!");
+    }
+    if (checkingUsrResult1 && !checkingUsrResult2) {
+      $("#value2").val("");
+      alert("Rossz"+wrongElement2+"érték!");
+    }
+    if (!checkingUsrResult1 && !checkingUsrResult2) {
+      $(".usrIN").val("");
+      alert('Helytelen megoldás!');
+    }
+    e.preventDefault();
+  });
+  
+});

@@ -18,15 +18,10 @@ export class Main {
     private currentPrefix: string;
     private ohmPrefix: string;
     private measurementVoltPrefix: string;
+    private taskResults: Object;
     public start(type: number){
         let cg: CircuitGenerator = new CircuitGenerator();
         let can: CircuitAnalyzer = new CircuitAnalyzer();
-
-        //can.setQuestionOrVoltmeterResistance(1500);
-        //can.setConnectedVoltagesourceValue(20);
-        //can.setConnectedVoltagesourceResistance(22000);
-
-        //let type = 5;
         let typeArray: number[] = [2, 3, 3.1, 4, 5];
         let temptype = type;
         let measurementError: number[] = [];
@@ -49,64 +44,33 @@ export class Main {
             //temptype = cg.randomChoiseTwoNumber(4,5);
             can.setConnectedVoltagesourceValue(20);
             can.setConnectedVoltagesourceResistance(22000);
+
         }
         let circuit: Circuit = cg.generateCircuit(temptype);
 
-        /*for(let i = 0; i < circuit.getMeshes().length; i++ ){
-            console.log();
-            console.log((i+1)+'. HUROK');
-            for (let j = 0; j < circuit.getMeshes()[i].getBranches().length; j++){
-                console.log();
-                console.log('BranchType: '+circuit.getMeshes()[i].getBranches()[j].getType());
-                for (let k = 0; k < circuit.getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
-                    console.log();
-                    console.log('ELEMENT: ');
-                    console.log(circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k]);
-                }
-            }
-        }*/
-        
-        cg.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
+        //cg.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
         //cg.exportToFalstadTxt(cg.getCircuitCoordinatesToFalstad())
         this.circuitCoordinateArray = cg.getCircuitCoordinatesToFalstad();
         this.falstadLink = cg.generateFalstadLink(circuit);
         can.analyzeCircuit(circuit);
         if (type === 7){
-            console.log("can.getQuestionResVoltage(): "+can.getQuestionResVoltage())
-            console.log("can.getResultOfTheveninVoltage(): "+can.getResultOfTheveninVoltage())
             measurementError = this.calculateMeasurementError(can.getQuestionResVoltage(),can.getResultOfTheveninVoltage());
-            this.scanPrefix(measurementError[0],"V");
-            console.log("measurementError:");
-            console.log(measurementError);
-            console.log("this.measurementVoltPrefix: "+this.measurementVoltPrefix);
+            console.log("measurementError: "+measurementError);
         }
-        console.log("can.getQuestionRes(): "+can.getQuestionRes())
-        if (type < 6){
-            this.scanPrefix(Math.abs(can.getResultOfTheveninVoltage()),"V");
-            this.scanPrefix(Math.abs(can.getResultOfTheveninResistance()),"Ohm");
-            this.results = {
-                "thres": Number(can.getResultOfTheveninResistance()),
-                "thvolt": Math.abs(Number(can.getResultOfTheveninVoltage())),
-                "timestamp": new Date(),
-            }
-        } else if (type === 8){
-            this.scanPrefix(Math.abs(can.getOutputVoltageWithConnectedVoltageSource()),"V");
-            this.results = {
-                "terminalVolt": Math.abs(Number(can.getOutputVoltageWithConnectedVoltageSource())),
-                "timestamp": new Date(),
-            }
-        } else {
-            this.scanPrefix(Math.abs(can.getQuestionResCurrent()),"A");
-            this.scanPrefix(Math.abs(can.getQuestionResVoltage()),"V");
-            this.results = {
-                "resCurrent": Math.abs(Number(can.getQuestionResCurrent())),
-                "resVolt": Math.abs(Number(can.getQuestionResVoltage())),
-                "absError": Number(measurementError[0]),
-                "relativeError": Number(measurementError[1]),
-                "timestamp": new Date(),
-                
-            }
+        this.taskResults = {
+            falstadTXT: this.getCircuitCoordinateArray(),
+            link: this.getFalstadLink(),
+            id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+            thVolt: can.getResultOfTheveninVoltage(),
+            thRes:can.getResultOfTheveninResistance(),
+            resCurrent: can.getQuestionResCurrent(),
+            resVolt: can.getQuestionResVoltage(),
+            absError: measurementError[0],
+            relError: measurementError[1],
+            terminalVolt: can.getOutputVoltageWithConnectedVoltageSource(),
         }
+        console.log(this.taskResults);
+        
         //this.scanPrefix(can.getQuestionResCurrent(),"A");
         //console.log('Prefix Current: '+ this.currentPrefix);
         //console.log('Prefix Voltage: '+ this.voltegePrefix);
@@ -143,39 +107,9 @@ export class Main {
         measurementErr.push(Math.abs(absolutError),relativeError);
         return measurementErr;
     }
-    public scanPrefix(ciruitresult: number, typeOfValue: string, type?: number): void{
-        let prefix: string = "";
-        let prefixNumb: number = ciruitresult * 1000;
-        if (prefixNumb < 1000000000 && prefixNumb > 10000000){
-            prefix = "k";
-        } 
-        if (prefixNumb < 1000000000000 && prefixNumb > 1000000000){
-            prefix = "M";
-        } 
-        if (prefixNumb < 1000 && prefixNumb > 1){
-            prefix = "m";
-        } 
-        if (prefixNumb < 1 && prefixNumb > 0.001){
-            prefix = "µ";
-        } 
-        if (prefixNumb < 0.001 && prefixNumb > 0.000001){
-            prefix = "n";
-        }
-        if (prefixNumb < 0.000001 && prefixNumb > 0.000000001){
-            prefix = "p";
-        }  
-        if (typeOfValue === "V"){
-            this.voltegePrefix = prefix;
-        }
-        if (typeOfValue === "A"){
-            this.currentPrefix = prefix;
-        }
-        if (typeOfValue === "Ohm"){
-            this.ohmPrefix = prefix;
-        }
-        if (typeOfValue === "Volt"){
-            this.measurementVoltPrefix = prefix;
-        }
+    
+    public getTaskResults(): Object{
+        return this.taskResults;
     }
     public getVoltagePrefix(): string{
         return this.voltegePrefix;

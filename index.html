@@ -60,51 +60,22 @@ THE SOFTWARE.
     </select>
     <button id="generate" >Hálózat generálása</button>
     <button id="generateTask8" hidden>Hálózat generálása 8</button>  
-    <button id="click" >click</button> 
     <br>
     
     <hr/>
     <div id="content"></div>
     <div id="result"></div>
     <div id="timeoutorsolve"></div>
-    <div id="userresult">
-        <!--Thevenin resistance: <input type = "text" id = "thres" value=""> <br>
-        Thevenin voltage: <input type = "text" id = "thvolt" value=""><br>-->
-        <span id="thevTaskRes"></span><input class="usrinput" type = "text" id = "thres" value=""><span class="result" id="resultTHRes" hidden></span><br>
-        <span id="thevTaskVolt"></span><input class="usrinput" type = "text" id = "thvolt" value=""><span class="result" id="resultTHVolt" hidden></span>
-        <!--ID-->
-        <input type = "text" id = "randomID" value="" hidden><br>
-        <!--Timer-->
-        <span class="usrCounter" id="timecount"></span><br>
-        <!--<input type = "button" id="check" value = "Check">-->
-        <button class="usrButton" id="check" >Ellenőrzés</button>
-        <!--<input type = "button" id="check" value = "Ellenőrzés">-->
-    </div>
-    <div id="userresult2">
-      <!--Thevenin resistance: <input type = "text" id = "thres" value=""> <br>
-      Thevenin voltage: <input type = "text" id = "thvolt" value=""><br>-->
-      <span id="resTaskCurrent"></span><input class="usrinput" type = "text" id = "resCurrent" value=""> <span class="result" id="resultAmp" hidden></span><br>
-      <span id="resTaskVolt"></span><input class="usrinput" type = "text" id = "resVolt" value=""><span class="result" id="resultVolt" hidden></span>
+    
+    <div id="usrCheck">
+      <span id="taskLabel1"></span><input class="usrIN" type = "text" id = "value1" value=""><span class="resultOUT" id="out1"></span><br>
+      <span id="taskLabel2"></span><input class="usrIN" type = "text" id = "value2" value=""><span class="resultOUT" id="out2"></span>
       <!--ID-->
-      <input type = "text" id = "randomID2" value="" hidden><br>
+      <input type = "text" id = "taskID" value="" hidden><br>
       <!--Timer-->
-      <span class="usrCounter" id="timecount2"></span><br>
-      <!--<input type = "button" id="check" value = "Check">-->
-      <button class="usrButton" id="check2" >Ellenőrzés</button>
-      
-  </div>
-  <div id="userresultVoltSource">
-    <!--Thevenin resistance: <input type = "text" id = "thres" value=""> <br>
-    Thevenin voltage: <input type = "text" id = "thvolt" value=""><br>-->
-    <span id="voltSourceTask">Majd a fesz kell ide: </span><input class="usrinput" type = "text" id = "voltValue" value=""><span class="result" id="correctVoltResult" hidden></span><br>
-    <!--ID-->
-    <input type = "text" id = "randomID3" value="" hidden><br>
-    <!--Timer-->
-    <span class="usrCounter" id="timecount3"></span><br>
-    <!--<input type = "button" id="check" value = "Check">-->
-    <button class="usrButton"  id="check3" >Ellenőrzés</button>
-    
-</div>
-    
+      <span class="counter" id="usrTimeCounter"></span><br>
+      <button id="checkUsrResult" >Ellenőrzés</button>
+
+    </div>
   </body>
 </html>
