@@ -56,6 +56,12 @@ app.get('/descript/description.json', (req,res)=> {
 app.get('/scripts/clientFunction.js', function (req, res) {
     res.sendFile(path.join(__dirname + '/scripts/clientFunction.js'));
 });
+app.get('/scripts/canvas.js', function (req, res) {
+    res.sendFile(path.join(__dirname + '/scripts/canvas.js'));
+});
+app.get('/css/generator.css', function (req, res) {
+    res.sendFile(path.join(__dirname + '/css/generator.css'));
+});
 app.get('/generate', function (req, res) {
     //let circuitCoordinateArray: string[];
     //let link: string;
@@ -76,8 +82,9 @@ app.get('/generate', function (req, res) {
         let generateResponse = main.getTaskResults();
         console.log('response: ');
         console.log(generateResponse);
-        serverFunction.addDatatoJSONfile(main.getResults(),generateResponse.id);
+        
         res.send(JSON.stringify(generateResponse));
+        serverFunction.addDatatoJSONfile(main.getTaskResults());
 });
 
 

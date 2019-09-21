@@ -1,9 +1,9 @@
 ﻿export class Serverfunction{
     private fs = require('fs');
-    private checkTimeToSolvedTask: number = 60*1000;
+    private checkTimeToSolvedTask: number = 5*60*1000;
 
-    public addDatatoJSONfile(pushData,id){
-        console.log()
+    public addDatatoJSONfile(pushData){
+        console.log("pushData: "+pushData);
         /*if (!this.fs.existsSync('generateLOG.json')){
             this.fs.writeFileSync('generateLOG.json','{}', (err) => {
                 if (err) {
@@ -17,7 +17,11 @@
             generateLOG = '{}';
         }
         let resultLOG = JSON.parse(generateLOG);
-        resultLOG[id] = pushData;
+        resultLOG[pushData.id] = pushData;
+        delete resultLOG[pushData.id].falstadTXT;
+        delete resultLOG[pushData.id].link;
+        delete resultLOG[pushData.id].id;
+        
         let pushlogData = JSON.stringify(resultLOG, null, 2);
         
     

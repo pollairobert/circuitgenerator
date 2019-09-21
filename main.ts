@@ -18,7 +18,7 @@ export class Main {
     private currentPrefix: string;
     private ohmPrefix: string;
     private measurementVoltPrefix: string;
-    private taskResults: Object;
+    private taskResults;
     public start(type: number){
         let cg: CircuitGenerator = new CircuitGenerator();
         let can: CircuitAnalyzer = new CircuitAnalyzer();
@@ -57,10 +57,11 @@ export class Main {
             measurementError = this.calculateMeasurementError(can.getQuestionResVoltage(),can.getResultOfTheveninVoltage());
             console.log("measurementError: "+measurementError);
         }
+        let randomID = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         this.taskResults = {
             falstadTXT: this.getCircuitCoordinateArray(),
             link: this.getFalstadLink(),
-            id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+            id: randomID,
             thVolt: can.getResultOfTheveninVoltage(),
             thRes:can.getResultOfTheveninResistance(),
             resCurrent: can.getQuestionResCurrent(),
@@ -68,6 +69,7 @@ export class Main {
             absError: measurementError[0],
             relError: measurementError[1],
             terminalVolt: can.getOutputVoltageWithConnectedVoltageSource(),
+            timestamp: new Date()
         }
         console.log(this.taskResults);
         

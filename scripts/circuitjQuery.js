@@ -53,10 +53,13 @@ $(document).ready(function () {
     }
   });*/
   //console.log(prefixes);
+
+  
+
   $("#usrCheck").hide();
-  $("#userresult").hide();
-  $("#userresult2").hide();
-  $("#userresultVoltSource").hide();
+  $("#drawCircuit").hide();
+  $("#hrUP").hide();
+  $("#hrDown").hide();
   var falstadlink;
   $("#generate").click(function () {
       select = $("select").val();
@@ -95,6 +98,7 @@ $(document).ready(function () {
           setPrefixOfResults(circuitResults,select);
           console.log(prefixes);
           startTimerTest(select,circuitResults,prefixes);
+          loadCanvas();
         });
         $("select").val("1");
       
