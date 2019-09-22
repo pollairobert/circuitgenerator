@@ -22,7 +22,9 @@ var circuitResults;
 var select;
 var checkingUsrResult1;
 var checkingUsrResult2;
-
+var canvas, ctx;
+var cloneCanvas; 
+var cloneContext; 
 function compareResults(userCalc, circResult){
     let resultTolerance = [circResult - 0.005, circResult + 0.005];
     console.log("circuitResults: "+ circResult);
@@ -98,11 +100,12 @@ function setResultWithPrefix(originalResult ,prefix){
 }
 function startTimerTest(taskType, resultsOfcircuit, prefixObj){
     console.log("taskType: "+taskType);
+    
     //taskType = Number(taskType);
     countdownMin = 0;
     countdownSec = 20;
     $("#checkUsrResult").prop("disabled", false);
-    //$("#result").html('');
+    $("#result").html('');
     $("#content").html('');
     $("#timeoutorsolve").html('');
     $("#usrCheck").show();
@@ -118,7 +121,7 @@ function startTimerTest(taskType, resultsOfcircuit, prefixObj){
     $("#hrUP").show();
     //$("#result").append("<h1>Ide jon majd a megjelenitese a halozatnak (CANVAS?)</h1>");
     $("#drawCircuit").show();
-    //$("#result").append("<canvas id=\"drawCircuit\" width=\"180%\" height=\"400\" style=\"border:1px solid #000000;\"></canvas>");
+    $("#result").append("<p>A kép egérrel nagyítható és mozgatható.</p>");
     //$("#result").append("<canvas id=\"drawCircuit\" ></canvas>");
     $("#hrDown").show();
     if (+taskType >0 && +taskType <=5 ){

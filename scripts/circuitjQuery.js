@@ -53,15 +53,18 @@ $(document).ready(function () {
     }
   });*/
   //console.log(prefixes);
-
+  canvas = document.getElementById('drawCircuit');
+  ctx = canvas.getContext('2d');
   
 
   $("#usrCheck").hide();
   $("#drawCircuit").hide();
+  $("#drawCircuit").closest();
   $("#hrUP").hide();
   $("#hrDown").hide();
   var falstadlink;
   $("#generate").click(function () {
+      clearCanvas();
       select = $("select").val();
       var descriptSelect = "type" + select;
       /*$.ajax({
@@ -72,6 +75,7 @@ $(document).ready(function () {
               descript = data[decriptSelect][title];
           }
       });*/
+      $("#drawCircuit").closest();
       title = Object.keys(description[descriptSelect])[0];
       descript = description[descriptSelect][title];
       var generate;
@@ -167,5 +171,10 @@ $(document).ready(function () {
     }
     e.preventDefault();
   });
-  
+  $("#clear").click(function (e) { 
+    alert("canvas torles");
+    clearCanvas();
+    e.preventDefault();
+    
+  });
 });
