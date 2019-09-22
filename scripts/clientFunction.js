@@ -225,10 +225,11 @@ function setDirectionTypeToCircuitElementInCanvas(startX,startY,endX,endY){
             return "2";
         }
     } else {
-        if (wichBiger(startX,endX) > startX) {
-            return "1";
-        } else {
+        //console.log("melyik nagyobb: "+wichBiger(startX,endX));
+        if (wichBiger(startX,endX) === startX) {
             return "3";
+        } else {
+            return "1";
         }
     }
 }

@@ -50,8 +50,8 @@ img_dot.src = host+"/char_dot.svg";
     dot: img_dot.src = host+"/char_dot.svg",
 } */
 //var ball   = new Image;
-var translateX = 600;
-var translateY = 400;
+var translateX = 500;
+var translateY = 300;
 //var img = new Image();
 function loadCanvas(){		
     //var canvas = document.getElementById('drawCircuit');
@@ -84,7 +84,7 @@ function loadCanvas(){
             //for (var j = 0; j < branchCoordinates.length; j++){
                 //console.log("branchCoordinates: "+branchCoordinates);
                 directionType = setDirectionTypeToCircuitElementInCanvas(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4]);
-                console.log(branchCoordinates[0]+" directionType: "+ directionType);
+                //console.log(branchCoordinates[0]+" directionType: "+ directionType);
                 if (branchCoordinates[0] === "v"){
                     var arcX;
                     var arcY;
@@ -96,7 +96,7 @@ function loadCanvas(){
                     if (directionType === "0"){
                         arcY = (meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]));
                         arcX = branchCoordinates[1];
-                        startValueY = +(meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) -5);
+                        startValueY = +(meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) -8);
                         startValueX = +branchCoordinates[1] +11;
                         arrowY = +(meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) -10);
                         arrowX = +branchCoordinates[1] -14;
@@ -104,7 +104,7 @@ function loadCanvas(){
                     if (directionType === "1"){
                         arcX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]));
                         arcY = branchCoordinates[2];
-                        startValueX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) -12);
+                        startValueX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) -14);
                         startValueY = branchCoordinates[2] -21.5;
                         arrowX = +(meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) +10);
                         arrowY = +branchCoordinates[2] +14;
@@ -112,7 +112,7 @@ function loadCanvas(){
                     if (directionType === "2"){
                         arcY = (meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]));
                         arcX = branchCoordinates[1];
-                        startValueY = +(meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) -5);
+                        startValueY = +(meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) -8);
                         startValueX = +branchCoordinates[1] +11;
                         arrowY = +(meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) -10);
                         arrowX = +branchCoordinates[1] -14;
@@ -120,7 +120,7 @@ function loadCanvas(){
                     if (directionType === "3"){
                         arcX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]));
                         arcY = branchCoordinates[2];
-                        startValueX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) -12);
+                        startValueX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) -14);
                         startValueY = branchCoordinates[2] -21.5;
                         arrowX = +(meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) +10);
                         arrowY = +branchCoordinates[2] +14;
@@ -444,7 +444,7 @@ function drawValueOfElements(value,startPosX,startPosY,elementType){
     //console.log("ohmToString: "+ ohmToString);
 }
 function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
-    console.log("value: "+value);
+    //console.log("value: "+value);
     if(branchDirectionType === "0"){
         if (value < 0){
             ctx.beginPath();
