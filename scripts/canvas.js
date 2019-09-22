@@ -49,22 +49,6 @@ img_9.src = host+"/number9.svg";
 img_k.src = host+"/char_k.svg";
 img_v.src = host+"/char_v.svg";
 img_dot.src = host+"/char_dot.svg";
-/*var svgImg = {
-    n0: img_0.src = host+"/number0.svg",
-    n1: img_1.src = host+"/number1.svg",
-    n2: img_2.src = host+"/number2.svg",
-    n3: img_3.src = host+"/number3.svg",
-    n4: img_4.src = host+"/number4.svg",
-    n5: img_5.src = host+"/number5.svg",
-    n6: img_6.src = host+"/number6.svg",
-    n7: img_7.src = host+"/number7.svg",
-    n8: img_8.src = host+"/number8.svg",
-    n9: img_9.src = host+"/number9.svg",
-    k: img_k.src = host+"/char_k.svg",
-    v: img_v.src = host+"/char_v.svg",
-    dot: img_dot.src = host+"/char_dot.svg",
-} */
-//var ball   = new Image;
 var translateX = 500;
 var translateY = 300;
 //var img = new Image();
@@ -219,53 +203,7 @@ function loadCanvas(){
             //}
             //console.log(branchCoordinates);
         }
-        /*ctx.beginPath();
-        ctx.lineWidth = 2;
-        ctx.moveTo(0,0);
-        ctx.lineTo(-96,288);
-        ctx.strokestyle = '#ff0000';
-        ctx.stroke();
-        //ctx.drawImage(gkhead,200,50);
-
-        /*ctx.beginPath();
-        ctx.lineWidth = 6;
-        ctx.moveTo(399,250);
-        ctx.lineTo(474,256);
-        ctx.stroke();
-
-        ctx.save();
-        ctx.translate(4,2);
-        ctx.beginPath();
-        ctx.lineWidth = 1;
-        ctx.moveTo(436,253);
-        ctx.lineTo(437.5,233);
-        ctx.stroke();
-
-        ctx.save();
-        ctx.translate(438.5,223);
-        ctx.strokeStyle = '#06c';
-        ctx.beginPath();
-        ctx.lineWidth = 0.05;
-        for (var i=0;i<60;++i){
-            ctx.rotate(6*i*Math.PI/180);
-            ctx.moveTo(9,0);
-            ctx.lineTo(10,0);
-            ctx.rotate(-6*i*Math.PI/180);
-        }
-        ctx.stroke();
-        ctx.restore();
-
-        ctx.beginPath();
-        ctx.lineWidth = 0.2;
-        ctx.arc(438.5,223,10,0,Math.PI*2);
-        ctx.stroke();
-        ctx.restore();
         
-        ctx.drawImage(ball,379,233,40,40);
-        ctx.drawImage(ball,454,239,40,40);
-        ctx.drawImage(ball,310,295,20,20);
-        ctx.drawImage(ball,314.5,296.5,5,5);
-        ctx.drawImage(ball,319,297.2,5,5);*/
     }
     redraw();
     
