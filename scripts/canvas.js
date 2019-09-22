@@ -1,34 +1,218 @@
-﻿var width, height;
+﻿
+
+//var width, height;
 
 //var canvas = document.getElementsByTagName('drawCircuit')[0];
 //var canvas = document.getElementById('drawCircuit');
 //var ctx = canvas.getContext('2d');
 
 //canvas.width = 800; canvas.height = 600;
-var gkhead = new Image;
-var ball   = new Image;
+//var gkhead, img_1,img_2,img_3,img_4,img_5,img_6,img_7,img_8,img_9,img_k,img_dot= new Image();
+var img_0 = new Image();
+var img_1 = new Image();
+var img_2 = new Image();
+var img_3 = new Image();
+var img_4 = new Image();
+var img_5 = new Image();
+var img_6 = new Image();
+var img_7 = new Image();
+var img_8 = new Image();
+var img_9 = new Image();
+var img_k = new Image();
+var img_v = new Image();
+var img_dot = new Image();
+img_0.src = host+"/number0.svg";
+img_1.src = host+"/number1.svg";
+img_2.src = host+"/number2.svg";
+img_3.src = host+"/number3.svg";
+img_4.src = host+"/number4.svg";
+img_5.src = host+"/number5.svg";
+img_6.src = host+"/number6.svg";
+img_7.src = host+"/number7.svg";
+img_8.src = host+"/number8.svg";
+img_9.src = host+"/number9.svg";
+img_k.src = host+"/char_k.svg";
+img_v.src = host+"/char_v.svg";
+img_dot.src = host+"/char_dot.svg";
+/*var svgImg = {
+    n0: img_0.src = host+"/number0.svg",
+    n1: img_1.src = host+"/number1.svg",
+    n2: img_2.src = host+"/number2.svg",
+    n3: img_3.src = host+"/number3.svg",
+    n4: img_4.src = host+"/number4.svg",
+    n5: img_5.src = host+"/number5.svg",
+    n6: img_6.src = host+"/number6.svg",
+    n7: img_7.src = host+"/number7.svg",
+    n8: img_8.src = host+"/number8.svg",
+    n9: img_9.src = host+"/number9.svg",
+    k: img_k.src = host+"/char_k.svg",
+    v: img_v.src = host+"/char_v.svg",
+    dot: img_dot.src = host+"/char_dot.svg",
+} */
+//var ball   = new Image;
+var translateX = 600;
+var translateY = 400;
+//var img = new Image();
 function loadCanvas(){		
     //var canvas = document.getElementById('drawCircuit');
-    
+    console.log(circuitResults);
     cloneCanvas = canvas;
     cloneContext = ctx;
-    //ctx.translate(600, 400);
+    var coordinateArray = circuitResults.falstadTXT;
+    //console.log("Melyik nagyobb: "+wichBiger(-21,0));
+    ctx.translate(translateX, translateY);
     trackTransforms(ctx);
     function redraw(){
         // Clear the entire canvas
-        var p1 = ctx.transformedPoint(0,0);
-        var p2 = ctx.transformedPoint(canvas.width,canvas.height);
-        ctx.clearRect(p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);
+        //var p1 = ctx.transformedPoint(0,0);
+        //var p2 = ctx.transformedPoint(canvas.width,canvas.height);
+        //var p2 = ctx.transformedPoint(canvas.width,canvas.height);
+        //ctx.clearRect(p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);
 
         // Alternatively:
-        // ctx.save();
-        // ctx.setTransform(1,0,0,1,0,0);
-        // ctx.clearRect(0,0,canvas.width,canvas.height);
-        // ctx.restore();
+        ctx.save();
+        ctx.setTransform(1,0,0,1,0,0);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.restore();
 
-        ctx.drawImage(gkhead,200,50);
+        
+        
+        
+        var directionType;
+        for(var i = 0; i < coordinateArray.length; i++){
+            var branchCoordinates = coordinateArray[i].split(" ");
+            //for (var j = 0; j < branchCoordinates.length; j++){
+                //console.log("branchCoordinates: "+branchCoordinates);
+                directionType = setDirectionTypeToCircuitElementInCanvas(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4]);
+                console.log(branchCoordinates[0]+" directionType: "+ directionType);
+                if (branchCoordinates[0] === "v"){
+                    var arcX;
+                    var arcY;
+                    var startValueX;
+                    var startValueY;
+                    var arrowX;
+                    var arrowY;
+                    var voltage = +branchCoordinates[8];
+                    if (directionType === "0"){
+                        arcY = (meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]));
+                        arcX = branchCoordinates[1];
+                        startValueY = +(meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) -5);
+                        startValueX = +branchCoordinates[1] +11;
+                        arrowY = +(meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) -10);
+                        arrowX = +branchCoordinates[1] -14;
+                    }
+                    if (directionType === "1"){
+                        arcX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]));
+                        arcY = branchCoordinates[2];
+                        startValueX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) -12);
+                        startValueY = branchCoordinates[2] -21.5;
+                        arrowX = +(meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) +10);
+                        arrowY = +branchCoordinates[2] +14;
+                    }
+                    if (directionType === "2"){
+                        arcY = (meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]));
+                        arcX = branchCoordinates[1];
+                        startValueY = +(meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) -5);
+                        startValueX = +branchCoordinates[1] +11;
+                        arrowY = +(meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) -10);
+                        arrowX = +branchCoordinates[1] -14;
+                    }
+                    if (directionType === "3"){
+                        arcX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]));
+                        arcY = branchCoordinates[2];
+                        startValueX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) -12);
+                        startValueY = branchCoordinates[2] -21.5;
+                        arrowX = +(meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) +10);
+                        arrowY = +branchCoordinates[2] +14;
+                    }
+                    ctx.beginPath();
+                    ctx.arc(arcX, arcY, 10, 0, 2*Math.PI,false);
+                    ctx.lineWidth = 2;
+                    ctx.fillStyle = 'transparent';
+                    ctx.strokestyle = '#ff0000';
+                    ctx.fill();
+                    ctx.stroke();
+                    drawValueOfElements(voltage,startValueX,startValueY,"V");
+                    //console.log("arrowX: "+arrowX);
+                    //console.log("arrowY: "+arrowY);
+                    drawVoltageSourceDirection(directionType,arrowX,arrowY,voltage);
+                    
+                    
+                }
+                ctx.beginPath();
+                ctx.lineWidth = 2;
+                ctx.moveTo(branchCoordinates[1],branchCoordinates[2]);
+                ctx.lineTo(branchCoordinates[3],branchCoordinates[4]);
+                ctx.strokestyle = '#ff0000';
+                ctx.stroke();
+                if (branchCoordinates[0] === "r"){
+                    var startRectX;
+                    var startRectY;
+                    var startValueX;
+                    var startValueY;
+                    var dimension;
+                    var kiloOhm = +branchCoordinates[6]/1000;
+                    //console.log("branchCoordinates: "+branchCoordinates);
 
-        ctx.beginPath();
+                    //console.log(kiloOhm.toString()[1]);
+                    if (directionType === "0"){
+                        startRectY = (meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) - 15);
+                        startRectX = branchCoordinates[1] - 5;
+                        dimension = [10,30];
+                        startValueY = +(meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) -5);
+                        startValueX = +branchCoordinates[1] +6;
+                        //console.log("meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]: "+meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]));
+                        
+                        //console.log("startValueX: "+startValueX);
+                        //console.log("startValueY: "+startValueY);
+                        }
+                    if (directionType === "1"){
+                        startRectX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) - 15);
+                        startRectY = branchCoordinates[2] - 5;
+                        dimension = [30,10];
+                        startValueX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) -10);
+                        startValueY = branchCoordinates[2] -16.5;
+                    }
+                    if (directionType === "2"){
+                        startRectY = (meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) - 15);
+                        startRectX = branchCoordinates[1] - 5;
+                        dimension = [10,30];
+                        startValueY = +(meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]) -5);
+                        startValueX = +branchCoordinates[1] +6;
+                        //console.log("meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]: "+meanOfCoordinates(branchCoordinates[2],branchCoordinates[4]));
+                        
+                        //console.log("startValueX: "+startValueX);
+                        //console.log("startValueY: "+startValueY);
+                    }
+                    if (directionType === "3"){
+                        startRectX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) - 15);
+                        startRectY = branchCoordinates[2] - 5;
+                        dimension = [30,10];
+                        startValueX = (meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]) -10);
+                        startValueY = branchCoordinates[2] -16.5;
+                    }
+                    ctx.beginPath();
+                    ctx.rect(startRectX, startRectY, dimension[0], dimension[1]);
+                    ctx.lineWidth = 2;
+                    ctx.fillStyle = 'white';
+                    ctx.strokestyle = '#ff0000';
+                    ctx.fill();
+                    ctx.stroke();
+                    drawValueOfElements(kiloOhm,startValueX,startValueY,"r");
+                }
+                /**/
+            //}
+            //console.log(branchCoordinates);
+        }
+        /*ctx.beginPath();
+        ctx.lineWidth = 2;
+        ctx.moveTo(0,0);
+        ctx.lineTo(-96,288);
+        ctx.strokestyle = '#ff0000';
+        ctx.stroke();
+        //ctx.drawImage(gkhead,200,50);
+
+        /*ctx.beginPath();
         ctx.lineWidth = 6;
         ctx.moveTo(399,250);
         ctx.lineTo(474,256);
@@ -66,22 +250,26 @@ function loadCanvas(){
         ctx.drawImage(ball,454,239,40,40);
         ctx.drawImage(ball,310,295,20,20);
         ctx.drawImage(ball,314.5,296.5,5,5);
-        ctx.drawImage(ball,319,297.2,5,5);
+        ctx.drawImage(ball,319,297.2,5,5);*/
     }
     redraw();
     
-    var lastX=canvas.width/2, lastY=canvas.height/2;
+    var lastX=canvas.width, lastY=canvas.height;
     var dragStart,dragged;
     canvas.addEventListener('mousedown',function(evt){
         document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
         lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
         lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
         dragStart = ctx.transformedPoint(lastX,lastY);
+        
+
         dragged = false;
     },false);
     canvas.addEventListener('mousemove',function(evt){
         lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
         lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
+        //console.log("x: "+lastX);
+        //console.log("y: "+lastY);
         dragged = true;
         if (dragStart){
             var pt = ctx.transformedPoint(lastX,lastY);
@@ -94,9 +282,9 @@ function loadCanvas(){
         if (!dragged) zoom(evt.shiftKey ? -1 : 1 );
     },false);
 
-    var scaleFactor = 1.1;
+    var scaleFactor = 1.01; //zoomolas lepteke
     var zoom = function(clicks){
-        var pt = ctx.transformedPoint(lastX,lastY);
+        var pt = ctx.transformedPoint(lastX-translateX,lastY-translateY);  //a translate-el el kellett tolni, hogy jo helyen zoomoljon
         ctx.translate(pt.x,pt.y);
         var factor = Math.pow(scaleFactor,clicks);
         ctx.scale(factor,factor);
@@ -112,8 +300,8 @@ function loadCanvas(){
     canvas.addEventListener('DOMMouseScroll',handleScroll,false);
     canvas.addEventListener('mousewheel',handleScroll,false);
 };
-gkhead.src = 'http://phrogz.net/tmp/gkhead.jpg';
-ball.src   = 'http://phrogz.net/tmp/alphaball.png';
+//gkhead.src = 'http://phrogz.net/tmp/gkhead.jpg';
+//ball.src   = 'http://phrogz.net/tmp/alphaball.png';
 
 // Adds ctx.getTransform() - returns an SVGMatrix
 // Adds ctx.transformedPoint(x,y) - returns an SVGPoint
@@ -172,73 +360,253 @@ function trackTransforms(ctx){
         return pt.matrixTransform(xform.inverse());
     }
 }
-/*function loadCanvas() {
-    console.log('loaded');
-    height = window.innerHeight;
-    width = window.innerWidth;
-    var c = document.getElementById('drawCircuit');
-    var ctx = c.getContext('2d');
-    cloneCanvas = c;
-    cloneContext = ctx;
-    c.width = c.width
-    //ctx.clearRect(-600, -4000, c.width, c.height);
-    // Center
-    //$("#drawCircuit").css({"width": width, "height": height, "border": "1px solid #fd0000"});
-    ctx.translate(600, 400);
-    ctx.scale(2, 2); //zoomhoz kell majd
-    ctx.translate(-600, -400);
-    
-    // Add some lines
-    ctx.beginPath();
-    ctx.moveTo(480,288);
-    ctx.lineTo(-96,288);
-    ctx.strokestyle = '#ff0000';
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(-200,0);
-    ctx.lineTo(200,0);
-    ctx.stroke();
-    ctx.moveTo(0,-200);
-    ctx.lineTo(0, 200);
-    ctx.stroke();     
 
-    ctx.font = "12px Arial";
-    ctx.fillText("+ x",180, -10);
-    ctx.fillText("- y",10, 180);
-
-    ctx.fillText("- x",-200, -10);
-    ctx.fillText("+ y",10, -180);  
-
-    // From the above I notice that -x coordinates behaves
-    // as expected, but the y coordinates jumps on the '
-    // wrong side of the line. 
-
-    ctx.fillRect(-100, -100, 4, 4); 
-    ctx.fillText("(-100,-100). Incorrect" ,-100, -100); 
-
-    // From 'translate' this is correct, but only the x coordinate
-    // looks like it should:
-    // x = 200 - 100 = 100
-    // y = 200 - 100 = 100
-
-    // In order to draw correct cartesian coordinates we could make
-    // a simple function like this 
-
-    function drawCartesianPoint(ctx, x, y) {
-        ctx.fillRect(x, -(y), 4, 4); 
-    }
-
-    // And for text:
-    function drawCartesianText(ctx, x, y, text) {
-        ctx.fillText(text , x, -(y));  
-    }
-
-    // Draw corrext:
-    drawCartesianPoint(ctx, -100, -100);
-    drawCartesianText(ctx, -100, -100, '(-100, -100) correct');
-
-};  */
 function clearCanvas() {  
     canvas.width = canvas.width;
     //cloneContext.clearRect(-600, -400, cloneCanvas.width, cloneCanvas.height);
+}
+function drawValueOfElements(value,startPosX,startPosY,elementType){
+    var ohmToString = value.toString();
+    var starting = 0;
+    var offset = 6;
+    if (elementType === "v"){
+        starting = Number(startPosX);
+    } else {
+        starting = Number(startPosX);
+    }
+    //console.log("starting a for elott: "+ starting);
+    for (var i = 0; i < ohmToString.length; i++){
+        //console.log("starting: "+i+ ". korben: "+ starting);
+        switch (ohmToString[i]){
+            case "0":{
+                ctx.drawImage(img_0, starting, startPosY);
+                starting += offset;
+                break;
+            }
+            case "1":{
+                ctx.drawImage(img_1, starting, startPosY);
+                starting += offset;
+                break;
+            }
+            case "2":{
+                ctx.drawImage(img_2, starting, startPosY);
+                starting += offset;
+                break;
+            }
+            case "3":{
+                ctx.drawImage(img_3, starting, startPosY);
+                starting += offset;
+                break;
+            }
+            case "4":{
+                ctx.drawImage(img_4, starting, startPosY);
+                starting += offset;
+                break;
+            }
+            case "5":{
+                ctx.drawImage(img_5, starting, startPosY);
+                starting += offset;
+                break;
+            }
+            case "6":{
+                ctx.drawImage(img_6, starting, startPosY);
+                starting += offset;
+                break;
+            }
+            case "7":{
+                ctx.drawImage(img_7, starting, startPosY);
+                starting += offset;
+                break;
+            }
+            case "8":{
+                ctx.drawImage(img_8, starting, startPosY);
+                starting += offset;
+                break;
+            }
+            case "9":{
+                ctx.drawImage(img_9, starting, startPosY);
+                starting += offset;
+                break;
+            }
+            case ".":{
+                ctx.drawImage(img_dot, starting, startPosY);
+                starting += offset;
+                break;
+            }
+        }
+    }
+    
+    if (elementType === "V"){
+        ctx.drawImage(img_v, starting+3, startPosY);
+    } else {
+        ctx.drawImage(img_k, starting, startPosY);
+    }
+    //console.log("ohmToString: "+ ohmToString);
+}
+function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
+    console.log("value: "+value);
+    if(branchDirectionType === "0"){
+        if (value < 0){
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY);
+            ctx.lineTo(startX,startY+20);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY+0.5);
+            ctx.lineTo(startX-3,startY+0.5+3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY+0.5);
+            ctx.lineTo(startX+3,startY+0.5+3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+        } else {
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY+20);
+            ctx.lineTo(startX,startY);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY+19.5);
+            ctx.lineTo(startX-3,startY+19.5-3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY+19.5);
+            ctx.lineTo(startX+3,startY+19.5-3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+        }
+    }
+    if(branchDirectionType === "1"){
+        if (value < 0){
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY);
+            ctx.lineTo(startX-20,startY);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX-0.5,startY);
+            ctx.lineTo(startX-0.5-3,startY-3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX-0.5,startY);
+            ctx.lineTo(startX-0.5-3,startY+3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+        } else {
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX-20,startY);
+            ctx.lineTo(startX,startY);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX-19.5,startY);
+            ctx.lineTo(startX-19.5+3,startY-3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX-19.5,startY);
+            ctx.lineTo(startX-19.5+3,startY+3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+        }
+    }
+    if(branchDirectionType === "2"){
+        if (value > 0){
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY);
+            ctx.lineTo(startX,startY+20);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY+0.5);
+            ctx.lineTo(startX-3,startY+0.5+3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY+0.5);
+            ctx.lineTo(startX+3,startY+0.5+3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+        } else {
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY+20);
+            ctx.lineTo(startX,startY);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY+19.5);
+            ctx.lineTo(startX-3,startY+19.5-3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY+19.5);
+            ctx.lineTo(startX+3,startY+19.5-3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+        }
+    }
+    if(branchDirectionType === "3"){
+        if (value > 0){
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX,startY);
+            ctx.lineTo(startX-20,startY);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX-0.5,startY);
+            ctx.lineTo(startX-0.5-3,startY-3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX-0.5,startY);
+            ctx.lineTo(startX-0.5-3,startY+3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+        } else {
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX-20,startY);
+            ctx.lineTo(startX,startY);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX-19.5,startY);
+            ctx.lineTo(startX-19.5+3,startY-3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(startX-19.5,startY);
+            ctx.lineTo(startX-19.5+3,startY+3);
+            ctx.strokestyle = "#ff0000";
+            ctx.stroke();
+        }
+    }
 }

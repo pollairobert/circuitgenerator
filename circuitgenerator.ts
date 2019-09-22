@@ -94,10 +94,10 @@ export class CircuitGenerator {
                 break;
             }
             case 4: {
-                parameters = [this.randomIntNumber(10,10),
+                parameters = [this.randomIntNumber(8,8),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
-                              this.randomIntNumber(8,5)];
+                              this.randomIntNumber(8,6)];
                 break;
             }
             case 5: {

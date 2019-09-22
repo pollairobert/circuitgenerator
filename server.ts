@@ -43,6 +43,7 @@ serverFunction.checkExistTaskLOGfile();
 serverFunction.intervalTimer();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false}));
+app.use(express.static('svg'));
 app.use(express.static('scripts'));
 app.get('/', (req,res)=> {
     res.sendFile(path.join(__dirname + '/index.html'));

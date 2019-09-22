@@ -18,7 +18,7 @@ var select;
 var removeTaskID;
 var title;
 var descript;
-var circuitResults;
+var circuitResults; //A servertol kapott valasz Obj
 var select;
 var checkingUsrResult1;
 var checkingUsrResult2;
@@ -208,4 +208,31 @@ function timeOutResult(whereCall) {
             alert("Lejárt az idő! Feladat törölve! ");
         }
     });
+}
+function wichBiger(num1, num2){
+    if (+num1 >= +num2){
+        return num1;
+    } else {
+        return num2;
+    }
+}
+function setDirectionTypeToCircuitElementInCanvas(startX,startY,endX,endY){
+    if(startX === endX){
+        //console.log("melyik nagyobb: "+wichBiger(startY,endY));
+        if (wichBiger(startY,endY) === startY) {
+            return "0"
+        } else {
+            return "2";
+        }
+    } else {
+        if (wichBiger(startX,endX) > startX) {
+            return "1";
+        } else {
+            return "3";
+        }
+    }
+}
+function meanOfCoordinates(coord1, coord2){
+    //console.log("meanofcoord: "+ (+coord1 + coord2)/2);
+    return ((Number(coord1)+Number(coord2))/2);
 }

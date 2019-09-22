@@ -64,7 +64,7 @@ $(document).ready(function () {
   $("#hrDown").hide();
   var falstadlink;
   $("#generate").click(function () {
-      clearCanvas();
+      //clearCanvas();
       select = $("select").val();
       var descriptSelect = "type" + select;
       /*$.ajax({
@@ -81,29 +81,41 @@ $(document).ready(function () {
       var generate;
       var regenerateTask = false;
       if ($("#usrCheck").is(":hidden") || timeout){
+          clearCanvas();
           generate = host + '/generate?type=' + select;
-          
+          $.get(generate, function (data, status) {
+            //console.log(JSON.parse(data));
+            console.log(generate);
+            circuitResults = JSON.parse(data);
+            removeTaskID = circuitResults.id;
+            setPrefixOfResults(circuitResults,select);
+            console.log(prefixes);
+            startTimerTest(select,circuitResults,prefixes);
+            loadCanvas();
+          });
       } else {
           generate = host + '/generate?type=' + select + '&id=' + removeTaskID;
           var confirmation = confirm('Biztos szeretnél újat generálni?');
           if (confirmation) {
+            clearCanvas();
             regenerateTask = true;
+            $.get(generate, function (data, status) {
+              //console.log(JSON.parse(data));
+              console.log(generate);
+              circuitResults = JSON.parse(data);
+              removeTaskID = circuitResults.id;
+              setPrefixOfResults(circuitResults,select);
+              console.log(prefixes);
+              startTimerTest(select,circuitResults,prefixes);
+              loadCanvas();
+            });
             console.log('Uj generalas, eldobni valo id: ' + removeTaskID);
           } else {
             console.log('Marad');
           }
       }
       timeout = false;
-        $.get(generate, function (data, status) {
-          console.log(JSON.parse(data));
-          console.log(generate);
-          circuitResults = JSON.parse(data);
-          removeTaskID = circuitResults.id;
-          setPrefixOfResults(circuitResults,select);
-          console.log(prefixes);
-          startTimerTest(select,circuitResults,prefixes);
-          loadCanvas();
-        });
+       
         $("select").val("1");
       
   });
@@ -156,6 +168,7 @@ $(document).ready(function () {
       timeout = true;
       timeOutResult(removeTaskID,+select);
       alert('Helyes megoldás!');
+      
     }
     if (!checkingUsrResult1 && checkingUsrResult2) {
       $("#value1").val("");
