@@ -40,7 +40,11 @@ export class CircuitGenerator {
     public circuitParameterLimits(type: number): number[]{
         //let parameters = new Array(5);
         let parameters: number[] = [];
-        switch (type){
+        let temptype: number = type;
+        if (type >= 4 && type < 8){
+            temptype = 4;
+        }
+        switch (temptype){
             //Egyszeru feszoszto, csak feszgennel
             case 1: {
                 parameters = [this.randomIntNumber(2,2),
@@ -90,10 +94,10 @@ export class CircuitGenerator {
                 break;
             }
             case 4: {
-                parameters = [this.randomIntNumber(10,10),
+                parameters = [this.randomIntNumber(8,8),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
-                              this.randomIntNumber(5,3)];
+                              this.randomIntNumber(15,15)];
                 break;
             }
             case 5: {
@@ -284,7 +288,7 @@ export class CircuitGenerator {
             
         }
         }
-        if (type === 6){
+        if (type === 16){
             meshes[0].setCommonBranchesArray([2, 0, 2, 1]);
             meshes[0].setCommonBranchesArray([3, 1, 3, 1]);
             meshes[1].setCommonBranchesArray([0, 2, 1, 2]);
@@ -299,7 +303,7 @@ export class CircuitGenerator {
             //meshes[3].setCommonBranchesArray([2, 0, 2, 4]);
             
         }
-        if (type === 7) {
+        if (type === 17) {
             meshes[0].setCommonBranchesArray([2, 0, 2, 1]);
             meshes[0].setCommonBranchesArray([3, 1, 3, 1]);
             meshes[1].setCommonBranchesArray([0, 2, 1, 2]);
@@ -388,97 +392,6 @@ export class CircuitGenerator {
         return circuit;
     }
 
-        //TESZTHEZ!!!!!!
-    public buildFinalCircuit2(circuit: Circuit, type: number): Circuit{
-        let meshes: Mesh[] = circuit.getMeshes();
-        let mesh1branches: Branch[] = meshes[0].getBranches();
-        for (let h = 0; h < 5; h++) {
-            circuit.setMeshes(new Mesh());
-            
-            //A 4 iranynak megfelelo branch-ek letrehozasa a mesh-en belul
-            for (let i = 0; i < 4; i++){
-                meshes[h].setBranches(new Branch(i,h));
-            }
-        }
-        mesh1branches.splice(2,0,new Branch(2,0));
-        meshes[3].getBranches().splice(0,0,new Branch(0,3));
-        meshes[3].getBranches().splice(0,0,new Branch(0,3));
-        meshes[4].getBranches().splice(3,0,new Branch(3,4));
-        meshes[0].setBranches(new Branch(2,0));
-        meshes[3].setBranches(new Branch(0,3));
-        meshes[3].setBranches(new Branch(0,3));
-        meshes[4].setBranches(new Branch(3,4));
-
-        mesh1branches[2].setCommon(3);
-        mesh1branches[3].setCommon(2);
-        mesh1branches[1].setCommon(5);
-
-        meshes[1].getBranches()[0].setCommon(1);
-        meshes[1].getBranches()[1].setCommon(3);
-        meshes[1].getBranches()[2].setCommon(4);
-
-        meshes[2].getBranches()[0].setCommon(1);
-        meshes[2].getBranches()[1].setCommon(5);
-        meshes[2].getBranches()[2].setCommon(4);
-        meshes[2].getBranches()[3].setCommon(2);
-
-        meshes[3].getBranches()[0].setCommon(2);
-        meshes[3].getBranches()[1].setCommon(3);
-        meshes[3].getBranches()[2].setCommon(5);
-
-        meshes[4].getBranches()[2].setCommon(4);
-        meshes[4].getBranches()[3].setCommon(3);
-        meshes[4].getBranches()[4].setCommon(1);
-        
-        mesh1branches[0].setBranchElements(new VoltageSource(5,false));
-        mesh1branches[0].setBranchElements(new Resistance(10));
-        mesh1branches[1].setBranchElements(new Resistance(20));
-        mesh1branches[2].setBranchElements(new VoltageSource(15,true));
-        mesh1branches[3].setBranchElements(new Resistance(80));
-
-        meshes[1].getBranches()[0].setBranchElements(this.copyCommonElement(mesh1branches[3].getBranchElements()[0]));
-        meshes[1].getBranches()[1].setBranchElements(new Resistance(70));
-        meshes[1].getBranches()[2].setBranchElements(new VoltageSource(25,true));
-
-        meshes[2].getBranches()[0].setBranchElements(this.copyCommonElement(mesh1branches[2].getBranchElements()[0]));
-        meshes[2].getBranches()[1].setBranchElements(new Resistance(50));
-        meshes[2].getBranches()[2].setBranchElements(new Resistance(60));
-        meshes[2].getBranches()[3].setBranchElements(this.copyCommonElement(meshes[1].getBranches()[1].getBranchElements()[0]));
-
-        meshes[3].getBranches()[0].setBranchElements(this.copyCommonElement(meshes[1].getBranches()[2].getBranchElements()[0]));
-        meshes[3].getBranches()[1].setBranchElements(this.copyCommonElement(meshes[2].getBranches()[2].getBranchElements()[0]));
-        meshes[3].getBranches()[2].setBranchElements(new Resistance(40));
-        meshes[3].getBranches()[4].setTh2Pole(true);
-
-        meshes[4].getBranches()[1].setBranchElements(new VoltageSource(10,false));
-        meshes[4].getBranches()[1].setBranchElements(new Resistance(30));
-        meshes[4].getBranches()[2].setBranchElements(this.copyCommonElement(meshes[3].getBranches()[2].getBranchElements()[0]));
-        meshes[4].getBranches()[3].setBranchElements(this.copyCommonElement(meshes[2].getBranches()[1].getBranchElements()[0]));
-        meshes[4].getBranches()[4].setBranchElements(this.copyCommonElement(mesh1branches[1].getBranchElements()[0]));
-        /*mesh1branches[0].setBranchElements(new VoltageSource(120,false));
-        mesh1branches[0].setBranchElements(new Resistance(2));
-        mesh1branches[1].setBranchElements(new Resistance(3));
-        meshes[1].getBranches()[1].setBranchElements(new VoltageSource(90,true));
-        meshes[1].getBranches()[2].setBranchElements(new Resistance(5));
-        mesh1branches[2].setCommon(2);
-        meshes[1].getBranches()[0].setCommon(1);*/
-        mesh1branches[2].setTh2Pole(true);
-
-        for (let i = 0; i < circuit.getNumberOfMesh(); i++){
-            let branches: Branch[] = meshes[i].getBranches();
-            for(let j = 0; j < branches.length; j++){
-                let mesh : Mesh =  meshes[i];
-                mesh.setMeshVoltage(mesh.getBranches()[j]);
-                mesh.setMeshResistance(mesh.getBranches()[j]);
-                if (mesh.getBranches()[j].getBranchElements()[0] === undefined){
-                    mesh.getBranches()[j].setBranchElements(new Wire());
-                }
-            }
-        }
-        //console.log(commonMeshesAndBranchTypes);
-        return circuit;
-    }
-    
     /**
      * Beallitja az aktualis hurokhoz tartozo eppen aktualis commonBranchesArray elemben szereplo masik hurokban is a megfelelo commonBranchesArray elemet.
      * @param circuit aramkor objektum
@@ -927,7 +840,7 @@ export class CircuitGenerator {
                 }
                 break;
             }
-            case 6: {
+            case 16: {
                 meshes[0].getBranches()[0].setBranchElements(new Resistance(this.randomE6Resistance()));
                 meshes[0].getBranches()[1].setBranchElements(new Resistance(this.randomE6Resistance()));
                 meshes[0].getBranches()[2].setBranchElements(new Resistance(this.randomE6Resistance()));
@@ -1100,7 +1013,7 @@ export class CircuitGenerator {
                 }
                 break;
             }
-            case 6: {
+            case 16: {
                 meshes[0].getBranches()[0].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
                 meshes[1].getBranches()[2].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
                 meshes[2].getBranches()[4].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
@@ -1699,7 +1612,7 @@ export class CircuitGenerator {
      * @param min 
      */
     public randomFloatNumber(max: number, min: number): number {
-        return +(Math.random() * (max - min) + min).toFixed(2);
+        return +(Math.random() * (max - min) + min).toFixed(1);
     }
     /**
      * 
@@ -1715,7 +1628,8 @@ export class CircuitGenerator {
      * 
      */
     public randomVoltageSourceValue(): number {
-        return this.randomIntNumber(24, 1);
+        return this.randomFloatNumber(24, 0.1);
+        //return this.randomIntNumber(24, 1);
     }
     /**
      * 

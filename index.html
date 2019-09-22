@@ -32,8 +32,12 @@ THE SOFTWARE.
 			  src="https://code.jquery.com/jquery-3.4.1.js"
 			  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
 			  crossorigin="anonymous"></script>
+      <!--<script src="jquery/jquery-3.4.1.min.js"></script>-->
       <script src="scripts/circuitjQuery.js" ></script>
+      <script src="scripts/clientFunction.js" type="text/javascript"></script>
+      <script src="scripts/canvas.js" type="text/javascript"></script>
       <script src="descript/description.json" type="application/json"></script>
+      <link rel="stylesheet" type="text/css" href="css/generator.css">
 
       
 	</head>
@@ -43,49 +47,43 @@ THE SOFTWARE.
     <h1>Áramkör generátor a Thevenin tétel alkalmazásához</h1>
     
     <!--Task type (difficulty):-->
-    Nehézségi szint:
+    <span>Feladattípus: </span> 
     <select size=”1”>
       <option value="1" selected>Egyszerű fesz.osztó</option>
       <option value="1.1">Egyszerű fesz.osztó (2 generátor)</option>
       <option value="2" >Kettős fesz.osztó</option>
       <option value="3" >Kettős fesz.osztó (2 generátor)</option>
       <option value="3.1" >Kettős fesz.osztó (3 generátor)</option>
-      <option value="4" >KÜLSŐ 2 pólus felőli helyettesítés (Random hálózat)</option>
-      <option value="5" >BELSŐ 2 pólus felőli helyettesítés (Random hálózat)</option>
+      <option value="4" >KÜLSŐ 2 pólus közötti helyettesítés (Random hálózat)</option>
+      <option value="5" >BELSŐ 2 pólus közötti helyettesítés (Random hálózat)</option>
       <option value="6" >Ellenálláson eső fesz. és folyó áram megadása (Random hálózat) </option>
+      <option value="7" >Mérési hiba megadása (Random hálózat) </option>
+      <option value="8" >Feszültséggenerátor beiktatása (Random hálózat) </option>
+
     </select>
     <button id="generate" >Hálózat generálása</button>
-    <button id="generateTask6" hidden>Hálózat generálása</button>  
-    <button id="click" >test</button>  
+    <button id="clear" >Clear Canvas</button>  
     <br>
     
     <hr/>
+    <div id="content"></div>
+    <hr id="hrUP"/>
     <div id="result"></div>
-    <div id="generateConfirm"></div>
-    <div id="userresult">
-        <!--Thevenin resistance: <input type = "text" id = "thres" value=""> <br>
-        Thevenin voltage: <input type = "text" id = "thvolt" value=""><br>-->
-        <span id="thevTaskRes"></span><input type = "text" id = "thres" value=""><span id="resultTHRes" hidden></span><br>
-        <span id="thevTaskVolt"></span><input type = "text" id = "thvolt" value=""><span id="resultTHVolt" hidden></span>
-        <!--ID-->
-        <input type = "text" id = "randomID" value="" hidden><br>
-        <!--Timer-->
-        <span id="timecount"></span><br>
-        <!--<input type = "button" id="check" value = "Check">-->
-        <input type = "button" id="check" value = "Ellenőrzés">
-    </div>
-    <div id="userresult2">
-      <!--Thevenin resistance: <input type = "text" id = "thres" value=""> <br>
-      Thevenin voltage: <input type = "text" id = "thvolt" value=""><br>-->
-      <span id="resTaskCurrent"></span><input type = "text" id = "resCurrent" value=""> <span id="resultAmp" hidden></span><br>
-      <span id="resTaskVolt"></span><input type = "text" id = "resVolt" value=""><span id="resultVolt" hidden></span>
-      <!--ID-->
-      <input type = "text" id = "randomID2" value="" hidden><br>
-      <!--Timer-->
-      <span id="timecount2"></span><br>
-      <!--<input type = "button" id="check" value = "Check">-->
-      <input type = "button" id="check2" value = "Ellenőrzés">
-  </div>
     
+    <canvas id="drawCircuit" width="1000" height="600" style="border:1px solid #000000;"></canvas>
+     
+    <hr id="hrDown"/>
+    <div id="timeoutorsolve"></div>
+    
+    <div id="usrCheck">
+      <span id="taskLabel1"></span><input class="usrIN" type = "text" id = "value1" value=""><span class="resultOUT" id="out1"></span><br>
+      <span id="taskLabel2"></span><input class="usrIN" type = "text" id = "value2" value=""><span class="resultOUT" id="out2"></span>
+      <!--ID-->
+      <input type = "text" id = "taskID" value="" hidden><br>
+      <!--Timer-->
+      <span class="counter" id="usrTimeCounter"></span><br>
+      <button id="checkUsrResult" >Ellenőrzés</button>
+
+    </div>
   </body>
 </html>
