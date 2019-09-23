@@ -44,7 +44,23 @@ var img_v = new Image(); img_v.src = host+"/char_v.svg";
 var img_dot = new Image(); img_dot.src = host+"/char_dot.svg";
 var img_a = new Image(); img_a.src = host+"/char_a.svg";
 var img_b = new Image(); img_b.src = host+"/char_b.svg";
-
+var svgObject = {
+    "0" : img_0,
+    "1" : img_1,
+    "2" : img_2,
+    "3" : img_3,
+    "4" : img_4,
+    "5" : img_5,
+    "6" : img_6,
+    "7" : img_7,
+    "8" : img_8,
+    "9" : img_9,
+    "k" : img_k,
+    "v" : img_v,
+    "." : img_dot,
+    "a" : img_a,
+    "b" : img_b
+}
 var translateX = 500;
 var translateY = 300;
 var arcX;
@@ -80,7 +96,7 @@ function loadCanvas(){
         ctx.setTransform(1,0,0,1,0,0);
         ctx.clearRect(0,0,canvas.width,canvas.height);
         ctx.restore();
-        
+        //ctx.drawImage(svgObject["5"], 0, 0);
         var directionType;
         for(var i = 0; i < coordinateArray.length; i++){
             var branchCoordinates = coordinateArray[i].split(" ");
@@ -351,8 +367,14 @@ function drawValueOfElements(value,startPosX,startPosY,elementType){
     }
     //console.log("starting a for elott: "+ starting);
     for (var i = 0; i < ohmToString.length; i++){
-        //console.log("starting: "+i+ ". korben: "+ starting);
-        switch (ohmToString[i]){
+        //console.log(typeof(ohmToString[i]));
+        //console.log(ohmToString[i]);
+        if (ohmToString[i] !== "-"){
+            ctx.drawImage(svgObject[ohmToString[i]], starting, startPosY);
+            starting += offset;
+        }
+        
+        /*switch (ohmToString[i]){
             case "0":{
                 ctx.drawImage(img_0, starting, startPosY);
                 starting += offset;
@@ -418,7 +440,7 @@ function drawValueOfElements(value,startPosX,startPosY,elementType){
                 starting += offset;
                 break;
             }
-        }
+        }*/
     }
     
     if (elementType === "V"){
