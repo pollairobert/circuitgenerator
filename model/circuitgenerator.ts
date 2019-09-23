@@ -117,17 +117,17 @@ export class CircuitGenerator {
                 break;
             }
             case 4: {
-                parameters = [this.randomIntNumber(8,8),
+                parameters = [this.randomIntNumber(15,4),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
-                              this.randomIntNumber(15,15)];
+                              this.randomIntNumber(15,8)];
                 break;
             }
             case 5: {
-                parameters = [this.randomIntNumber(15,15),
+                parameters = [this.randomIntNumber(15,4),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
-                              this.randomIntNumber(10,8)];
+                              this.randomIntNumber(15,8)];
                 break;
             }
             case 6: {

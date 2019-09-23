@@ -21,10 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+const format = require('string-format')
 export class Serverfunction{
     private fs = require('fs');
     private checkTimeToSolvedTask: number = 5*60*1000;
 
+    public readDescripiom(type){
+
+    }
     public addDatatoJSONfile(pushData){
         console.log("pushData: "+pushData);
         /*if (!this.fs.existsSync('generateLOG.json')){

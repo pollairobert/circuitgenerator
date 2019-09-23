@@ -44,6 +44,7 @@ var img_v = new Image(); img_v.src = host+"/char_v.svg";
 var img_dot = new Image(); img_dot.src = host+"/char_dot.svg";
 var img_a = new Image(); img_a.src = host+"/char_a.svg";
 var img_b = new Image(); img_b.src = host+"/char_b.svg";
+var img_vmeter = new Image(); img_vmeter.src = host+"/voltmeter.svg";
 var svgObject = {
     "0" : img_0,
     "1" : img_1,
@@ -75,9 +76,10 @@ var startRectX;
 var startRectY;
 var dimensionOfRect = [];
 //var img = new Image();
-function loadCanvas(){		
+function loadCanvas(){	
+
     //var canvas = document.getElementById('drawCircuit');
-    console.log(circuitResults);
+    //console.log(circuitResults);
     cloneCanvas = canvas;
     cloneContext = ctx;
     var coordinateArray = circuitResults.falstadTXT;
@@ -108,8 +110,6 @@ function loadCanvas(){
                 ctx.lineWidth = 2;
                 ctx.moveTo(branchCoordinates[1],branchCoordinates[2]);
                 ctx.lineTo(branchCoordinates[3],branchCoordinates[4]);
-                //ctx.strokestyle = '#ff0000';
-                //ctx.closePath();
                 ctx.stroke();
             }
             if (branchCoordinates[0] === "v"){
@@ -131,24 +131,56 @@ function loadCanvas(){
             if (branchCoordinates[0] === "r"){
                 var kiloOhm = +branchCoordinates[6]/1000;
                 setStartingPositionsToElementsDrawing(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4],directionType);
+                
                 ctx.beginPath();
-                //ctx.strokeStyle = '#ff00ff';
                 ctx.strokeStyle = '#000000';
-            
-
                 ctx.rect(startRectX, startRectY, dimensionOfRect[0], dimensionOfRect[1]);
                 ctx.lineWidth = 2;
                 ctx.fillStyle = 'white';
-                //ctx.strokestyle = '#ff00ff';
                 ctx.fill();
                 ctx.stroke();
                 drawValueOfElements(kiloOhm,startValueXofResistor,startValueYofResistor,"r");
             }
             if (branchCoordinates[0] === "p"){
-                if (+select <6){
+                if (+select <6 || +select === 8){
                     //console.log("branchCoordinates: "+ branchCoordinates);
                     draw2Pole(branchCoordinates,directionType);
+                    
                     //alert("kisebb mint 6");
+                }
+                if (+select === 6){
+                    var kiloOhm = circuitResults.resValue/1000;
+                    //console.log("kiloOhm: "+ kiloOhm);
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#000000';
+                    ctx.lineWidth = 2;
+                    ctx.moveTo(branchCoordinates[1],branchCoordinates[2]);
+                    ctx.lineTo(branchCoordinates[3],branchCoordinates[4]);
+                    ctx.stroke();
+
+                    setStartingPositionsToElementsDrawing(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4],directionType);
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#ff0000';
+                    ctx.rect(startRectX, startRectY, dimensionOfRect[0], dimensionOfRect[1]);
+                    ctx.lineWidth = 2;
+                    ctx.fillStyle = '#ff0000';
+                    ctx.fill();
+                    ctx.stroke();
+                    drawValueOfElements(kiloOhm,startValueXofResistor,startValueYofResistor,"r");
+                }
+                if (+select === 7){
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#16600b';
+                    ctx.lineWidth = 2;
+                    ctx.moveTo(branchCoordinates[1],branchCoordinates[2]);
+                    ctx.lineTo(branchCoordinates[3],branchCoordinates[4]);
+                    ctx.stroke();
+                    draw2Pole(branchCoordinates,directionType);
+                    var centerOfbranch = [meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]),meanOfCoordinates(branchCoordinates[2],branchCoordinates[4])];
+                    //console.log("branchCoordinates: "+ branchCoordinates);
+                    //console.log("centerOfbranch: "+ centerOfbranch);
+                    ctx.drawImage(img_vmeter, centerOfbranch[0] - 20, centerOfbranch[1] - 20);
+                    
                 }
             }
             
@@ -273,34 +305,42 @@ function draw2Pole(coordinates,direction){
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 2;
     ctx.moveTo(coordinates[1],coordinates[2]);
-    ctx.lineTo(+coordinates[1] + (direction === "1" ? 7 : (direction === "3") ? -7 : 0),+coordinates[2] + (direction === "0" ? -7 : (direction === "2") ? 7 : 0));
+    ctx.lineTo(+coordinates[1] + (direction === "1" ? 7 : (direction === "3") ? -7 : 0),
+               +coordinates[2] + (direction === "0" ? -7 : (direction === "2") ? 7 : 0));
     ctx.stroke();
 
     ctx.beginPath();
     ctx.strokeStyle = "transparent";
     ctx.fillStyle="#ff0000";
-    ctx.arc(+coordinates[1] + (direction === "1" ? 7 : (direction === "3") ? -7 : 0),+coordinates[2] + (direction === "0" ? -7 : (direction === "2") ? 7 : 0), 3, 2*Math.PI, false);
+    ctx.arc(+coordinates[1] + (direction === "1" ? 7 : (direction === "3") ? -7 : 0),
+            +coordinates[2] + (direction === "0" ? -7 : (direction === "2") ? 7 : 0), 
+            3, 2*Math.PI, false);
     ctx.fill();
     ctx.stroke();
 
-    ctx.drawImage(img_a, +coordinates[1] + (direction === "1" ? 7 : (direction === "3") ? -7 : 0) + ((direction === "0") ? -10 : (direction === "1") ? 4 : (direction === "3") ? -24 : -10),+coordinates[2] + (direction === "0" ? -7 : (direction === "2") ? 7 : 0) + ((direction === "0") ? -24 : (direction === "1") ? -10 :(direction === "3") ? -10: 4));
+    ctx.drawImage(img_a, +coordinates[1] + (direction === "1" ? 7 : (direction === "3") ? -7 : 0) + ((direction === "0") ? -10 : (direction === "1") ? 4 : (direction === "3") ? -24 : -10),
+                         +coordinates[2] + (direction === "0" ? -7 : (direction === "2") ? 7 : 0) + ((direction === "0") ? -24 : (direction === "1") ? -10 :(direction === "3") ? -10: 4));
     
 
     ctx.beginPath();
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 2;
     ctx.moveTo(coordinates[3],coordinates[4]);
-    ctx.lineTo(+coordinates[3] + (direction === "1" ? -7 : (direction === "3") ? 7 : 0),+coordinates[4] + (direction === "0" ? 7 : (direction === "2") ? -7 : 0));
+    ctx.lineTo(+coordinates[3] + (direction === "1" ? -7 : (direction === "3") ? 7 : 0),
+               +coordinates[4] + (direction === "0" ? 7 : (direction === "2") ? -7 : 0));
     ctx.stroke();
 
     ctx.beginPath();
     ctx.strokeStyle = "transparent";
     ctx.fillStyle="#ff0000";
-    ctx.arc(+coordinates[3] + (direction === "1" ? -7 : (direction === "3") ? 7 : 0),+coordinates[4] + (direction === "0" ? 7 : (direction === "2") ? -7 : 0), 3, 2*Math.PI, false);
+    ctx.arc(+coordinates[3] + (direction === "1" ? -7 : (direction === "3") ? 7 : 0),
+            +coordinates[4] + (direction === "0" ? 7 : (direction === "2") ? -7 : 0), 
+            3, 2*Math.PI, false);
     ctx.fill();
     ctx.stroke();  
     
-    ctx.drawImage(img_b, +coordinates[3] + (direction === "1" ? -7 : (direction === "3") ? 7 : 0)  + ((direction === "0") ? -10 : (direction === "1") ? -24 : (direction === "3") ? 4 : -10),+coordinates[4] + (direction === "0" ? 7 : (direction === "2") ? -7 : 0) + ((direction === "0") ? 4 : (direction === "1") ? -10 : (direction === "3") ? -10 :-24));
+    ctx.drawImage(img_b, +coordinates[3] + (direction === "1" ? -7 : (direction === "3") ? 7 : 0)  + ((direction === "0") ? -10 : (direction === "1") ? -24 : (direction === "3") ? 4 : -10),
+                         +coordinates[4] + (direction === "0" ? 7 : (direction === "2") ? -7 : 0) + ((direction === "0") ? 4 : (direction === "1") ? -10 : (direction === "3") ? -10 :-24));
 
     
 }

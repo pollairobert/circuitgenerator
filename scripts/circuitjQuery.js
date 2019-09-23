@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 var description = {
   "type1": {
       "Egyszerű feszültségosztó": 
@@ -61,9 +62,10 @@ var description = {
   },
   "type8": {
       "Megadott belső ellenállású feszültséggenerátor beiktatása": 
-          "Adott az alábbi belső ellenállású és feszültségű generátor. Add meg mekkora lesz az A és B pontok közötti kapocsfeszültség, ha rákötjük a generátort ezen pontokra.<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          "Adott az alábbi belső ellenállású és ${test} feszültségű generátor. Add meg mekkora lesz az A és B pontok közötti kapocsfeszültség, ha rákötjük a generátort ezen pontokra.<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
   }
 }
+//const format = require('string-format')
 $(document).ready(function () {
   /*$('select').on('change', function() {
     //alert( $(this).find(":selected").val() );
@@ -78,8 +80,6 @@ $(document).ready(function () {
   //console.log(prefixes);
   canvas = document.getElementById('drawCircuit');
   ctx = canvas.getContext('2d');
-  
-
   $("#usrCheck").hide();
   $("#drawCircuit").hide();
   $("#drawCircuit").closest();
@@ -98,6 +98,7 @@ $(document).ready(function () {
               descript = data[decriptSelect][title];
           }
       });*/
+      let test = 3456547;
       $("#drawCircuit").closest();
       title = Object.keys(description[descriptSelect])[0];
       descript = description[descriptSelect][title];
