@@ -113,7 +113,7 @@ $(document).ready(function () {
             removeTaskID = circuitResults.id;
             setPrefixOfResults(circuitResults,select);
             console.log(prefixes);
-            startTimerTest(select,circuitResults,prefixes);
+            startTimer(select,circuitResults,prefixes);
             loadCanvas();
           });
       } else {
@@ -129,7 +129,7 @@ $(document).ready(function () {
               removeTaskID = circuitResults.id;
               setPrefixOfResults(circuitResults,select);
               console.log(prefixes);
-              startTimerTest(select,circuitResults,prefixes);
+              startTimer(select,circuitResults,prefixes);
               loadCanvas();
             });
             console.log('Uj generalas, eldobni valo id: ' + removeTaskID);

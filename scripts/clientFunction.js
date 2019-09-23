@@ -42,7 +42,7 @@ var removeTaskID;
 var title;
 var descript;
 var circuitResults; //A servertol kapott valasz Obj
-var select;
+//var select;
 var checkingUsrResult1;
 var checkingUsrResult2;
 var canvas, ctx;
@@ -121,7 +121,7 @@ function setResultWithPrefix(originalResult ,prefix){
     }
     return result;
 }
-function startTimerTest(taskType, resultsOfcircuit, prefixObj){
+function startTimer(taskType, resultsOfcircuit, prefixObj){
     console.log("taskType: "+taskType);
     
     //taskType = Number(taskType);

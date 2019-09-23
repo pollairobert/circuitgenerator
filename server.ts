@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-import { CircuitGenerator } from './circuitgenerator';
-import { Circuit } from './circuit';
-import { CircuitAnalyzer } from './circuitanalyzer';
+import { CircuitGenerator } from './model/circuitgenerator';
+import { Circuit } from './model/circuit';
+import { CircuitAnalyzer } from './model/circuitanalyzer';
 import { Main } from './main';
 import * as math from 'mathjs';
 import { finished } from 'stream';

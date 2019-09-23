@@ -21,16 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-import { CircuitElements } from "./interfaceCircElement";
+/*import { CircuitElements } from "./interfaceCircElement";
 import { Wire } from "./wire";
 import { Resistance } from "./resistance";
 import { CurrentSource } from "./currentsource";
 import { VoltageSource } from "./voltagesource";
-import { Branch, branchCounter } from "./branch";
-import { meshCounter, resetMeshCounter } from "./mesh";
-import { Circuit } from "./circuit";
-import { CircuitGenerator } from './circuitgenerator';
-import { CircuitAnalyzer } from './circuitanalyzer';
+import { Branch, branchCounter } from "./branch";*/
+import { meshCounter, resetMeshCounter } from "./model/mesh";
+import { Circuit } from "./model/circuit";
+import { CircuitGenerator } from './model/circuitgenerator';
+import { CircuitAnalyzer } from './model/circuitanalyzer';
 import * as math from 'mathjs';
 
 export class Main {
