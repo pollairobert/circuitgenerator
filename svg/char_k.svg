@@ -1,10 +1,10 @@
-<svg width="6" height="10" xmlns="http://www.w3.org/2000/svg">
+<svg id="svgV" width="6" height="10" xmlns="http://www.w3.org/2000/svg">
  <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
  <g>
   <title>background</title>
   </g>
  <g>
   <title>Layer 1</title>
-  <text font-weight="bold" xml:space="preserve" text-anchor="start" font-family="Arvo, sans-serif" font-size="12" id="svg_1" y="9.316432" x="-0.249775" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="#000000">k</text>
+  <text font-weight="bold" xml:space="preserve" text-anchor="start" font-family="Arvo, sans-serif" font-size="12" id="svg_1" y="9.316432" x="-0.249775" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="#0518c7">k</text>
  </g>
 </svg>

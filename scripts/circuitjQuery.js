@@ -207,10 +207,5 @@ $(document).ready(function () {
     }
     e.preventDefault();
   });
-  $("#clear").click(function (e) { 
-    alert("canvas torles");
-    clearCanvas();
-    e.preventDefault();
-    
-  });
+  
 });
