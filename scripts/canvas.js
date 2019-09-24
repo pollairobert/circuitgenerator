@@ -1,6 +1,4 @@
-﻿
-
-/* 
+﻿/* 
  * The MIT License
  *
  * Copyright 2019 Robert Pollai <pollairobert at gmail.com>, University of Szeged, Department of Technical Informatics.
@@ -62,8 +60,8 @@ var svgObject = {
     "a" : img_a,
     "b" : img_b
 }
-var translateX = 500;
-var translateY = 300;
+//var translateX = 500;
+//var translateY = 300;
 var arcX;
 var arcY;
 var startValueXofVoltageSource;
@@ -75,18 +73,49 @@ var arrowY;
 var startRectX;
 var startRectY;
 var dimensionOfRect = [];
+var negativX = Infinity;
+var negativY = Infinity;
+var positiveX = -Infinity;
+var positiveY = -Infinity;
+//var translateOffset;
+//var task8Th2poleBranchCoordinates = [];
 //var img = new Image();
 function loadCanvas(){	
-
-    //var canvas = document.getElementById('drawCircuit');
-    //console.log(circuitResults);
+    var coordinateArray = circuitResults.falstadTXT;
+    var translateOffset;
+    var task8Th2poleBranchCoordinates = [];
+    var translateX = 600;
+    var translateY = 500;
+    negativX = Infinity;
+    negativY = Infinity;
+    positiveX = -Infinity;
+    positiveY = -Infinity;
     cloneCanvas = canvas;
     cloneContext = ctx;
-    var coordinateArray = circuitResults.falstadTXT;
     //console.log("Melyik nagyobb: "+wichBiger(-21,0));
+    findDrawingCircuitPositivAndNegativCorners(coordinateArray);
+    translateOffset = [(negativX + positiveX)/2,(negativY + positiveY)/2];
+    translateX -= translateOffset[0];
+    translateY -= translateOffset[1];
+    console.log("negativX: "+negativX);
+    console.log("negativY: "+negativY);
+    console.log("positiveX: "+positiveX);
+    console.log("positiveY: "+positiveY);
+    console.log("translateOffset: "+translateOffset);
+    console.log("translateX: "+translateX);
+    console.log("translateY: "+translateY);
+    
     ctx.translate(translateX, translateY);
+    
     trackTransforms(ctx);
+    /*if ((negativX + translateX) < 0 || (negativY + translateY) < 0){
+        ctx.scale(0.3,0.3);
+    } else
+    if ((negativX + translateX) > translateX / 2 || (negativY + translateY) > translateY / 2){
+        ctx.scale(3,3);
+    }*/
     function redraw(){
+        
         // Clear the entire canvas
         //var p1 = ctx.transformedPoint(0,0);
         //var p2 = ctx.transformedPoint(canvas.width,canvas.height);
@@ -99,9 +128,15 @@ function loadCanvas(){
         ctx.clearRect(0,0,canvas.width,canvas.height);
         ctx.restore();
         //ctx.drawImage(svgObject["5"], 0, 0);
+        
         var directionType;
+        
+        //if (negativ )
+        //ctx.scale(2,2);
+        
         for(var i = 0; i < coordinateArray.length; i++){
             var branchCoordinates = coordinateArray[i].split(" ");
+            //console.log("branchCoordinates: "+branchCoordinates)
             directionType = setDirectionTypeToCircuitElementInCanvas(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4]);
             //console.log(branchCoordinates[0]+" directionType: "+ directionType);
             if (branchCoordinates[0] !== "p"){
@@ -118,10 +153,8 @@ function loadCanvas(){
                 ctx.beginPath();
                 ctx.arc(arcX, arcY, 10, 0, 2*Math.PI,false);
                 ctx.strokeStyle = '#000000';
-            
                 ctx.lineWidth = 2;
                 ctx.fillStyle = 'transparent';
-                //ctx.strokestyle = '#ff0000';
                 ctx.fill();
                 ctx.stroke();
                 drawValueOfElements(voltage,startValueXofVoltageSource,startValueYofVoltageSource,"V");
@@ -145,7 +178,9 @@ function loadCanvas(){
                 if (+select <6 || +select === 8){
                     //console.log("branchCoordinates: "+ branchCoordinates);
                     draw2Pole(branchCoordinates,directionType);
-                    
+                    if (+select === 8){
+                        task8Th2poleBranchCoordinates = branchCoordinates;
+                    }
                     //alert("kisebb mint 6");
                 }
                 if (+select === 6){
@@ -185,8 +220,58 @@ function loadCanvas(){
             }
             
         }
+        /*console.log("negativX: "+negativX);
+        console.log("negativY: "+negativY);
+        console.log("positiveX: "+positiveX);
+        console.log("positiveY: "+positiveY);*/
+        if (+select === 8){
+            //task8Th2poleBranchCoordinates = branchCoordinates;
+            //var offsetX1 = 
+            //var offsetY1 = 
+            //var offsetX2 = 
+            //var offsetY2 = 
+            ctx.beginPath();
+            //console.log("task8Th2poleBranchCoordinates: "+ task8Th2poleBranchCoordinates);
+            ctx.arc(task8Th2poleBranchCoordinates[1], task8Th2poleBranchCoordinates[2], 3, 0, 2*Math.PI,false);
+            ctx.strokeStyle = '#ff0000';
+            ctx.lineWidth = 2;
+            ctx.fillStyle = '#ff0000';
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(task8Th2poleBranchCoordinates[3], task8Th2poleBranchCoordinates[4], 3, 0, 2*Math.PI,false);
+            ctx.strokeStyle = '#ff0000';
+            ctx.lineWidth = 2;
+            ctx.fillStyle = '#ff0000';
+            ctx.fill();
+            ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.arc(negativX, negativY, 3, 0, 2*Math.PI,false);
+        ctx.strokeStyle = '#ff0000';
+        ctx.lineWidth = 2;
+        ctx.fillStyle = '#ff0000';
+        ctx.fill();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(positiveX, positiveY, 3, 0, 2*Math.PI,false);
+        ctx.strokeStyle = '#ff0000';
+        ctx.lineWidth = 2;
+        ctx.fillStyle = '#ff0000';
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(translateOffset[0], translateOffset[1], 3, 0, 2*Math.PI,false);
+        ctx.strokeStyle = '#ff0000';
+        ctx.lineWidth = 2;
+        ctx.fillStyle = '#ff0000';
+        ctx.fill();
+        ctx.stroke();
         
     }
+    ctx.scale(1,1);
     redraw();
     
     var lastX=canvas.width, lastY=canvas.height;
@@ -217,8 +302,9 @@ function loadCanvas(){
         if (!dragged) zoom(evt.shiftKey ? -1 : 1 );
     },false);
 
-    var scaleFactor = 1.01; //zoomolas lepteke
+    var scaleFactor = 1.005; //zoomolas lepteke
     var zoom = function(clicks){
+        //ctx.scale(2,2);
         var pt = ctx.transformedPoint(lastX-translateX,lastY-translateY);  //a translate-el el kellett tolni, hogy jo helyen zoomoljon
         ctx.translate(pt.x,pt.y);
         var factor = Math.pow(scaleFactor,clicks);
@@ -298,6 +384,37 @@ function trackTransforms(ctx){
 function clearCanvas() {  
     canvas.width = canvas.width;
     //cloneContext.clearRect(-600, -400, cloneCanvas.width, cloneCanvas.height);
+}
+
+function findDrawingCircuitPositivAndNegativCorners(coordinates){
+    for(var i = 0; i < coordinates.length; i++){
+        var branchCoordinates = coordinates[i].split(" ");
+        //console.log("branchCoordinates: "+branchCoordinates)
+        if (+branchCoordinates[1] < negativX){
+            negativX = +branchCoordinates[1];
+        } 
+        if (+branchCoordinates[3] < negativX){
+            negativX = +branchCoordinates[3];
+        }
+        if (+branchCoordinates[2] < negativY){
+            negativY = +branchCoordinates[2];
+        }
+        if (+branchCoordinates[4] < negativY){
+            negativY = +branchCoordinates[4];
+        } 
+        if (+branchCoordinates[1] > positiveX){
+            positiveX = +branchCoordinates[1];
+        }
+        if (+branchCoordinates[3] > positiveX){
+            positiveX = +branchCoordinates[3];
+        }
+        if (+branchCoordinates[2] > positiveY){
+            positiveY = +branchCoordinates[2];
+        }
+        if (+branchCoordinates[4] > positiveY){
+            positiveY = +branchCoordinates[4];
+        }
+    }
 }
 function draw2Pole(coordinates,direction){
     

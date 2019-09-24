@@ -51,9 +51,9 @@ app.get('/', (req,res)=> {
 app.get('/scripts/circuitjQuery.js', (req,res)=> {
     res.sendFile(path.join(__dirname + '/scripts/circuitjQuery.js'));
 });
-app.get('/descript/description.json', (req,res)=> {
-    res.sendFile(path.join(__dirname + '/descript/description.json'));
-});
+/*app.get('description.json', (req,res)=> {
+    res.sendFile(path.join(__dirname + 'description.json'));
+});*/
 app.get('/scripts/clientFunction.js', function (req, res) {
     res.sendFile(path.join(__dirname + '/scripts/clientFunction.js'));
 });
@@ -86,6 +86,7 @@ app.get('/generate', function (req, res) {
         
         res.send(JSON.stringify(generateResponse));
         serverFunction.addDatatoJSONfile(main.getTaskResults());
+        //serverFunction.selectDescription();
 });
 
 
