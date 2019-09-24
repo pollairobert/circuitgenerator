@@ -39,7 +39,7 @@ import { CircuitAnalyzer } from './circuitanalyzer';
 export class CircuitGenerator {
     private fs = require('fs');
     private circuitCoordinatesToFalstad: string[] = []; 
-    
+    //private resTask: boolean = false;
     /**
      * Aramkor generalasaert felelos. Ezzel a metodussal kezdodik a teljes halozat generalasaert felelos tobbi metodus meghivasa
      * @param type aramkor tipusa adott struktura alapjan 
@@ -1481,7 +1481,7 @@ export class CircuitGenerator {
             }
         }
     }
-    public generateFalstadLink(circuit: Circuit):string{
+    public generateFalstadLink(circuit: Circuit, type?: number, res?: number, voltage?: number):string{
         let meshes: Mesh[] = circuit.getMeshes();
         let link: string = 'https://www.falstad.com/circuit/circuitjs.html?cct=$+1+0.000005+10.20027730826997+50+5+43';
         for (let h = 0; h < circuit.getNumberOfMesh(); h++){
@@ -1493,7 +1493,11 @@ export class CircuitGenerator {
                         let coordinate: number[] = elements[j].getCoordinate();
                         if (elements[j].getId() === 'W'){
                             if (branches[i].getTh2Pole()){
-                                link +='%0Ap+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+1+0';
+                                if (type === 6){
+                                    link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+'+ res;
+                                } else {
+                                    link +='%0Ap+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+1+0';
+                                }
                             } else {
                                 link +='%0Aw+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0';
                             }

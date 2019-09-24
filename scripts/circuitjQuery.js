@@ -62,7 +62,7 @@ var description = {
   },
   "type8": {
       "Megadott belső ellenállású feszültséggenerátor beiktatása": 
-          "Adott az alábbi belső ellenállású és feszültségű generátor. Add meg mekkora lesz az A és B pontok közötti kapocsfeszültség, ha rákötjük a generátort ezen pontokra.<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          "Adott a képen balra látható belső ellenállású és feszültségű generátor. Add meg mekkora lesz az A és B pontok közötti kapocsfeszültség, ha rákötjük a generátort ezen pontokra.<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
   }
 }
 //const format = require('string-format')
@@ -109,7 +109,7 @@ $(document).ready(function () {
           clearCanvas();
           generate = host + '/generate?type=' + select;
           $.get(generate, function (data, status) {
-            //console.log(JSON.parse(data));
+            console.log(JSON.parse(data));
             console.log(generate);
             circuitResults = JSON.parse(data);
             removeTaskID = circuitResults.id;

@@ -74,8 +74,9 @@ export class Main {
         //cg.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
         //cg.exportToFalstadTxt(cg.getCircuitCoordinatesToFalstad())
         this.circuitCoordinateArray = cg.getCircuitCoordinatesToFalstad();
-        this.falstadLink = cg.generateFalstadLink(circuit);
+        
         can.analyzeCircuit(circuit);
+        this.falstadLink = cg.generateFalstadLink(circuit, type, (type === 6 ? can.getQuestionRes() : can.getConnectedVoltagesourceResistance()),can.getConnectedVoltagesourceValue());
         if (type === 7){
             measurementError = this.calculateMeasurementError(can.getQuestionResVoltage(),can.getResultOfTheveninVoltage());
             console.log("measurementError: "+measurementError);
