@@ -1,3 +1,27 @@
+/* 
+ * The MIT License
+ *
+ * Copyright 2019 Robert Pollai <pollairobert at gmail.com>, University of Szeged, Department of Technical Informatics.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 var description = {
   "type1": {
       "Egyszerű feszültségosztó": 
@@ -38,9 +62,10 @@ var description = {
   },
   "type8": {
       "Megadott belső ellenállású feszültséggenerátor beiktatása": 
-          "Adott az alábbi belső ellenállású és feszültségű generátor. Add meg mekkora lesz az A és B pontok közötti kapocsfeszültség, ha rákötjük a generátort ezen pontokra.<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          "Adott a képen balra látható belső ellenállású és feszültségű generátor. Add meg mekkora lesz az A és B pontok közötti kapocsfeszültség, ha rákötjük a generátort ezen pontokra.<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
   }
 }
+//const format = require('string-format')
 $(document).ready(function () {
   /*$('select').on('change', function() {
     //alert( $(this).find(":selected").val() );
@@ -55,8 +80,6 @@ $(document).ready(function () {
   //console.log(prefixes);
   canvas = document.getElementById('drawCircuit');
   ctx = canvas.getContext('2d');
-  
-
   $("#usrCheck").hide();
   $("#drawCircuit").hide();
   $("#drawCircuit").closest();
@@ -75,7 +98,9 @@ $(document).ready(function () {
               descript = data[decriptSelect][title];
           }
       });*/
+      //let test = 3456547;
       $("#drawCircuit").closest();
+      //var test = "VALTOZO";
       title = Object.keys(description[descriptSelect])[0];
       descript = description[descriptSelect][title];
       var generate;
@@ -84,13 +109,13 @@ $(document).ready(function () {
           clearCanvas();
           generate = host + '/generate?type=' + select;
           $.get(generate, function (data, status) {
-            //console.log(JSON.parse(data));
+            console.log(JSON.parse(data));
             console.log(generate);
             circuitResults = JSON.parse(data);
             removeTaskID = circuitResults.id;
             setPrefixOfResults(circuitResults,select);
             console.log(prefixes);
-            startTimerTest(select,circuitResults,prefixes);
+            startTimer(select,circuitResults,prefixes);
             loadCanvas();
           });
       } else {
@@ -106,7 +131,7 @@ $(document).ready(function () {
               removeTaskID = circuitResults.id;
               setPrefixOfResults(circuitResults,select);
               console.log(prefixes);
-              startTimerTest(select,circuitResults,prefixes);
+              startTimer(select,circuitResults,prefixes);
               loadCanvas();
             });
             console.log('Uj generalas, eldobni valo id: ' + removeTaskID);
@@ -184,10 +209,5 @@ $(document).ready(function () {
     }
     e.preventDefault();
   });
-  $("#clear").click(function (e) { 
-    alert("canvas torles");
-    clearCanvas();
-    e.preventDefault();
-    
-  });
+  
 });

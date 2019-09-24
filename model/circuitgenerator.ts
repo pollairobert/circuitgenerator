@@ -1,4 +1,27 @@
-﻿import { CircuitElements } from './interfaceCircElement';
+﻿/* 
+ * The MIT License
+ *
+ * Copyright 2019 Robert Pollai <pollairobert at gmail.com>, University of Szeged, Department of Technical Informatics.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+import { CircuitElements } from './interfaceCircElement';
 import { Wire } from "./wire";
 import { Resistance } from "./resistance";
 import { CurrentSource } from "./currentsource";
@@ -16,7 +39,7 @@ import { CircuitAnalyzer } from './circuitanalyzer';
 export class CircuitGenerator {
     private fs = require('fs');
     private circuitCoordinatesToFalstad: string[] = []; 
-    
+    //private resTask: boolean = false;
     /**
      * Aramkor generalasaert felelos. Ezzel a metodussal kezdodik a teljes halozat generalasaert felelos tobbi metodus meghivasa
      * @param type aramkor tipusa adott struktura alapjan 
@@ -94,17 +117,17 @@ export class CircuitGenerator {
                 break;
             }
             case 4: {
-                parameters = [this.randomIntNumber(8,8),
+                parameters = [this.randomIntNumber(15,4),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
-                              this.randomIntNumber(15,15)];
+                              this.randomIntNumber(15,8)];
                 break;
             }
             case 5: {
-                parameters = [this.randomIntNumber(15,15),
+                parameters = [this.randomIntNumber(15,4),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
-                              this.randomIntNumber(10,8)];
+                              this.randomIntNumber(15,8)];
                 break;
             }
             case 6: {
@@ -1458,7 +1481,7 @@ export class CircuitGenerator {
             }
         }
     }
-    public generateFalstadLink(circuit: Circuit):string{
+    public generateFalstadLink(circuit: Circuit, type?: number, res?: number, voltage?: number):string{
         let meshes: Mesh[] = circuit.getMeshes();
         let link: string = 'https://www.falstad.com/circuit/circuitjs.html?cct=$+1+0.000005+10.20027730826997+50+5+43';
         for (let h = 0; h < circuit.getNumberOfMesh(); h++){
@@ -1470,7 +1493,11 @@ export class CircuitGenerator {
                         let coordinate: number[] = elements[j].getCoordinate();
                         if (elements[j].getId() === 'W'){
                             if (branches[i].getTh2Pole()){
-                                link +='%0Ap+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+1+0';
+                                if (type === 6){
+                                    link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+'+ res;
+                                } else {
+                                    link +='%0Ap+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+1+0';
+                                }
                             } else {
                                 link +='%0Aw+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0';
                             }

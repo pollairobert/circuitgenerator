@@ -1,13 +1,36 @@
-﻿import { CircuitElements } from "./interfaceCircElement";
+﻿/* 
+ * The MIT License
+ *
+ * Copyright 2019 Robert Pollai <pollairobert at gmail.com>, University of Szeged, Department of Technical Informatics.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+/*import { CircuitElements } from "./interfaceCircElement";
 import { Wire } from "./wire";
 import { Resistance } from "./resistance";
 import { CurrentSource } from "./currentsource";
 import { VoltageSource } from "./voltagesource";
-import { Branch, branchCounter } from "./branch";
-import { meshCounter, resetMeshCounter } from "./mesh";
-import { Circuit } from "./circuit";
-import { CircuitGenerator } from './circuitgenerator';
-import { CircuitAnalyzer } from './circuitanalyzer';
+import { Branch, branchCounter } from "./branch";*/
+import { meshCounter, resetMeshCounter } from "./model/mesh";
+import { Circuit } from "./model/circuit";
+import { CircuitGenerator } from './model/circuitgenerator';
+import { CircuitAnalyzer } from './model/circuitanalyzer';
 import * as math from 'mathjs';
 
 export class Main {
@@ -30,20 +53,20 @@ export class Main {
             //type = cg.randomChoiseTwoNumber(temp,3);
         }
         if (type === 6){
-            temptype = cg.randomChoiseInAnyArray(typeArray);
-            //temptype = cg.randomChoiseTwoNumber(4,5);
-            can.setQuestionOrVoltmeterResistance(680000);
+            //temptype = cg.randomChoiseInAnyArray(typeArray);
+            temptype = cg.randomChoiseTwoNumber(4,5);
+            can.setQuestionOrVoltmeterResistance(cg.randomE6Resistance());
         }
         if (type === 7){
-            temptype = cg.randomChoiseInAnyArray(typeArray);
-            //temptype = cg.randomChoiseTwoNumber(4,5);
+            //temptype = cg.randomChoiseInAnyArray(typeArray);
+            temptype = cg.randomChoiseTwoNumber(4,5);
             can.setQuestionOrVoltmeterResistance(2000000);
         }
         if (type === 8){
             temptype = cg.randomChoiseInAnyArray(typeArray);
             //temptype = cg.randomChoiseTwoNumber(4,5);
-            can.setConnectedVoltagesourceValue(20);
-            can.setConnectedVoltagesourceResistance(22000);
+            can.setConnectedVoltagesourceValue(cg.randomVoltageSourceValue());
+            can.setConnectedVoltagesourceResistance(cg.randomE6Resistance());
 
         }
         let circuit: Circuit = cg.generateCircuit(temptype);
@@ -51,8 +74,9 @@ export class Main {
         //cg.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
         //cg.exportToFalstadTxt(cg.getCircuitCoordinatesToFalstad())
         this.circuitCoordinateArray = cg.getCircuitCoordinatesToFalstad();
-        this.falstadLink = cg.generateFalstadLink(circuit);
+        
         can.analyzeCircuit(circuit);
+        this.falstadLink = cg.generateFalstadLink(circuit, type, (type === 6 ? can.getQuestionRes() : can.getConnectedVoltagesourceResistance()),can.getConnectedVoltagesourceValue());
         if (type === 7){
             measurementError = this.calculateMeasurementError(can.getQuestionResVoltage(),can.getResultOfTheveninVoltage());
             console.log("measurementError: "+measurementError);
@@ -61,6 +85,7 @@ export class Main {
         this.taskResults = {
             falstadTXT: this.getCircuitCoordinateArray(),
             link: this.getFalstadLink(),
+            link2: "majd ide kellene egy ellenallasos link",
             id: randomID,
             thVolt: can.getResultOfTheveninVoltage(),
             thRes:can.getResultOfTheveninResistance(),
@@ -69,6 +94,9 @@ export class Main {
             absError: measurementError[0],
             relError: measurementError[1],
             terminalVolt: can.getOutputVoltageWithConnectedVoltageSource(),
+            resValue: can.getQuestionRes(),
+            connVSRes: can.getConnectedVoltagesourceResistance(),
+            connVSVolt: can.getConnectedVoltagesourceValue(),
             timestamp: new Date()
         }
         console.log(this.taskResults);
