@@ -53,20 +53,20 @@ export class Main {
             //type = cg.randomChoiseTwoNumber(temp,3);
         }
         if (type === 6){
-            temptype = cg.randomChoiseInAnyArray(typeArray);
-            //temptype = cg.randomChoiseTwoNumber(4,5);
-            can.setQuestionOrVoltmeterResistance(680000);
+            //temptype = cg.randomChoiseInAnyArray(typeArray);
+            temptype = cg.randomChoiseTwoNumber(4,5);
+            can.setQuestionOrVoltmeterResistance(cg.randomE6Resistance());
         }
         if (type === 7){
-            temptype = cg.randomChoiseInAnyArray(typeArray);
-            //temptype = cg.randomChoiseTwoNumber(4,5);
+            //temptype = cg.randomChoiseInAnyArray(typeArray);
+            temptype = cg.randomChoiseTwoNumber(4,5);
             can.setQuestionOrVoltmeterResistance(2000000);
         }
         if (type === 8){
             temptype = cg.randomChoiseInAnyArray(typeArray);
             //temptype = cg.randomChoiseTwoNumber(4,5);
-            can.setConnectedVoltagesourceValue(20);
-            can.setConnectedVoltagesourceResistance(22000);
+            can.setConnectedVoltagesourceValue(cg.randomVoltageSourceValue());
+            can.setConnectedVoltagesourceResistance(cg.randomE6Resistance());
 
         }
         let circuit: Circuit = cg.generateCircuit(temptype);
@@ -74,8 +74,9 @@ export class Main {
         //cg.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
         //cg.exportToFalstadTxt(cg.getCircuitCoordinatesToFalstad())
         this.circuitCoordinateArray = cg.getCircuitCoordinatesToFalstad();
-        this.falstadLink = cg.generateFalstadLink(circuit);
+        
         can.analyzeCircuit(circuit);
+        this.falstadLink = cg.generateFalstadLink(circuit, type, ((type === 6 || type ===7) ? can.getQuestionRes() : can.getConnectedVoltagesourceResistance()),can.getConnectedVoltagesourceValue());
         if (type === 7){
             measurementError = this.calculateMeasurementError(can.getQuestionResVoltage(),can.getResultOfTheveninVoltage());
             console.log("measurementError: "+measurementError);
@@ -92,9 +93,12 @@ export class Main {
             absError: measurementError[0],
             relError: measurementError[1],
             terminalVolt: can.getOutputVoltageWithConnectedVoltageSource(),
+            resValue: can.getQuestionRes(),
+            connVSRes: can.getConnectedVoltagesourceResistance(),
+            connVSVolt: can.getConnectedVoltagesourceValue(),
             timestamp: new Date()
         }
-        console.log(this.taskResults);
+        //console.log(this.taskResults);
         
         //this.scanPrefix(can.getQuestionResCurrent(),"A");
         //console.log('Prefix Current: '+ this.currentPrefix);

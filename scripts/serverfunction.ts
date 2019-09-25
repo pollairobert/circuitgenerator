@@ -24,7 +24,27 @@
 export class Serverfunction{
     private fs = require('fs');
     private checkTimeToSolvedTask: number = 5*60*1000;
+    //private format = require('string-format');
+    public readDescripiom(type){
 
+    }
+
+    public selectDescription(){
+        
+        //let valami = "IDE JON EGY VALTOZO";
+        //let test = "itt kell "+valami+ " kivalasztodni";
+        //let descript = this.fs.readFileSync('descript/description.json',"utf8");
+        //descript = descript.trim()
+        //console.log(descript);
+
+        //let result = JSON.parse(descript);
+        //let result2 = JSON.parse(result)
+        /*this.fs.readFile('descript/description.json',"utf8", (err, data) => {
+            if (err) throw err;
+            let result = JSON.parse(data);
+            console.log("student: "+data);
+        });*/
+    }
     public addDatatoJSONfile(pushData){
         console.log("pushData: "+pushData);
         /*if (!this.fs.existsSync('generateLOG.json')){
@@ -35,11 +55,14 @@ export class Serverfunction{
             });
         }*/
         let generateLOG = this.fs.readFileSync('generateLOG.json');
+        console.log("generateLOG: "+ generateLOG);
+        //let generateLOG = this.fs.readFileSync('descript/description.json');
         if (generateLOG[0] === undefined){
             console.log('Ures file volt');
             generateLOG = '{}';
         }
         let resultLOG = JSON.parse(generateLOG);
+        
         resultLOG[pushData.id] = pushData;
         delete resultLOG[pushData.id].falstadTXT;
         delete resultLOG[pushData.id].link;
