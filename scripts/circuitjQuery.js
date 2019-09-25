@@ -110,11 +110,11 @@ $(document).ready(function () {
           generate = host + '/generate?type=' + select;
           $.get(generate, function (data, status) {
             console.log(JSON.parse(data));
-            console.log(generate);
+            //console.log(generate);
             circuitResults = JSON.parse(data);
             removeTaskID = circuitResults.id;
             setPrefixOfResults(circuitResults,select);
-            console.log(prefixes);
+            //console.log(prefixes);
             startTimer(select,circuitResults,prefixes);
             loadCanvas();
           });
@@ -126,18 +126,18 @@ $(document).ready(function () {
             regenerateTask = true;
             $.get(generate, function (data, status) {
               console.log(JSON.parse(data));
-              console.log(generate);
+              //console.log(generate);
               circuitResults = JSON.parse(data);
               removeTaskID = circuitResults.id;
               setPrefixOfResults(circuitResults,select);
-              console.log(prefixes);
+              //console.log(prefixes);
               startTimer(select,circuitResults,prefixes);
               loadCanvas();
             });
             console.log('Uj generalas, eldobni valo id: ' + removeTaskID);
-          } else {
+          } /*else {
             console.log('Marad');
-          }
+          }*/
       }
       timeout = false;
        

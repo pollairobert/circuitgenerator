@@ -99,10 +99,10 @@ function loadCanvas(){
     translateX -= translateOffset[0];
     translateY -= translateOffset[1];
     /*console.log("negativX: "+negativX);
-    console.log("negativY: "+negativY);*/
+    console.log("negativY: "+negativY);
     console.log("positiveX: "+positiveX);
     console.log("positiveY: "+positiveY);
-    /*console.log("translateOffset: "+translateOffset);
+    console.log("translateOffset: "+translateOffset);
     console.log("translateX: "+translateX);
     console.log("translateY: "+translateY);*/
     
@@ -251,6 +251,7 @@ function loadCanvas(){
             ctx.fill();
             ctx.stroke();*/
         }
+        /*
         //Az aramkori rajz ket atellenes sarka
         //-x -y
         ctx.beginPath();
@@ -287,7 +288,7 @@ function loadCanvas(){
         ctx.fillStyle = '#4df50a';
         ctx.fill();
         ctx.stroke();
-        
+        */
     }
     //translateX = 600;
     //translateY = 500;
@@ -476,6 +477,10 @@ function drawConnectedVoltageSource(){
     ctx.fill();
     ctx.stroke();
     drawValueOfElements(kiloOhm,startValueXofResistor,startValueYofResistor,"r");
+
+    ctx.drawImage(img_a, xCoordToConnected+6, y2CoordToConnected-10);
+    ctx.drawImage(img_b, xCoordToConnected+6, y1CoordToConnected-10);
+    
     /*task8Th2poleBranchCoordinates = branchCoordinates;
     var offsetX1 = 0;
     var offsetY1 = 0;

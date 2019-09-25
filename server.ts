@@ -34,7 +34,7 @@ import { Serverfunction } from './scripts/serverfunction';
 const path = require('path');
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 
 let fs = require('fs');
 let serverFunction: Serverfunction = new Serverfunction();
@@ -81,8 +81,8 @@ app.get('/generate', function (req, res) {
         //link = main.getFalstadLink();
         //circuitCoordinateArray = main.getCircuitCoordinateArray();
         let generateResponse = main.getTaskResults();
-        console.log('response: ');
-        console.log(generateResponse);
+        //console.log('response: ');
+        //console.log(generateResponse);
         
         res.send(JSON.stringify(generateResponse));
         serverFunction.addDatatoJSONfile(main.getTaskResults());

@@ -76,7 +76,7 @@ export class Main {
         this.circuitCoordinateArray = cg.getCircuitCoordinatesToFalstad();
         
         can.analyzeCircuit(circuit);
-        this.falstadLink = cg.generateFalstadLink(circuit, type, (type === 6 ? can.getQuestionRes() : can.getConnectedVoltagesourceResistance()),can.getConnectedVoltagesourceValue());
+        this.falstadLink = cg.generateFalstadLink(circuit, type, ((type === 6 || type ===7) ? can.getQuestionRes() : can.getConnectedVoltagesourceResistance()),can.getConnectedVoltagesourceValue());
         if (type === 7){
             measurementError = this.calculateMeasurementError(can.getQuestionResVoltage(),can.getResultOfTheveninVoltage());
             console.log("measurementError: "+measurementError);
@@ -98,7 +98,7 @@ export class Main {
             connVSVolt: can.getConnectedVoltagesourceValue(),
             timestamp: new Date()
         }
-        console.log(this.taskResults);
+        //console.log(this.taskResults);
         
         //this.scanPrefix(can.getQuestionResCurrent(),"A");
         //console.log('Prefix Current: '+ this.currentPrefix);

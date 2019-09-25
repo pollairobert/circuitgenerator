@@ -1489,13 +1489,14 @@ export class CircuitGenerator {
             }
         }
     }
-    public generateFalstadLink(circuit: Circuit, type?: number, res?: number, voltage?: number):string{
+    public generateFalstadLink(circuit: Circuit, type?: number, res?: number, volt?: number):string{
         let meshes: Mesh[] = circuit.getMeshes();
         let link: string = 'https://www.falstad.com/circuit/circuitjs.html?cct=$+1+0.000005+10.20027730826997+50+5+43';
         let positiveX:number = -Infinity, positiveY: number = -Infinity;
         let negativX:number = Infinity, negativY: number = Infinity;
         let offsetX: number;
         let ohmMeterCoord: number[] = [];
+        let halfBranch: number;
         if (type >= 1 && type < 6){
             
             this.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
@@ -1548,7 +1549,9 @@ export class CircuitGenerator {
                         if (elements[j].getId() === 'R'){
                             let resistance: number = elements[j].getResistance();
                             link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+'+resistance;
-                            link +='%0Ar+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0+'+resistance;
+                            if (type >= 1 && type < 6){
+                                link +='%0Ar+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0+'+resistance;
+                            }
                         }
                         if (elements[j].getId() === 'V'){
                             let voltage: number;
@@ -1571,20 +1574,54 @@ export class CircuitGenerator {
                         }
                         if (elements[j].getId() === 'W'){
                             if (branches[i].getTh2Pole()){
-                                if (type === 6){
-                                    link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+'+ res;
-                                } else if (type >= 1 && type < 6){
+                                if (type === 6 || type === 8){
+                                    if (branchType === 0 || branchType === 2){
+                                        halfBranch = (Math.abs(coordinate[1] - coordinate[3]) / 2);
+                                        link +='%0Aw+'+coordinate[0]+'+'+coordinate[1]+'+'+(coordinate[0] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[1] + (branchType === 0 ? -20 : 20))+'+0';
+                                        link +='%0Aw+'+coordinate[2]+'+'+coordinate[3]+'+'+(coordinate[2] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 0 ? 20 : -20))+'+0';
+                                        link +='%0Ap+'+(coordinate[0] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[1] + (branchType === 0 ? -20 : 20))+'+'+(coordinate[2] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 0 ? 20 : -20))+'+1+0';
+                                        link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2] + '+'+(coordinate[3] + (branchType === 0 ? halfBranch : -halfBranch ))+'+0+'+ res;
+                                        link +='%0A'+(type === 6 ? "370" : "v") +'+'+coordinate[2] + '+'+(coordinate[3] + (branchType === 0 ? halfBranch : -halfBranch ))+'+'+coordinate[2] + '+'+coordinate[3]+'+'+(type === 6 ? '+1+0' : '+0+0+40+'+(-volt)+'+0+0.5');
+                                        
+                                    } else {
+                                        halfBranch = (Math.abs(coordinate[0] - coordinate[2]) / 2);
+                                        link +='%0Aw+'+coordinate[0]+'+'+coordinate[1]+'+'+(coordinate[0] + (branchType === 1? 20 : -20) )+'+'+(coordinate[1] + (branchType === 1 ? -20 : 20))+'+0';
+                                        link +='%0Aw+'+coordinate[2]+'+'+coordinate[3]+'+'+(coordinate[2] + (branchType === 1 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 1 ? -20 : 20))+'+0';
+                                        link +='%0Ap+'+(coordinate[0] + (branchType === 1 ? 20 : -20) )+'+'+(coordinate[1] + (branchType === 1 ? -20 : 20))+'+'+(coordinate[2] + (branchType === 1 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 1 ? -20 : 20))+'+1+0';
+                                        link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+(coordinate[2] + (branchType === 1 ? - halfBranch : halfBranch )) + '+'+coordinate[3]+'+0+'+ res;
+                                        link +='%0A'+(type === 6 ? "370" : "v") +'+'+(coordinate[2] + (branchType === 1 ? - halfBranch : halfBranch )) + '+'+coordinate[3]+'+'+coordinate[2] + '+'+coordinate[3]+'+'+(type === 6 ? '+1+0' : '+0+0+40+'+(-volt)+'+0+0.5');
+                                        
+                                    }
+                                    console.log("halfBranch: " +halfBranch);
+                                    //link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+'+ res;
+                                } else if ((type >= 1 && type < 6)){
                                     ohmMeterCoord.push(coordinate[0],coordinate[1],coordinate[2],coordinate[3])
                                     link +='%0Ap+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+1+0';
                                     //link +='%0A216+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+32+0+0.001';
                                     link +='%0A216+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0+0.0001';
 
+                                } else if (type === 7){
+                                    if (branchType === 0 || branchType === 2){
+                                        //halfBranch = (Math.abs(coordinate[1] - coordinate[3]) / 2);
+                                        link +='%0Aw+'+coordinate[0]+'+'+coordinate[1]+'+'+(coordinate[0] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[1] + (branchType === 0 ? -20 : 20))+'+0';
+                                        link +='%0Aw+'+coordinate[2]+'+'+coordinate[3]+'+'+(coordinate[2] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 0 ? 20 : -20))+'+0';
+                                        link +='%0Ap+'+(coordinate[0] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[1] + (branchType === 0 ? -20 : 20))+'+'+(coordinate[2] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 0 ? 20 : -20))+'+1+0';
+                                        link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+'+res;
+                                    } else {
+                                        //halfBranch = (Math.abs(coordinate[0] - coordinate[2]) / 2);
+                                        link +='%0Aw+'+coordinate[0]+'+'+coordinate[1]+'+'+(coordinate[0] + (branchType === 1? 20 : -20) )+'+'+(coordinate[1] + (branchType === 1 ? -20 : 20))+'+0';
+                                        link +='%0Aw+'+coordinate[2]+'+'+coordinate[3]+'+'+(coordinate[2] + (branchType === 1 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 1 ? -20 : 20))+'+0';
+                                        link +='%0Ap+'+(coordinate[0] + (branchType === 1 ? 20 : -20) )+'+'+(coordinate[1] + (branchType === 1 ? -20 : 20))+'+'+(coordinate[2] + (branchType === 1 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 1 ? -20 : 20))+'+1+0';
+                                        link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+'+res;
+                                    }
                                 } else {
                                     link +='%0Ap+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+1+0';
                                 }
 
                             } else {
-                                link +='%0Aw+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0';
+                                if (type >= 1 && type < 6){
+                                    link +='%0Aw+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0';
+                                }
                                 link +='%0Aw+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0';
                             }
                         }
