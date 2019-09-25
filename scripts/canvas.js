@@ -60,8 +60,8 @@ var svgObject = {
     "a" : img_a,
     "b" : img_b
 }
-//var translateX = 500;
-//var translateY = 300;
+//var translateX = 600;
+//var translateY = 500;
 var arcX;
 var arcY;
 var startValueXofVoltageSource;
@@ -115,7 +115,7 @@ function loadCanvas(){
     if ((negativX + translateX) > translateX / 2 || (negativY + translateY) > translateY / 2){
         ctx.scale(3,3);
     }*/
-    ctx.scale(1,1);
+    //ctx.scale(1,1);
     function redraw(){
         
         // Clear the entire canvas
@@ -251,6 +251,7 @@ function loadCanvas(){
             ctx.fill();
             ctx.stroke();*/
         }
+        /*
         //Az aramkori rajz ket atellenes sarka
         //-x -y
         ctx.beginPath();
@@ -287,7 +288,7 @@ function loadCanvas(){
         ctx.fillStyle = '#4df50a';
         ctx.fill();
         ctx.stroke();
-        
+        */
     }
     //translateX = 600;
     //translateY = 500;
@@ -476,6 +477,10 @@ function drawConnectedVoltageSource(){
     ctx.fill();
     ctx.stroke();
     drawValueOfElements(kiloOhm,startValueXofResistor,startValueYofResistor,"r");
+
+    ctx.drawImage(img_a, xCoordToConnected+6, y2CoordToConnected-10);
+    ctx.drawImage(img_b, xCoordToConnected+6, y1CoordToConnected-10);
+    
     /*task8Th2poleBranchCoordinates = branchCoordinates;
     var offsetX1 = 0;
     var offsetY1 = 0;

@@ -50,7 +50,7 @@ var cloneCanvas;
 var cloneContext; 
 function compareResults(userCalc, circResult){
     let resultTolerance = [circResult - 0.005, circResult + 0.005];
-    console.log("circuitResults: "+ circResult);
+    //console.log("circuitResults: "+ circResult);
 
     if (+userCalc >= resultTolerance[0] && +userCalc <= resultTolerance[1]){
         return true;
@@ -122,7 +122,7 @@ function setResultWithPrefix(originalResult ,prefix){
     return result;
 }
 function startTimer(taskType, resultsOfcircuit, prefixObj){
-    console.log("taskType: "+taskType);
+    //console.log("taskType: "+taskType);
     
     //taskType = Number(taskType);
     countdownMin = 0;
@@ -203,8 +203,8 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     }, 1000);
 }
 function checkResult(userResult1, userResult2){
-    console.log("userResult1: "+userResult1)
-    console.log("userResult2: "+userResult2)
+    //console.log("userResult1: "+userResult1)
+    //console.log("userResult2: "+userResult2)
     if (+select > 0 && +select <= 5){
         //console.log("VALAMIJE: "+Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)));
         checkingUsrResult1 = compareResults(userResult1,+Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)));
@@ -224,9 +224,9 @@ function checkResult(userResult1, userResult2){
 }
 function timeOutResult(whereCall) {
     var timeoutURL = host + "/timeout?id=" + removeTaskID;
-    console.log(timeoutURL);
+    //console.log(timeoutURL);
     $.get(timeoutURL, function (data, status) {
-        console.log(status);
+        //console.log(status);
         if (whereCall === "timeout"){
             alert("Lejárt az idő! Feladat törölve! ");
         }
