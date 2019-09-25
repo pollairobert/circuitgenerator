@@ -85,7 +85,6 @@ export class Main {
         this.taskResults = {
             falstadTXT: this.getCircuitCoordinateArray(),
             link: this.getFalstadLink(),
-            link2: "majd ide kellene egy ellenallasos link",
             id: randomID,
             thVolt: can.getResultOfTheveninVoltage(),
             thRes:can.getResultOfTheveninResistance(),

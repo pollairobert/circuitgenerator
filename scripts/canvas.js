@@ -60,8 +60,8 @@ var svgObject = {
     "a" : img_a,
     "b" : img_b
 }
-//var translateX = 500;
-//var translateY = 300;
+//var translateX = 600;
+//var translateY = 500;
 var arcX;
 var arcY;
 var startValueXofVoltageSource;
@@ -99,10 +99,10 @@ function loadCanvas(){
     translateX -= translateOffset[0];
     translateY -= translateOffset[1];
     /*console.log("negativX: "+negativX);
-    console.log("negativY: "+negativY);
+    console.log("negativY: "+negativY);*/
     console.log("positiveX: "+positiveX);
     console.log("positiveY: "+positiveY);
-    console.log("translateOffset: "+translateOffset);
+    /*console.log("translateOffset: "+translateOffset);
     console.log("translateX: "+translateX);
     console.log("translateY: "+translateY);*/
     
@@ -115,7 +115,7 @@ function loadCanvas(){
     if ((negativX + translateX) > translateX / 2 || (negativY + translateY) > translateY / 2){
         ctx.scale(3,3);
     }*/
-    ctx.scale(1,1);
+    //ctx.scale(1,1);
     function redraw(){
         
         // Clear the entire canvas

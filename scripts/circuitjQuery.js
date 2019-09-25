@@ -125,7 +125,7 @@ $(document).ready(function () {
             clearCanvas();
             regenerateTask = true;
             $.get(generate, function (data, status) {
-              //console.log(JSON.parse(data));
+              console.log(JSON.parse(data));
               console.log(generate);
               circuitResults = JSON.parse(data);
               removeTaskID = circuitResults.id;
