@@ -39,6 +39,7 @@ import { CircuitAnalyzer } from './circuitanalyzer';
 export class CircuitGenerator {
     private fs = require('fs');
     private circuitCoordinatesToFalstad: string[] = []; 
+    private circuitResistorsDetails: string[] = [];
     //private resTask: boolean = false;
     /**
      * Aramkor generalasaert felelos. Ezzel a metodussal kezdodik a teljes halozat generalasaert felelos tobbi metodus meghivasa
@@ -117,14 +118,14 @@ export class CircuitGenerator {
                 break;
             }
             case 4: {
-                parameters = [this.randomIntNumber(15,4),
+                parameters = [this.randomIntNumber(12,3),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(15,8)];
                 break;
             }
             case 5: {
-                parameters = [this.randomIntNumber(15,4),
+                parameters = [this.randomIntNumber(12,3),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(15,8)];
@@ -174,7 +175,7 @@ export class CircuitGenerator {
      */
     public buildFinalCircuit(circuit: Circuit, type: number): Circuit{
         let circParam: Object = circuit.getParameters();
-
+        console.log("circParam: "+ circParam);
         /**
          * [[sajat branch type, kapcsolodo branch type, sajt meshnumber]]
          */
@@ -533,7 +534,7 @@ export class CircuitGenerator {
                         circuitResistanceNumber--;
                         //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                         if (circuitResistanceNumber > 0){
-                            if (this.randomBoolean()){
+                            if (this.percentRandom(80)){
                                 //console.log('RES 1 - 2');
                                 mesh1branches[1].setBranchElements(new Resistance(this.randomE6Resistance()));
                                 circuitResistanceNumber--;
@@ -546,7 +547,7 @@ export class CircuitGenerator {
                         circuitResistanceNumber--;
                         //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                         if (circuitResistanceNumber > 0){
-                            if (this.randomBoolean()){
+                            if (this.percentRandom(80)){
                                 //console.log('RES 1 - 2');
                                 mesh1branches[1].setBranchElements(new Resistance(this.randomE6Resistance()));
                                 circuitResistanceNumber--;
@@ -562,7 +563,7 @@ export class CircuitGenerator {
                     circuitResistanceNumber--;
                     //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                     if (circuitResistanceNumber > 0){
-                        if (this.randomBoolean()){
+                        if (this.percentRandom(80)){
                            // console.log('RES 1 - 4');
                             mesh1branches[this.randomChoiseTwoNumber(1,2)].setBranchElements(new Resistance(this.randomE6Resistance()));
                             circuitResistanceNumber--;
@@ -577,7 +578,7 @@ export class CircuitGenerator {
                     circuitResistanceNumber--;
                     //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                     if (circuitResistanceNumber > 0){
-                        if (this.randomBoolean()){
+                        if (this.percentRandom(80)){
                             //console.log('RES 1 - 4');
                             mesh1branches[this.randomChoiseTwoNumber(0,1)].setBranchElements(new Resistance(this.randomE6Resistance()));
                             circuitResistanceNumber--;
@@ -841,19 +842,19 @@ export class CircuitGenerator {
                                 if (this.percentRandom(10) && !oneres){
                                     branch.setBranchElements(new Resistance(this.randomE6Resistance()));
                                 }
-                            } else if (commBrArray[0][0] !== branch.getType() && (type === 5 ? true : h < circuit.getNumberOfMesh()-1)){
+                            } else if (commBrArray[0][0] !== branch.getType() && (type === 4 ? h < circuit.getNumberOfMesh()-1 : (type === 5 ? true : /* ide majd a Kirchoffos feladat szama johet*/true))){
                                 //if (!branches[i].getTh2Pole()){
                                     if (branches[i].getCommon() !== meshes[h].getMeshNumber()){
                                         branch.setBranchElements(new Resistance(this.randomE6Resistance()));
                                     } else if (this.percentRandom(50)){
-                                        if (branch.getType() !== commBrArray[0][0]){
+                                        //if (branch.getType() !== commBrArray[0][0]){
                                             branch.setBranchElements(new Resistance(this.randomE6Resistance()));
-                                        }
+                                        //}
                                     }
                                     if (this.percentRandom(10)){
-                                        if (branch.getType() !== commBrArray[0][0]){
+                                       // if (branch.getType() !== commBrArray[0][0]){
                                             branch.setBranchElements(new Resistance(this.randomE6Resistance()));
-                                        }
+                                       // }
                                     }
                                 //}
                             }
@@ -1454,10 +1455,12 @@ export class CircuitGenerator {
     public setCircuitElementCoordinatesArrayToFalstadExport(circuit: Circuit):void{
         this.circuitCoordinatesToFalstad = [];
         let meshes: Mesh[] = circuit.getMeshes();
+        let allResistanceCounter: number = 0;
         for (let h = 0; h < circuit.getNumberOfMesh(); h++){
             let branches: Branch[] = meshes[h].getBranches();
             for (let i = 0;  i < branches.length; i++){
                 let elements: CircuitElements[] = branches[i].getBranchElements();
+                //let branchResistanceCounter: number = 0;
                 for (let j = 0; j < elements.length; j++){
                     if (elements[j].getCoordinate()[0] !== undefined){
                         let coordinate: number[] = elements[j].getCoordinate();
@@ -1469,8 +1472,13 @@ export class CircuitGenerator {
                             }
                         }
                         if (elements[j].getId() === 'R'){
+                            //branchResistanceCounter++;
+                            allResistanceCounter++;
+                            branches[i].setResistanceOfBranch(allResistanceCounter);
                             let resistance: number = elements[j].getResistance();
-                            this.circuitCoordinatesToFalstad.push('r '+coordinate[0]+' '+coordinate[1]+' '+coordinate[2]+' '+coordinate[3]+' 0 '+resistance);
+                            elements[j].setNumber(allResistanceCounter);
+                            this.circuitResistorsDetails.push("R"+allResistanceCounter+" "+elements[j].getResistance());
+                            this.circuitCoordinatesToFalstad.push('r '+coordinate[0]+' '+coordinate[1]+' '+coordinate[2]+' '+coordinate[3]+' 0 '+resistance+' '+allResistanceCounter);
                         }
                         if (elements[j].getId() === 'V'){
                             let voltage: number;
@@ -1488,6 +1496,7 @@ export class CircuitGenerator {
                 }
             }
         }
+        circuit.setNumberOfResistors(allResistanceCounter);
     }
     public generateFalstadLink(circuit: Circuit, type?: number, res?: number, volt?: number):string{
         let meshes: Mesh[] = circuit.getMeshes();
@@ -1497,9 +1506,9 @@ export class CircuitGenerator {
         let offsetX: number;
         let ohmMeterCoord: number[] = [];
         let halfBranch: number;
-        if (type >= 1 && type < 6){
+        if ((type >= 1 && type < 6) || type === 9){
             
-            this.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
+            //this.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
             let coordinates = this.circuitCoordinatesToFalstad;
             
             for(var i = 0; i < coordinates.length; i++){
@@ -1549,7 +1558,7 @@ export class CircuitGenerator {
                         if (elements[j].getId() === 'R'){
                             let resistance: number = elements[j].getResistance();
                             link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+'+resistance;
-                            if (type >= 1 && type < 6){
+                            if ((type >= 1 && type < 6) || type === 9){
                                 link +='%0Ar+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0+'+resistance;
                             }
                         }
@@ -1560,7 +1569,7 @@ export class CircuitGenerator {
                             } else {
                                 voltage = elements[j].getVoltage();
                             }
-                            if (type >= 1 && type < 6){
+                            if ((type >= 1 && type < 6) || type === 9){
                                 link +='%0Aw+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0';
                                 link +='%0Av+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+0+40+'+voltage+'+0+0.5';
                                 //link +='%0Aw+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0';
@@ -1594,7 +1603,7 @@ export class CircuitGenerator {
                                     }
                                     console.log("halfBranch: " +halfBranch);
                                     //link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+'+ res;
-                                } else if ((type >= 1 && type < 6)){
+                                } else if ((type >= 1 && type < 6) || type === 9){
                                     ohmMeterCoord.push(coordinate[0],coordinate[1],coordinate[2],coordinate[3])
                                     link +='%0Ap+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+1+0';
                                     //link +='%0A216+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+32+0+0.001';
@@ -1619,7 +1628,7 @@ export class CircuitGenerator {
                                 }
 
                             } else {
-                                if (type >= 1 && type < 6){
+                                if ((type >= 1 && type < 6) || type === 9){
                                     link +='%0Aw+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0';
                                 }
                                 link +='%0Aw+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0';
@@ -1734,6 +1743,9 @@ export class CircuitGenerator {
             circuitelement = new CurrentSource(element.getVoltage(),!element.getDirection());
         }
         return circuitelement;
+    }
+    public getCircuitResistorsDetails():string[]{
+        return this.circuitResistorsDetails;
     }
     /**
      * 

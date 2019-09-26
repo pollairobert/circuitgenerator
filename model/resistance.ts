@@ -25,6 +25,7 @@ import { CircuitElements } from "./interfaceCircElement";
 
 export class Resistance implements CircuitElements {
     private id = 'R';
+    private number: number;
     private resistance: number;
     private current: number;
     private voltage: number;
@@ -37,7 +38,9 @@ export class Resistance implements CircuitElements {
     constructor(resistance: number) {
         this.resistance = resistance;
     }
-
+    public setNumber(num: number): void {
+        this.number = num;
+    }
     public setCurrent(cur: number): void {
         this.current = cur;
     }
@@ -76,6 +79,9 @@ export class Resistance implements CircuitElements {
     }
     public replaceWire(): void {
         this.id = 'W';
+    }
+    public getNumber(): number {
+        return this.number;
     }
     public getElementSize(): number {
         return this.elementSize;

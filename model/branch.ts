@@ -36,7 +36,7 @@ export class Branch {
     private orientation: boolean;
     private direction: boolean;
     private current: number = 0;
-    
+    private resistanceOfBranch: number[] = [];
     /*alapesetben a kozossegi ertek az agat tartalmazo hurok szama.
     Ha tobb hurokhoz tartozik a hurkok akkor azok szamanak osszege*/
     private common: number = 0; 
@@ -83,6 +83,9 @@ export class Branch {
         branchCounter++;
     }
 
+    public setResistanceOfBranch(resNumber: number): void {
+        this.resistanceOfBranch.push(resNumber);
+    }
     /**
      * Agaram beallitasa az analizis soran meghatarozott aramvektor segitsegevel
      * @param currentVector aramvektor
@@ -195,6 +198,9 @@ export class Branch {
             //branchClone.setBranchElements(branch.getBranchElements()[i].cloneElements(branch.getBranchElements()[i]));
         }
         return branchClone;
+    }
+    public getResistanceOfBranch(): number[]{
+        return this.resistanceOfBranch;
     }
     public getBranchNumber(): number {
         return this.branchNumber;

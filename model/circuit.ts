@@ -34,7 +34,7 @@ export class Circuit {
     private numberOfMesh: number;
     private theveninResistance: number = 0;
     private theveninVoltage: number = 0;
-    private numbOfResistance: number;
+    private numbOfResistors: number;
     private numbOfCurrentSource: number;
     private numbOfVoltageSource: number;
     private circuitParameters: number[];
@@ -56,7 +56,7 @@ export class Circuit {
     }*/
     constructor(parameters: number[]){
         this.numberOfMesh = parameters[0];
-        this.numbOfResistance = parameters[1];
+        //this.numbOfResistance = parameters[1];
         this.numbOfCurrentSource = parameters[2];
         this.numbOfVoltageSource = parameters[3];
         this.circuitParameters = parameters;
@@ -66,6 +66,12 @@ export class Circuit {
     }
     public setThevRes(res: number): void {
         this.theveninResistance = res;
+    }
+    /**
+     * setNumberOfResistance
+     */
+    public setNumberOfResistors(number: number): void {
+        this.numbOfResistors = number;
     }
     public setThevVolt(volt: number): void {
         this.theveninVoltage = volt;
@@ -83,7 +89,7 @@ export class Circuit {
         this.theveninVoltage = volt;
     } 
     private cloneNumbOfRes(num: number): void {
-        this.numbOfResistance = num;
+        this.numbOfResistors = num;
     }
     private cloneNumbOfCurrentSource(num: number): void {
         this.numbOfCurrentSource = num;
@@ -121,7 +127,7 @@ export class Circuit {
         return this.numberOfMesh;
     }
     public getNumbOfRes(): number{
-        return this.numbOfResistance;
+        return this.numbOfResistors;
     }
     public getNumbOfVoltSource(): number{
         return this.numbOfVoltageSource;

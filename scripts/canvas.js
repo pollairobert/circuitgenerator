@@ -42,6 +42,7 @@ var img_v = new Image(); img_v.src = host+"/char_v.svg";
 var img_dot = new Image(); img_dot.src = host+"/char_dot.svg";
 var img_a = new Image(); img_a.src = host+"/char_a.svg";
 var img_b = new Image(); img_b.src = host+"/char_b.svg";
+var img_r = new Image(); img_r.src = host+"/char_r.svg";
 var img_vmeter = new Image(); img_vmeter.src = host+"/voltmeter.svg";
 var svgObject = {
     "0" : img_0,
@@ -58,7 +59,8 @@ var svgObject = {
     "v" : img_v,
     "." : img_dot,
     "a" : img_a,
-    "b" : img_b
+    "b" : img_b,
+    "r" : img_r
 }
 //var translateX = 600;
 //var translateY = 500;
@@ -165,6 +167,7 @@ function loadCanvas(){
             
             if (branchCoordinates[0] === "r"){
                 var kiloOhm = +branchCoordinates[6]/1000;
+                var number = +branchCoordinates[7]
                 setStartingPositionsToElementsDrawing(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4],directionType);
                 
                 ctx.beginPath();
@@ -174,10 +177,14 @@ function loadCanvas(){
                 ctx.fillStyle = 'white';
                 ctx.fill();
                 ctx.stroke();
-                drawValueOfElements(kiloOhm,startValueXofResistor,startValueYofResistor,"r");
+                if (+select === 9){
+                    drawValueOfElements(number,startValueXofResistor,startValueYofResistor,"r");
+                } else {
+                    drawValueOfElements(kiloOhm,startValueXofResistor,startValueYofResistor,"r");
+                }
             }
             if (branchCoordinates[0] === "p"){
-                if (+select <6 || +select === 8){
+                if (+select <6 || +select === 8 || +select === 9){
                     //console.log("branchCoordinates: "+ branchCoordinates);
                     draw2Pole(branchCoordinates,directionType);
                     if (+select === 8){
@@ -691,24 +698,50 @@ function drawValueOfElements(value,startPosX,startPosY,elementType){
     var ohmToString = value.toString();
     var starting = 0;
     var offset = 6;
-    if (elementType === "v"){
+    if (elementType === "V"){
         starting = Number(startPosX);
     } else {
         starting = Number(startPosX);
     }
     //console.log("starting a for elott: "+ starting);
-    for (var i = 0; i < ohmToString.length; i++){
-        //console.log(typeof(ohmToString[i]));
-        //console.log(ohmToString[i]);
-        if (ohmToString[i] !== "-"){
-            ctx.drawImage(svgObject[ohmToString[i]], starting, startPosY);
-            starting += offset;
+    if (+select !== 9){
+        for (var i = 0; i < ohmToString.length; i++){
+            //console.log(typeof(ohmToString[i]));
+            //console.log(ohmToString[i]);
+            if (ohmToString[i] !== "-"){
+                ctx.drawImage(svgObject[ohmToString[i]], starting, startPosY);
+                starting += offset;
+            }
+        }
+    } else {
+        if (elementType === "r"){
+            ctx.drawImage(img_r, starting, startPosY);
+            starting += 10;
+            for (var i = 0; i < ohmToString.length; i++){
+                //console.log(typeof(ohmToString[i]));
+                console.log(value);
+                
+                ctx.drawImage(svgObject[ohmToString[i]], starting, startPosY);
+                starting += offset;
+                
+            }
+        }
+        if (elementType === "V"){
+            for (var i = 0; i < ohmToString.length; i++){
+                //console.log(typeof(ohmToString[i]));
+                //console.log(ohmToString[i]);
+                if (ohmToString[i] !== "-"){
+                    ctx.drawImage(svgObject[ohmToString[i]], starting, startPosY);
+                    starting += offset;
+                }
+            }
         }
     }
     
+    
     if (elementType === "V"){
         ctx.drawImage(img_v, starting, startPosY);
-    } else {
+    } else if (+select !== 9){
         ctx.drawImage(img_k, starting, startPosY);
     }
     //console.log("ohmToString: "+ ohmToString);

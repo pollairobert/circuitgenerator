@@ -25,44 +25,78 @@
 var description = {
   "type1": {
       "Egyszerű feszültségosztó": 
-          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>"+
+          "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
+          "Legalább 3 tizedesjegy pontosságú legyen!"
           
   },
   "type1.1": {
       "Egyszerű feszültségosztó (2 generátor)": 
-          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>"+
+          "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
+          "Legalább 3 tizedesjegy pontosságú legyen!"
   },
   "type2": {
       "Kettős feszültségosztó": 
-          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>"+
+          "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
+          "Legalább 3 tizedesjegy pontosságú legyen!"
   },
   "type3": {
       "Kettős feszültségosztó (2 generátor)": 
-          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>"+
+          "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
+          "Legalább 3 tizedesjegy pontosságú legyen!"
   },
   "type3.1": {
       "Kettős feszültségosztó (3 generátor)": 
-          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>"+
+          "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
+          "Legalább 3 tizedesjegy pontosságú legyen!"
   },
   "type4": {
       "A hálózat KÜLSŐ 2 pólus közötti helyettesítése": 
-          "Old meg az A - B pontok közötti összetett hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          "Old meg az A - B pontok közötti összetett hálózat Thevenin helyattesítését!<br>"+
+          "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
+          "Legalább 3 tizedesjegy pontosságú legyen!"
   },
   "type5": {
       "A hálózat BELSŐ 2 pólus közötti helyettesítése": 
-          "Old meg az A - B pontok közötti összetett hálózat Thevenin helyattesítését!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          "Old meg az A - B pontok közötti összetett hálózat Thevenin helyattesítését!<br>"+
+          "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
+          "Legalább 3 tizedesjegy pontosságú legyen!"
   },
   "type6": {
       "Ellenálláson eső feszültség és a rajta folyó áram megadása": 
-          "Thevenin helyettesítés segíségével határozd meg a jelölt ellenalláson folyó áramot, valamint annak feszültségét!<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          "Thevenin helyettesítés segíségével határozd meg a jelölt ellenalláson folyó áramot, valamint annak feszültségét!<br>"+
+          "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
+          "Legalább 3 tizedesjegy pontosságú legyen!"
   },
   "type7": {
       "Mérési hiba megadása": 
-          "Adott egy 2 MΩ belső ellenállású feszültségmérő. Mekkora lesz az abszolút és relatív mérési hiba, ha az alábbi hálózat  A - B pontján mérjük meg a feszültséget?<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          "Adott egy 2 MΩ belső ellenállású feszültségmérő. Mekkora lesz az abszolút és relatív mérési hiba, ha az alábbi hálózat  A - B pontján mérjük meg a feszültséget?<br>"+
+          "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
+          "Legalább 3 tizedesjegy pontosságú legyen!"
   },
   "type8": {
       "Megadott belső ellenállású feszültséggenerátor beiktatása": 
-          "Adott a képen balra látható belső ellenállású és feszültségű generátor. Add meg mekkora lesz az A és B pontok közötti kapocsfeszültség, ha rákötjük a generátort ezen pontokra.<br>Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>Legalább 3 tizedesjegy pontosságú legyen!"
+          "Adott a képen balra látható belső ellenállású és feszültségű generátor. Add meg mekkora lesz az A és B pontok közötti kapocsfeszültség, ha rákötjük a generátort ezen pontokra.<br>"+
+          "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
+          "Legalább 3 tizedesjegy pontosságú legyen!"
+  },
+  "type9": {
+    "Áramkör helyes értékeinek megadása I.": 
+        "Adott az alábbi feszültségű generátorhoz tartozó hálózat, melyet az A és B pontjaival szeretnénk egy másik halózathoz csatlakoztatni.<br>"+
+        "A másik hálózat bemenetén korlátozás van, amely megszabja, hogy mekkora feszultségű és ellenállású hálózat köthető rá.<br>"+
+        "Add meg a jelölt elemek értékeit úgy, hogy az áramkör kimeneti értékei megfeleljenek a megadott értékeknek!<br>"+
+        "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
+        "Legalább 3 tizedesjegy pontosságú legyen!"
+  },
+  "type10": {
+    "Áramkör helyes értékeinek megadása II.": 
+        "Adott a képen balra látható belső ellenállású és feszültségű generátor. Add meg mekkora lesz az A és B pontok közötti kapocsfeszültség, ha rákötjük a generátort ezen pontokra.<br>"+
+        "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
+        "Legalább 3 tizedesjegy pontosságú legyen!"
   }
 }
 //const format = require('string-format')

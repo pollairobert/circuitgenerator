@@ -25,6 +25,7 @@ import { CircuitElements } from "./interfaceCircElement";
 
 export class Wire implements CircuitElements {
     private id = 'W';
+    private number: number;
     private resistance: number = 0;
     private current: number;
     private voltage: number = 0;
@@ -41,6 +42,12 @@ export class Wire implements CircuitElements {
         wireClone.setCurrent(element.getCurrent());
         //wireClone.setCoordinate(element.getCoordinate()[0],element.getCoordinate()[1],element.getCoordinate()[2],element.getCoordinate()[3]);
         return wireClone;
+    }
+    public setNumber(num: number): void {
+        this.number = num;
+    }
+    public getNumber(): number {
+        return this.number;
     }
     public setVoltage(vol: number): void {
         this.voltage = vol;

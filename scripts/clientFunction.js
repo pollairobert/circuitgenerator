@@ -126,7 +126,7 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     
     //taskType = Number(taskType);
     countdownMin = 0;
-    countdownSec = 20;
+    countdownSec = 40;
     $("#checkUsrResult").prop("disabled", false);
     $("#result").html('');
     $("#content").html('');
@@ -135,6 +135,7 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     $("#value1").show();
     $("#value2").show();
     $("#taskLabel2").show();
+    $("#taskLabel1").show();
     $(".resultOUT").hide();
     $("input").val("");
     $("resultOUT").val("");
@@ -142,6 +143,8 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     $("#content").append("<h2>" + title + "</h2>");
     $("#content").append("<p>" + descript + "</p>");
     $("#hrUP").show();
+    $("#resistorResult").html("");
+    //$("#resistorResult").hide();
     //$("#result").append("<h1>Ide jon majd a megjelenitese a halozatnak (CANVAS?)</h1>");
     $("#drawCircuit").show();
     $("#result").append("<p>A kép egérrel nagyítható és mozgatható.</p>");
@@ -164,6 +167,18 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         $("#taskLabel2").hide();
         $("#value2").hide();
         $("#out2").hide();
+    }
+    if (+taskType === 9){
+        $("#taskLabel1").hide();
+        $("#taskLabel2").hide();
+        $("#value2").hide();
+        $("#out2").hide();
+        $("#value1").hide();
+        $("#out1").hide();
+        for (var i = 0; i < circuitResults.resistorDetails.length; i++){
+            var resistor = circuitResults.resistorDetails[i].split(" ");
+            $("#resistorResult").append("<span>"+resistor[0]+": </span><input type = 'text' id = 'result"+(i+1)+"' value=''><br>");
+        }
     }
     clearInterval(timer);
     let linkOfFalstad = '<b><a href="' + resultsOfcircuit.link + '" target="_blank">Falstad</a></b>';

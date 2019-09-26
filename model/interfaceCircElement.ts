@@ -36,6 +36,8 @@ export interface CircuitElements {
     getDirection(): boolean;
     cloneElements(element: CircuitElements): CircuitElements;
     replaceWire(): void;
+    setNumber(num: number): void;
+    getNumber(): number;
     setCurrent(cur: number): void;
     setResistance(res: number): void;
     setVoltage(vol: number): void;
