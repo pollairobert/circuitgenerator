@@ -69,7 +69,7 @@ export class Main {
             can.setConnectedVoltagesourceResistance(cg.randomE6Resistance());
         }
         if (type === 9) {
-            temptype = 1;
+            //temptype = 1;
         }
         let circuit: Circuit = cg.generateCircuit(temptype);
 
@@ -116,7 +116,7 @@ export class Main {
             console.log('   A halozat kapocsfeszultseges a keresett pontok kozott: ' +can.getOutputVoltageWithConnectedVoltageSource());
         }
         //console.log(this.falstadLink);
-        console.log(this.results);
+        //console.log(this.results);
         
         if (type >= 0){
             //can.analyzeCircuit(circuit);
@@ -130,117 +130,119 @@ export class Main {
         //console.log(cg.getCircuitCoordinatesToFalstad());
         
         resetMeshCounter();
-        for (let i = 0; i < circuit.getMeshes().length; i++){
-            console.log('A(z) '+circuit.getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
-            console.log('   Mesh ellenallasa (matrixhoz, a benne levo ellenallasok osszege): '+circuit.getMeshes()[i].getMeshResistance());
-            console.log('   Mesh feszultsege (vektorhoz, generator ertekek elojelhelyes osszege): '+circuit.getMeshes()[i].getMeshVoltage());
-            console.log('   Mesh-ben levo Branch-ek: ');
-            console.log();
-    
-            for (let j = 0; j < circuit.getMeshes()[i].getBranches().length; j++){
-                let type;
-                switch (circuit.getMeshes()[i].getBranches()[j].getType()){
-                    case 0:{
-                        type='↑';
-                        break;
-                    }
-                    case 1:{
-                        type='→';
-                        break;
-                    }
-                    case 2:{
-                        type='↓';
-                        break;
-                    }
-                    case 3:{
-                        type='←';
-                        break;
-                    }
-                }
-                console.log('       '+j+'.(branches tomb indexe) Branch iranya (ez a felvett hurokarammal egyezik): '+type);
-                if (circuit.getMeshes()[i].getBranches()[j].getTh2Pole()){
-                    console.log('           *****************************************');
-                    console.log('           *ENNEK A BRANCH-NEK A KET VEGE A 2 POLUS*');
-                    console.log('           *****************************************');
-                }
-                console.log('           Arama: '+circuit.getMeshes()[i].getBranches()[j].getCurrent());
-                console.log('           Common (kozossegi) erteke: '+circuit.getMeshes()[i].getBranches()[j].getCommon());
-                if (circuit.getMeshes()[i].getBranches()[j].getCommon() > circuit.getMeshes()[i].getMeshNumber()){
-                    let commMesh = circuit.getMeshes()[i].getBranches()[j].getCommon()-circuit.getMeshes()[i].getMeshNumber();
-                    console.log('           A(z) '+commMesh+ '. hurokkal kozos Branch.');
-                }
-                if (circuit.getMeshes()[i].getBranches()[j].getBranchElements()[0] !== undefined){
-                    console.log('           Szama: '+circuit.getMeshes()[i].getBranches()[j].getBranchNumber());
-                    console.log('           Ellenallasa (benne levo ellenallasok osszege): '+circuit.getMeshes()[i].getBranches()[j].getBranchResistance());
-                    console.log('           Feszultsege (generator ertekek elojelhelyes osszege): '+circuit.getMeshes()[i].getBranches()[j].getBranchVoltage());
-                    console.log('           Agban levo ellenallasok szamai: '+circuit.getMeshes()[i].getBranches()[j].getResistanceOfBranch());
-                    console.log('           Aramkori elemei: ');
-                    console.log();
-                    for (let k = 0; k < circuit.getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
-                        if (circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'R'){
-                            console.log('               Ellenallas: '+circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getResistance()+ ' Ohm');
-                            console.log('                   Szama: '+circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getNumber());
-                            console.log('                   Arama: '+circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getCurrent());
-                            console.log('                   Feszultesege: '+circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage());
+        if (type < 0){
+            for (let i = 0; i < circuit.getMeshes().length; i++){
+                console.log('A(z) '+circuit.getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
+                console.log('   Mesh ellenallasa (matrixhoz, a benne levo ellenallasok osszege): '+circuit.getMeshes()[i].getMeshResistance());
+                console.log('   Mesh feszultsege (vektorhoz, generator ertekek elojelhelyes osszege): '+circuit.getMeshes()[i].getMeshVoltage());
+                console.log('   Mesh-ben levo Branch-ek: ');
+                console.log();
+        
+                for (let j = 0; j < circuit.getMeshes()[i].getBranches().length; j++){
+                    let type;   
+                    switch (circuit.getMeshes()[i].getBranches()[j].getType()){
+                        case 0:{
+                            type='↑';
+                            break;
                         }
-                        if (circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'V'){
-                            let direction;
-                            if (circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getDirection()){
-                                switch (circuit.getMeshes()[i].getBranches()[j].getType()){
-                                    case 0:{
-                                        direction='↑';
-                                        break;
-                                    }
-                                    case 1:{
-                                        direction='→';
-                                        break;
-                                    }
-                                    case 2:{
-                                        direction='↓';
-                                        break;
-                                    }
-                                    case 3:{
-                                        direction='←';
-                                        break;
-                                    }
-                                }
-                            } else {
-                                switch (circuit.getMeshes()[i].getBranches()[j].getType()){
-                                    case 0:{
-                                        direction = '↓';
-                                        break;
-                                    }
-                                    case 1:{
-                                        direction='←';
-                                        break;
-                                    }
-                                    case 2:{
-                                        direction='↑';
-                                        break;
-                                    }
-                                    case 3:{
-                                        direction='→';
-                                        break;
-                                    }
-                                }
+                        case 1:{
+                            type='→';
+                            break;
+                        }
+                        case 2:{
+                            type='↓';
+                            break;
+                        }
+                        case 3:{
+                            type='←';
+                            break;
+                        }
+                    }
+                    console.log('       '+j+'.(branches tomb indexe) Branch iranya (ez a felvett hurokarammal egyezik): '+type);
+                    if (circuit.getMeshes()[i].getBranches()[j].getTh2Pole()){
+                        console.log('           *****************************************');
+                        console.log('           *ENNEK A BRANCH-NEK A KET VEGE A 2 POLUS*');
+                        console.log('           *****************************************');
+                    }
+                    console.log('           Arama: '+circuit.getMeshes()[i].getBranches()[j].getCurrent());
+                    console.log('           Common (kozossegi) erteke: '+circuit.getMeshes()[i].getBranches()[j].getCommon());
+                    if (circuit.getMeshes()[i].getBranches()[j].getCommon() > circuit.getMeshes()[i].getMeshNumber()){
+                        let commMesh = circuit.getMeshes()[i].getBranches()[j].getCommon()-circuit.getMeshes()[i].getMeshNumber();
+                        console.log('           A(z) '+commMesh+ '. hurokkal kozos Branch.');
+                    }
+                    if (circuit.getMeshes()[i].getBranches()[j].getBranchElements()[0] !== undefined){
+                        console.log('           Szama: '+circuit.getMeshes()[i].getBranches()[j].getBranchNumber());
+                        console.log('           Ellenallasa (benne levo ellenallasok osszege): '+circuit.getMeshes()[i].getBranches()[j].getBranchResistance());
+                        console.log('           Feszultsege (generator ertekek elojelhelyes osszege): '+circuit.getMeshes()[i].getBranches()[j].getBranchVoltage());
+                        console.log('           Agban levo ellenallasok szamai: '+circuit.getMeshes()[i].getBranches()[j].getResistanceOfBranch());
+                        console.log('           Aramkori elemei: ');
+                        console.log();
+                        for (let k = 0; k < circuit.getMeshes()[i].getBranches()[j].getBranchElements().length; k++){
+                            if (circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'R'){
+                                console.log('               Ellenallas: '+circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getResistance()+ ' Ohm');
+                                console.log('                   Szama: '+circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getNumber());
+                                console.log('                   Arama: '+circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getCurrent());
+                                console.log('                   Feszultesege: '+circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage());
                             }
-    
-                            console.log('               Feszultseggenerator: '+math.abs(circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage())+ ' V, '+direction);
-                            console.log('                   Arama: '+circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getCurrent());
-                        }
-                        if (circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'C'){
+                            if (circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'V'){
+                                let direction;
+                                if (circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getDirection()){
+                                    switch (circuit.getMeshes()[i].getBranches()[j].getType()){
+                                        case 0:{
+                                            direction='↑';
+                                            break;
+                                        }
+                                        case 1:{
+                                            direction='→';
+                                            break;
+                                        }
+                                        case 2:{
+                                            direction='↓';
+                                            break;
+                                        }
+                                        case 3:{
+                                            direction='←';
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    switch (circuit.getMeshes()[i].getBranches()[j].getType()){
+                                        case 0:{
+                                            direction = '↓';
+                                            break;
+                                        }
+                                        case 1:{
+                                            direction='←';
+                                            break;
+                                        }
+                                        case 2:{
+                                            direction='↑';
+                                            break;
+                                        }
+                                        case 3:{
+                                            direction='→';
+                                            break;
+                                        }
+                                    }
+                                }
+        
+                                console.log('               Feszultseggenerator: '+math.abs(circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getVoltage())+ ' V, '+direction);
+                                console.log('                   Arama: '+circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getCurrent());
+                            }
+                            if (circuit.getMeshes()[i].getBranches()[j].getBranchElements()[k].getId() === 'C'){
+                                
+                            }
                             
                         }
-                        
                     }
+                    
+                    
+                    
+                    console.log();
                 }
-                
-                
-                
                 console.log();
             }
-            console.log();
-        }
+    }
     
         console.log('Az aramkor '+ circuit.getNumbOfRes()+' db ellenallast tartalmaz.');
     
@@ -294,9 +296,9 @@ export class Main {
     public getMeasurementVoltPrefix(): string{
         return this.measurementVoltPrefix;
     }
-    public getResults():any{
+    /*public getResults():any{
         return this.results;
-    }
+    }*/
     public getCircuitCoordinateArray(): string[]{
         return this.circuitCoordinateArray;
     }

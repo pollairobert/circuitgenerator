@@ -62,8 +62,8 @@ var svgObject = {
     "b" : img_b,
     "r" : img_r
 }
-//var translateX = 600;
-//var translateY = 500;
+var translateX = 600;
+var translateY = 500;
 var arcX;
 var arcY;
 var startValueXofVoltageSource;
@@ -87,8 +87,8 @@ function loadCanvas(){
     var coordinateArray = circuitResults.falstadTXT;
     
     var task8Th2poleBranchCoordinates = [];
-    var translateX = 600;
-    var translateY = 500;
+    translateX = 600;
+    translateY = 500;
     negativX = Infinity;
     negativY = Infinity;
     positiveX = -Infinity;
@@ -162,7 +162,7 @@ function loadCanvas(){
                 ctx.fill();
                 ctx.stroke();
                 drawValueOfElements(voltage,startValueXofVoltageSource,startValueYofVoltageSource,"V");
-                drawVoltageSourceDirection(directionType,arrowX,arrowY,voltage);
+                drawVoltageSourceDirection(directionType,arrowX,arrowY,(+select === 9 ? Math.abs(voltage): voltage));
             }
             
             if (branchCoordinates[0] === "r"){
@@ -719,7 +719,7 @@ function drawValueOfElements(value,startPosX,startPosY,elementType){
             starting += 10;
             for (var i = 0; i < ohmToString.length; i++){
                 //console.log(typeof(ohmToString[i]));
-                console.log(value);
+                //console.log(value);
                 
                 ctx.drawImage(svgObject[ohmToString[i]], starting, startPosY);
                 starting += offset;

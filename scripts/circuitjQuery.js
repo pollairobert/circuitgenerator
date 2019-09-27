@@ -74,7 +74,7 @@ var description = {
   },
   "type7": {
       "Mérési hiba megadása": 
-          "Adott egy 2 MΩ belső ellenállású feszültségmérő. Mekkora lesz az abszolút és relatív mérési hiba, ha az alábbi hálózat  A - B pontján mérjük meg a feszültséget?<br>"+
+          "Adott egy <b style=\"color:red;font-size: 25px;\">2 MΩ</b> belső ellenállású feszültségmérő. Mekkora lesz az abszolút és relatív mérési hiba, ha az alábbi hálózat  A - B pontján mérjük meg a feszültséget?<br>"+
           "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
           "Legalább 3 tizedesjegy pontosságú legyen!"
   },
@@ -88,9 +88,8 @@ var description = {
     "Áramkör helyes értékeinek megadása I.": 
         "Adott az alábbi feszültségű generátorhoz tartozó hálózat, melyet az A és B pontjaival szeretnénk egy másik halózathoz csatlakoztatni.<br>"+
         "A másik hálózat bemenetén korlátozás van, amely megszabja, hogy mekkora feszultségű és ellenállású hálózat köthető rá.<br>"+
-        "Add meg a jelölt elemek értékeit úgy, hogy az áramkör kimeneti értékei megfeleljenek a megadott értékeknek!<br>"+
-        "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
-        "Legalább 3 tizedesjegy pontosságú legyen!"
+        "Add meg a jelölt ellenállások értékeit úgy, hogy az áramkör kimeneti értékei megfeleljenek a megadott értékeknek!<br>"+
+        "Az eredményeket most prefixum nélkül, <b style=\"color:red;font-size: 25px;\">Ω</b> -ban add meg!<br>"
   },
   "type10": {
     "Áramkör helyes értékeinek megadása II.": 
@@ -148,9 +147,17 @@ $(document).ready(function () {
             circuitResults = JSON.parse(data);
             removeTaskID = circuitResults.id;
             setPrefixOfResults(circuitResults,select);
-            //console.log(prefixes);
+            console.log(prefixes);
             startTimer(select,circuitResults,prefixes);
             loadCanvas();
+            if (+select === 9){
+              checkUsrResistors = [];
+              //console.log("circuitResults.resistorDetails.length: "+ circuitResults.resistorDetails.length);
+              for (var i = 0; i < circuitResults.resistorDetails.length; i++){
+                checkUsrResistors.push(false);
+              }
+              console.log("checkUsrResistors: "+ checkUsrResistors);
+            }
           });
       } else {
           generate = host + '/generate?type=' + select + '&id=' + removeTaskID;
@@ -164,26 +171,47 @@ $(document).ready(function () {
               circuitResults = JSON.parse(data);
               removeTaskID = circuitResults.id;
               setPrefixOfResults(circuitResults,select);
-              //console.log(prefixes);
+              console.log(prefixes);
               startTimer(select,circuitResults,prefixes);
               loadCanvas();
+              if (+select === 9){
+                checkUsrResistors = [];
+                //console.log("circuitResults.resistorDetails.length: "+ circuitResults.resistorDetails.length);
+                for (var i = 0; i < circuitResults.resistorDetails.length; i++){
+                  
+                  checkUsrResistors.push(false);
+                }
+                console.log("checkUsrResistors: "+ checkUsrResistors);
+              }
             });
             console.log('Uj generalas, eldobni valo id: ' + removeTaskID);
           } /*else {
             console.log('Marad');
           }*/
       }
+      
+      
       timeout = false;
        
         $("select").val("1");
       
   });
-  $("#checkUsrResult").click(function (e) { 
+  $("#checkUsrResult").click(function (e) {
+    
     //console.log(circuitResults);
     //console.log("checktest");
     var wrongElement1;
     var wrongElement2;
-    checkResult(+$("#value1").val(),+$("#value2").val());
+    if (+select >=1 && +select <8){
+      checkResult(+$("#value1").val(),+$("#value2").val());
+    }
+    if (+select === 9){
+      userResistorsResult = [];
+      for(var i = 0; i < circuitResults.resistorDetails.length; i++){
+        userResistorsResult.push(+$("#usrRes"+(i+1)).val());
+      }
+    }
+    console.log("userResistorsResult: " +userResistorsResult);
     if (+select > 0 && +select <= 5){
         wrongElement1 = " feszültség ";
         wrongElement2 = " ellenállás ";
@@ -200,6 +228,9 @@ $(document).ready(function () {
       wrongElement1 = " kapocsfeszültség  ";
       checkingUsrResult2 = true;
     }
+    if (+select === 9){
+
+    }
     if (checkingUsrResult1 && checkingUsrResult2) {
       let linkOfFalstad = '<b><a href="' + circuitResults.link + '" target="_blank">Falstad</a></b>';
       $("#timeoutorsolve").html("<h3>Feladat megoldásának ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
@@ -209,19 +240,19 @@ $(document).ready(function () {
       $(".resultOUT").show();
       $("#checkUsrResult").attr("disabled", "disabled");
       if (+select >0 && +select <=5 ){
-        $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix))+"</b>");
-        $("#out2").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thRes,prefixes.thResPrefix))+"</b>");
+        $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)).toFixed(3)+"</b>");
+        $("#out2").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thRes,prefixes.thResPrefix)).toFixed(3)+"</b>");
       }
       if (+select === 6){
-          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.resCurrent,prefixes.resCurrPrefix))+"</b>");
-          $("#out2").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.resVolt,prefixes.resVoltPrefix))+"</b>");
+          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.resCurrent,prefixes.resCurrPrefix)).toFixed(3)+"</b>");
+          $("#out2").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.resVolt,prefixes.resVoltPrefix)).toFixed(3)+"</b>");
       }
       if (+select === 7){
-          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.absError,prefixes.absErrorPrefix))+"</b>");
+          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.absError,prefixes.absErrorPrefix)).toFixed(3)+"</b>");
           $("#out2").html("<b>" +circuitResults.relError+"</b>");
       }
       if (+select === 8){
-          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix))+"</b>");
+          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)).toFixed(3)+"</b>");
           $("#out2").hide();
       }
       timeout = true;

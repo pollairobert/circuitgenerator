@@ -68,11 +68,14 @@ export class CircuitGenerator {
         if (type >= 4 && type < 8){
             temptype = 4;
         }
+        if (type === 9){
+            temptype = 1;
+        }
         switch (temptype){
             //Egyszeru feszoszto, csak feszgennel
             case 1: {
                 parameters = [this.randomIntNumber(2,2),
-                              this.randomIntNumber(3,2),
+                              this.randomIntNumber(4,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(1,1)];
                 break;
@@ -80,7 +83,7 @@ export class CircuitGenerator {
             //Egyszeru 2 hurkos halozat (feszoszto), 1-nel tobb generatorral
             case 1.1: {
                 parameters = [this.randomIntNumber(2,2),
-                              this.randomIntNumber(2,2),
+                              this.randomIntNumber(4,2),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(2,2)];
                 break;
@@ -189,7 +192,7 @@ export class CircuitGenerator {
         let randomCommonBranchPair: number[] = [];
         this.buildCircuitSkeleton(circuit);
 
-        if (type === 1 || type === 1.1){
+        if (type === 1 || type === 1.1 || type === 9){
             randomCommonBranchPair = this.randomChoiseInAnyArray([[1,3],[2,0],[0,2]]);
         } else if (type === 2 || type === 3 || type === 3.1){
             randomCommonBranchPair = this.randomChoiseInAnyArray([[1,3],[2,0],[0,2]]);
@@ -201,7 +204,7 @@ export class CircuitGenerator {
         //console.log(typeof(meshPieceArray));
         let multiConnection: boolean = true;
         let meshes: Mesh[] = circuit.getMeshes();
-        if (type < 6){
+        if (type < 6 || type === 9){
         for (let h = 1; h <= numberOfMeshes; h++){
             
             //this.removeElementInAnyArray(h,meshPieceArray);
@@ -215,7 +218,7 @@ export class CircuitGenerator {
             //let tempPieceArray: number[] = meshPieceArray.slice();
             ///console.log('tempPieceArray: '+tempPieceArray);
             //let randomFor: number;
-            if (type === 1 || type === 1.1 || type === 2 || type === 2.1 || type === 3 || type == 3.1 ){
+            if (type === 1 || type === 1.1 || type === 2 || type === 2.1 || type === 3 || type === 3.1 || type === 9){
                 //randomFor = 1;
                 if (h < numberOfMeshes){
                     choiseMeshNumber = (h+1); 
@@ -368,7 +371,7 @@ export class CircuitGenerator {
         //console.log('acceptebleCommonBranchArray: ' +acceptebleCommonBranchArray);
         //console.log('acceptebleCommonBranchArray: ' +acceptebleCommonBranchArray);
         console.log();
-        if (type <= 6){
+        if (type <= 6 || type === 9){
             //this.setThevenin2PoleInCircuit(circuit, type);
             this.setCommonBranchesInCircuit(circuit);
             this.setThevenin2PoleInCircuit(circuit, type);
@@ -398,7 +401,7 @@ export class CircuitGenerator {
                 }
             }
         }
-        if (type <= 7){
+        if (type <= 9){ //EZ ITT KERDESES??? type <= 7 volt!!!!
             this.setAllSizeOfCircuit(circuit);
             this.setElementsCoordinate(circuit);
         }
@@ -519,9 +522,12 @@ export class CircuitGenerator {
         if (type ===3 || type === 3.1){
             tempType = 3;
         }
-        if (type === 4 || type === 5){
+        if (type === 4 || type === 5 ){
             tempType = 4;
         } 
+        if (type ===9){
+            tempType = 1;
+        }
         switch (tempType){
             case 1 : {
                 //console.log('RES 1');
@@ -534,10 +540,15 @@ export class CircuitGenerator {
                         circuitResistanceNumber--;
                         //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                         if (circuitResistanceNumber > 0){
-                            if (this.percentRandom(80)){
+                            if (this.percentRandom(70)){
                                 //console.log('RES 1 - 2');
                                 mesh1branches[1].setBranchElements(new Resistance(this.randomE6Resistance()));
                                 circuitResistanceNumber--;
+                            }
+                            if (this.percentRandom(40)){
+                                //console.log('RES 1 - 2');
+                                mesh1branches[2].setBranchElements(new Resistance(this.randomE6Resistance()));
+                                //circuitResistanceNumber--;
                             }
                         }
                     } else {
@@ -547,10 +558,14 @@ export class CircuitGenerator {
                         circuitResistanceNumber--;
                         //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                         if (circuitResistanceNumber > 0){
-                            if (this.percentRandom(80)){
+                            if (this.percentRandom(70)){
                                 //console.log('RES 1 - 2');
                                 mesh1branches[1].setBranchElements(new Resistance(this.randomE6Resistance()));
                                 circuitResistanceNumber--;
+                            }
+                            if (this.percentRandom(40)){
+                                //console.log('RES 1 - 2');
+                                mesh1branches[2].setBranchElements(new Resistance(this.randomE6Resistance()));
                             }
                         }
                     }
@@ -563,11 +578,16 @@ export class CircuitGenerator {
                     circuitResistanceNumber--;
                     //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                     if (circuitResistanceNumber > 0){
-                        if (this.percentRandom(80)){
+                        if (this.percentRandom(70)){
                            // console.log('RES 1 - 4');
                             mesh1branches[this.randomChoiseTwoNumber(1,2)].setBranchElements(new Resistance(this.randomE6Resistance()));
                             circuitResistanceNumber--;
                             //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
+                        }
+                        if (this.percentRandom(40)){
+                            // console.log('RES 1 - 4');
+                             mesh1branches[3].setBranchElements(new Resistance(this.randomE6Resistance()));
+                             //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                         }
                     }
                 } else if (msh1CommBrArray[0][0] === 0){
@@ -578,11 +598,17 @@ export class CircuitGenerator {
                     circuitResistanceNumber--;
                     //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                     if (circuitResistanceNumber > 0){
-                        if (this.percentRandom(80)){
+                        if (this.percentRandom(70)){
                             //console.log('RES 1 - 4');
+                            mesh1branches[3].setBranchElements(new Resistance(this.randomE6Resistance()));
                             mesh1branches[this.randomChoiseTwoNumber(0,1)].setBranchElements(new Resistance(this.randomE6Resistance()));
                             circuitResistanceNumber--;
                             //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
+                        }
+                        if (this.percentRandom(40)){
+                            // console.log('RES 1 - 4');
+                             mesh1branches[3].setBranchElements(new Resistance(this.randomE6Resistance()));
+                             //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                         }
                     }
                 }
@@ -607,11 +633,21 @@ export class CircuitGenerator {
                         circuitResistanceNumber--;
                         mesh1branches[1].setBranchElements(new Resistance(this.randomE6Resistance()));
                         circuitResistanceNumber--;
+                        if (this.percentRandom(40)){
+                            //console.log('RES 1 - 2');
+                            mesh1branches[2].setBranchElements(new Resistance(this.randomE6Resistance()));
+                            //circuitResistanceNumber--;
+                        }
                     } else {
                         mesh1branches[1].setBranchElements(new Resistance(this.randomE6Resistance()));
                         circuitResistanceNumber--;
-                        mesh1branches[2].setBranchElements(new Resistance(this.randomE6Resistance()));
+                        mesh1branches[0].setBranchElements(new Resistance(this.randomE6Resistance()));
                         circuitResistanceNumber--;
+                        if (this.percentRandom(40)){
+                            //console.log('RES 1 - 2');
+                            mesh1branches[0].setBranchElements(new Resistance(this.randomE6Resistance()));
+                            //circuitResistanceNumber--;
+                        }
                     }
                     
                     
@@ -624,11 +660,16 @@ export class CircuitGenerator {
                     circuitResistanceNumber--;
                     //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                     if (circuitResistanceNumber > 0){
-                        if (this.randomBoolean()){
+                        if (this.percentRandom(70)){
                             //console.log('RES 1 - 4');
                             mesh1branches[1].setBranchElements(new Resistance(this.randomE6Resistance()));
                             circuitResistanceNumber--;
                             //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
+                        }
+                        if (this.percentRandom(40)){
+                            // console.log('RES 1 - 4');
+                             mesh1branches[3].setBranchElements(new Resistance(this.randomE6Resistance()));
+                             //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                         }
                     }
                 } 
@@ -842,7 +883,7 @@ export class CircuitGenerator {
                                 if (this.percentRandom(10) && !oneres){
                                     branch.setBranchElements(new Resistance(this.randomE6Resistance()));
                                 }
-                            } else if (commBrArray[0][0] !== branch.getType() && (type === 4 ? h < circuit.getNumberOfMesh()-1 : (type === 5 ? true : /* ide majd a Kirchoffos feladat szama johet*/true))){
+                            } else if (commBrArray[0][0] !== branch.getType() && (type === 4 ? h < circuit.getNumberOfMesh()-1 : ((type === 5) ? true : false))){
                                 //if (!branches[i].getTh2Pole()){
                                     if (branches[i].getCommon() !== meshes[h].getMeshNumber()){
                                         branch.setBranchElements(new Resistance(this.randomE6Resistance()));
@@ -901,18 +942,21 @@ export class CircuitGenerator {
         if (type > 3.1 && type <=5){
             tempType = 4;
         } 
+        if (type === 9){
+            tempType = 1;
+        }
         switch (tempType){
             case 1: {
                 if (msh1CommBrArray[0][0] === 1){
                     if (this.randomChoiseTwoNumber(0,2) === 0){
-                        mesh1branches[0].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
+                        mesh1branches[0].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),(type === 9 ? false :this.randomBoolean())));
                     } else {
-                        mesh1branches[2].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
+                        mesh1branches[2].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),(type === 9 ? false :this.randomBoolean())));
                     }
                 } else if (msh1CommBrArray[0][0] === 2){
-                    mesh1branches[0].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
+                    mesh1branches[0].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),(type === 9 ? false :this.randomBoolean())));
                 } else {
-                    mesh1branches[2].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),this.randomBoolean()));
+                    mesh1branches[2].setBranchElements(new VoltageSource(this.randomVoltageSourceValue(),(type === 9 ? false :this.randomBoolean())));
                 }
                 break;
             }
@@ -1057,7 +1101,7 @@ export class CircuitGenerator {
     public setThevenin2PoleInCircuit(circuit: Circuit, type: number): void{
         let meshes: Mesh[] = circuit.getMeshes();
         let tempType:  number = type;
-        if (type <= 4){
+        if (type <= 4 || type === 9){
             tempType = 1;
         }
         switch (tempType){
@@ -1477,7 +1521,8 @@ export class CircuitGenerator {
                             branches[i].setResistanceOfBranch(allResistanceCounter);
                             let resistance: number = elements[j].getResistance();
                             elements[j].setNumber(allResistanceCounter);
-                            this.circuitResistorsDetails.push("R"+allResistanceCounter+" "+elements[j].getResistance());
+                            console.log("az ag ossz ellenallasa: "+branches[i].getBranchResistance());
+                            this.circuitResistorsDetails.push("R"+allResistanceCounter+" "+elements[j].getResistance()+" "+branches[i].getBranchResistance());
                             this.circuitCoordinatesToFalstad.push('r '+coordinate[0]+' '+coordinate[1]+' '+coordinate[2]+' '+coordinate[3]+' 0 '+resistance+' '+allResistanceCounter);
                         }
                         if (elements[j].getId() === 'V'){
@@ -1514,7 +1559,7 @@ export class CircuitGenerator {
             for(var i = 0; i < coordinates.length; i++){
                 var branchCoordinates = coordinates[i].split(" ");
                 
-                console.log("branchCoordinates[1]: "+typeof(branchCoordinates))
+                //console.log("branchCoordinates[1]: "+typeof(branchCoordinates))
                 if (+branchCoordinates[1] < negativX){
                     negativX = +branchCoordinates[1];
                 } 
@@ -1541,9 +1586,9 @@ export class CircuitGenerator {
                 }
             }
             offsetX = Math.abs(negativX - positiveX)+96;
-            console.log("offsetX: "+offsetX)
-            console.log("positiveX: "+positiveX)
-            console.log("positiveY: "+positiveY)
+            //console.log("offsetX: "+offsetX)
+            //console.log("positiveX: "+positiveX)
+           // console.log("positiveY: "+positiveY)
         }
         
         for (let h = 0; h < circuit.getNumberOfMesh(); h++){
