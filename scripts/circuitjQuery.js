@@ -151,15 +151,7 @@ $(document).ready(function () {
             console.log(prefixes);
             startTimer(select,circuitResults,prefixes);
             loadCanvas();
-            if (+select === 9){
-              checkUsrResistors = [];
-              //console.log("circuitResults.resistorDetails.length: "+ circuitResults.resistorDetails.length);
-              for (var i = 0; i < circuitResults.resistorDetails.length; i++){
-                checkUsrResistors.push(false);
-              }
-              
-              console.log("checkUsrResistors generalaskor: "+ checkUsrResistors);
-            }
+            
           });
       } else {
           generate = host + '/generate?type=' + select + '&id=' + removeTaskID;
@@ -176,17 +168,9 @@ $(document).ready(function () {
               console.log(prefixes);
               startTimer(select,circuitResults,prefixes);
               loadCanvas();
-              if (+select === 9){
-                checkUsrResistors = [];
-                //console.log("circuitResults.resistorDetails.length: "+ circuitResults.resistorDetails.length);
-                for (var i = 0; i < circuitResults.resistorDetails.length; i++){
-                  
-                  checkUsrResistors.push(false);
-                }
-                console.log("checkUsrResistors: "+ checkUsrResistors);
-              }
+              
             });
-            console.log('Uj generalas, eldobni valo id: ' + removeTaskID);
+            //console.log('Uj generalas, eldobni valo id: ' + removeTaskID);
           } /*else {
             console.log('Marad');
           }*/
@@ -209,9 +193,14 @@ $(document).ready(function () {
     }
     if (+select === 9){
       userResistorsResult = [];
+      checkUsrResistors = [];
+      //checkUsrResistors = [];
       for(var i = 0; i < circuitResults.resistorDetails.length; i++){
         userResistorsResult.push(+$("#usrRes"+(i+1)).val());
+        checkUsrResistors.push(false);
       }
+      //console.log("checkUsrResistors klikk: "+ checkUsrResistors);
+
       checkResistorResult(circuitResults.resistorDetails,userResistorsResult);
     }
     //console.log("userResistorsResult: " +userResistorsResult);
@@ -232,7 +221,8 @@ $(document).ready(function () {
       checkingUsrResult2 = true;
     }
     if (+select === 9){
-
+      
+      
     }
     if (+select > 0 && +select <= 8){
       if (checkingUsrResult1 && checkingUsrResult2) {
@@ -283,7 +273,7 @@ $(document).ready(function () {
       var falseResistor = [];
       //
       //timeOutResult(removeTaskID,+select)
-      console.log("checkUsrResistors az alltrue elott: "+ checkUsrResistors);
+      //console.log("checkUsrResistors az alltrue elott: "+ checkUsrResistors);
       for (var i = 0; i < checkUsrResistors.length; i++){
         if (checkUsrResistors[i] === false){
           allTrue = false;
@@ -293,13 +283,21 @@ $(document).ready(function () {
         $("#timeoutorsolve").html("<h3>Feladat megoldásának ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
         $(".resultOUTRes").show();
         $(".usrINRes").hide();
-        alert("Helyes megoldas");
+        alert("Helyes megoldás");
         timeout = true;
         clearInterval(timer);
         $("#checkUsrResult").attr("disabled", "disabled");
         timeOutResult(removeTaskID,+select);
       } else {
-        alert("Valami nem jo!");
+        var wrongRes = [];
+       
+        //console.log("wrongRes: "+ wrongRes);
+        for (var i = 0; i < checkUsrResistors.length; i++){
+          if (checkUsrResistors[i] === false){
+            wrongRes.push("R"+(i+1));
+          }
+        }
+        alert("Nem megfelelő értékek: \n "+wrongRes);
       }
       
     }

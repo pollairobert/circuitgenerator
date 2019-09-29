@@ -1497,15 +1497,37 @@ export class CircuitGenerator {
     public getCircuitCoordinatesToFalstad():string[]{
         return this.circuitCoordinatesToFalstad;
     }
-    public setMultiplyResistorInBranch(ciruitResDet: string[]): void{
-        for (let i = 0; i < ciruitResDet.length-1; i++){
-            var resistor = ciruitResDet[i].split(" ");
+    public setMultiplyResistorInBranch(circuitResDet: string[]): void{
+        console.log("ciruitResDet sort elott: "+circuitResDet);
+        var cloneCircResDet = circuitResDet.slice(0);
+        cloneCircResDet.sort((a, b) => { return +b.split(" ")[2] - (+a.split(" ")[2])});
+        console.log("ciruitResDet sort utan: "+cloneCircResDet);
+        var multitemp = [];
+        for (let i = 0; i < cloneCircResDet.length; i++){
+            var resistor = cloneCircResDet[i].split(" ");
             //this.multiplyResistorInBranch.push(resistor[2]);
-            if ((resistor[1] !== resistor[2]) && resistor[2] === ciruitResDet[i+1].split(" ")[2]){
-                this.multiplyResistorInBranch.push(resistor[2]+" "+ resistor[0]+" "+ciruitResDet[i+1].split(" ")[0]);
+            if ((resistor[1] !== resistor[2])/* && resistor[2] === cloneCircResDet[i+1].split(" ")[2]*/){
+                multitemp.push(resistor[2]);
+                //this.multiplyResistorInBranch.push(resistor[2]+" "+ resistor[0]+" "+cloneCircResDet[i+1].split(" ")[0]);
                 //multiplyResistorsInBranch[resistor[2]] = [resistor[0]];
                 //multiplyResistorsInBranch[resistor[2]].push(ciruitResDet[i+1].split(" ")[0]);
             }
+        }
+        let temp = Array.from(new Set(multitemp));
+        console.log("multitemp: "+multitemp);
+        console.log("temp: "+temp);
+        for (let h = 0; h < temp.length; h++){
+            var multitmp = [temp[h]];
+            //ultitmp.push(temp[h]);
+            for (let i = 0; i < cloneCircResDet.length; i++){
+                var resistor = cloneCircResDet[i].split(" ");
+                console.log("resistor: "+ resistor);
+                if (+temp[h] === +resistor[2]){
+                    multitmp.push(resistor[0]);
+                }
+            }
+            console.log("multitmp: "+ multitmp);
+            this.multiplyResistorInBranch.push(multitmp.join(" "));
         }
     }
     public setCircuitElementCoordinatesArrayToFalstadExport(circuit: Circuit):void{
@@ -1514,6 +1536,12 @@ export class CircuitGenerator {
         let allResistanceCounter: number = 0;
         for (let h = 0; h < circuit.getNumberOfMesh(); h++){
             let branches: Branch[] = meshes[h].getBranches();
+            let commonBranchRes;
+            for (let j = 0; j < branches.length; j++){
+                if (branches[j].getCommon() !== circuit.getMeshes()[h].getMeshNumber()){
+                    commonBranchRes = branches[j].getBranchResistance();
+                }
+            }
             for (let i = 0;  i < branches.length; i++){
                 let elements: CircuitElements[] = branches[i].getBranchElements();
                 //let branchResistanceCounter: number = 0;
@@ -1533,8 +1561,16 @@ export class CircuitGenerator {
                             branches[i].setResistanceOfBranch(allResistanceCounter);
                             let resistance: number = elements[j].getResistance();
                             elements[j].setNumber(allResistanceCounter);
-                            console.log("az ag ossz ellenallasa: "+branches[i].getBranchResistance());
-                            this.circuitResistorsDetails.push("R"+allResistanceCounter+" "+elements[j].getResistance()+" "+branches[i].getBranchResistance());
+                            
+                            if (branches[i].getCommon() !== circuit.getMeshes()[h].getMeshNumber()){
+                                console.log("circuit.getNumberOfMesh(): "+circuit.getNumberOfMesh());
+                                console.log("branches[i].getCommon(): "+branches[i].getCommon());
+                                console.log("a kozos ag ossz ellenallasa: "+branches[i].getBranchResistance());
+                                this.circuitResistorsDetails.push("R"+allResistanceCounter+" "+elements[j].getResistance()+" "+branches[i].getBranchResistance());
+                            } else {
+                                this.circuitResistorsDetails.push("R"+allResistanceCounter+" "+elements[j].getResistance()+" "+(meshes[h].getMeshResistance() - commonBranchRes));
+                            }
+                            
                             this.circuitCoordinatesToFalstad.push('r '+coordinate[0]+' '+coordinate[1]+' '+coordinate[2]+' '+coordinate[3]+' 0 '+resistance+' '+allResistanceCounter);
                         }
                         if (elements[j].getId() === 'V'){

@@ -70,15 +70,16 @@ export class Main {
         }
         if (type === 9) {
             //temptype = 1;
+            
+
         }
         let circuit: Circuit = cg.generateCircuit(temptype);
-
+        cg.setMultiplyResistorInBranch(cg.getCircuitResistorsDetails());
         //cg.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
         //cg.exportToFalstadTxt(cg.getCircuitCoordinatesToFalstad())
         this.circuitCoordinateArray = cg.getCircuitCoordinatesToFalstad();
         
         can.analyzeCircuit(circuit);
-        cg.setMultiplyResistorInBranch(cg.getCircuitResistorsDetails());
         this.falstadLink = cg.generateFalstadLink(circuit, type, ((type === 6 || type ===7) ? can.getQuestionRes() : can.getConnectedVoltagesourceResistance()),can.getConnectedVoltagesourceValue());
         if (type === 7){
             measurementError = this.calculateMeasurementError(can.getQuestionResVoltage(),can.getResultOfTheveninVoltage());
@@ -132,7 +133,7 @@ export class Main {
         //console.log(cg.getCircuitCoordinatesToFalstad());
         
         resetMeshCounter();
-        if (type < 10){
+        if (type < 0){
             for (let i = 0; i < circuit.getMeshes().length; i++){
                 console.log('A(z) '+circuit.getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
                 console.log('   Mesh ellenallasa (matrixhoz, a benne levo ellenallasok osszege): '+circuit.getMeshes()[i].getMeshResistance());

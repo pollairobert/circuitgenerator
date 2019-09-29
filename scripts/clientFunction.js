@@ -128,7 +128,7 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     
     //taskType = Number(taskType);
     countdownMin = 1;
-    countdownSec = 50;
+    countdownSec = 5;
     $("#checkUsrResult").prop("disabled", false);
     $("#result").html('');
     $("#content").html('');
@@ -202,7 +202,7 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         countdownSec--;
         if (countdownSec === -1) {
             countdownMin--;
-            countdownSec = 9;
+            countdownSec = 59;
         }
         if (countdownSec === 0 && countdownMin === 0) {
             clearInterval(timer);
@@ -263,7 +263,7 @@ function checkResistorResult(resDetail,usrResValues){
 
         var resistor = circuitResults.resistorDetails[i].split(" ");
         console.log("egyeduli a : "+resistor[0]+" ellenallas: " +isOnlyResistor(circuitResults.multiResInBranch,resistor[0]));
-        if (isOnlyResistor(circuitResults.multiResInBranch,resistor[0]) && ((+usrResValues[i]) >= (+resistor[1])-50 && (+usrResValues[i]) <= (+resistor[1])+50)){
+        if (isOnlyResistor(circuitResults.multiResInBranch,resistor[0]) && ((+usrResValues[i]) >= (+resistor[1])-10 && (+usrResValues[i]) <= (+resistor[1])+10)){
             checkUsrResistors[i] = true;
         } 
         
@@ -273,15 +273,15 @@ function checkResistorResult(resDetail,usrResValues){
     }
     for (var i = 0; i < circuitResults.multiResInBranch.length; i++){
         var multi = circuitResults.multiResInBranch[i].split(" ");
-        console.log("multi: " +multi); 
+        //console.log("multi: " +multi); 
         var branchRes = +multi[0];
         for (var j = 1; j < multi.length; j++){
             
-            console.log(multi[j].split("")[1]); 
+            //console.log(multi[j].split("")[1]); 
             //checkUsrResistors[multi[1].split("")[1]] = true; 
             branchRes -= +$("#usrRes"+multi[j].split("")[1]).val();
         }
-        if (branchRes >= (0 - 50) && branchRes <= (0 + 50)){
+        if (branchRes >= (0 - 10) && branchRes <= (0 + 10)){
             for (var j = 1; j < multi.length; j++){
                 //console.log(multi[j].split("")[1])
                 checkUsrResistors[(multi[j].split("")[1])-1] = true;
@@ -289,11 +289,11 @@ function checkResistorResult(resDetail,usrResValues){
             }
             
         }   
-        console.log("Kivonas utan a branch: "+branchRes);
+        //console.log("Kivonas utan a branch: "+branchRes);
         
     }
-    
-    console.log("checkUsrResistors: " +checkUsrResistors)
+    //checkUsrResistors = [];
+    //console.log("checkUsrResistors: " +checkUsrResistors)
 }
 function checkResult(userResult1, userResult2){
     //console.log("userResult1: "+userResult1)
