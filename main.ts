@@ -118,7 +118,7 @@ export class Main {
         //console.log(this.falstadLink);
         //console.log(this.results);
         
-        if (type >= 0){
+        if (type >= 1){
             //can.analyzeCircuit(circuit);
 
             //console.log('Az aramkor Thevenin ellenalasa: '+circuit.getThevRes().toFixed(6)+ ' Ohm');
@@ -130,7 +130,7 @@ export class Main {
         //console.log(cg.getCircuitCoordinatesToFalstad());
         
         resetMeshCounter();
-        if (type < 0){
+        if (type < 10){
             for (let i = 0; i < circuit.getMeshes().length; i++){
                 console.log('A(z) '+circuit.getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
                 console.log('   Mesh ellenallasa (matrixhoz, a benne levo ellenallasok osszege): '+circuit.getMeshes()[i].getMeshResistance());

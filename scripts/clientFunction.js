@@ -128,7 +128,7 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     
     //taskType = Number(taskType);
     countdownMin = 0;
-    countdownSec = 10;
+    countdownSec = 30;
     $("#checkUsrResult").prop("disabled", false);
     $("#result").html('');
     $("#content").html('');
@@ -187,6 +187,7 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         $("#taskLabel2").html("Bemeneti terhelő ellenállás: ");
         $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thVolt,prefixObj.thVoltPrefix)).toFixed(3)+" <b style=\"color:red;\">" + prefixObj.thVoltPrefix + "V</b>");
         $("#out2").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thRes,prefixObj.thResPrefix)).toFixed(3)+" <b style=\"color:red;\">" + prefixObj.thResPrefix + "Ω</b>");
+        $("#out2").append("<hr>");
         for (var i = 0; i < circuitResults.resistorDetails.length; i++){
             var resistor = circuitResults.resistorDetails[i].split(" ");
             $("#resistorResult").append("<span>"+resistor[0]+": </span><input type = 'text' class='usrINRes' id = 'usrRes"+(i+1)+"' value=''><span class='resultOUTRes' id='out"+(i+1)+"'> <b>"+resistor[1]+" </b><b style=\"color:red;\">Ω</b></span><br>");
@@ -222,7 +223,7 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
             }
             if (+taskType === 7){
                 $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.absError,prefixObj.absErrorPrefix)).toFixed(3)+"</b>");
-                $("#out2").html("<b>" +resultsOfcircuit.relError+"</b>");
+                $("#out2").html("<b>" +resultsOfcircuit.relError.toFixed(3)+"</b>");
             }
             if (+taskType === 8){
                 $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.terminalVolt,prefixObj.terminalVoltPrefix)).toFixed(3)+"</b>");
@@ -234,8 +235,23 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         $('#usrTimeCounter').text(countdownMin + ' m ' + countdownSec + " s ");
     }, 1000);
 }
-function checkResistorResult(resDetail,numbOfRes){
-
+function checkResistorResult(resDetail,usrResValues){
+    var branchResistance = [];
+    for (var i =0; i < resDetail.length; i++){
+        var resistor = circuitResults.resistorDetails[i].split(" ");
+        branchResistance.push(resistor[2]);
+    }
+    for (var i =0; i < resDetail.length; i++){
+        var resistor = circuitResults.resistorDetails[i].split(" ");
+        console.log("branchResistance: " +branchResistance)
+        if ((+branchResistance[i] - (+usrResValues[i])) === 0){
+            checkUsrResistors[i] = true;
+        }
+        if ((+branchResistance - (+usrResValues[i])) > 0) {
+            branchResistance[i] -=(+usrResValues[i])
+        }
+    }
+    console.log("checkUsrResistors: " +checkUsrResistors)
 }
 function checkResult(userResult1, userResult2){
     //console.log("userResult1: "+userResult1)

@@ -89,7 +89,7 @@ var description = {
         "Adott az alábbi feszültségű generátorhoz tartozó hálózat, melyet az A és B pontjaival szeretnénk egy másik halózathoz csatlakoztatni.<br>"+
         "A másik hálózat bemenetén korlátozás van, amely megszabja, hogy mekkora feszultségű és ellenállású hálózat köthető rá.<br>"+
         "Add meg a jelölt ellenállások értékeit úgy, hogy az áramkör kimeneti értékei megfeleljenek a megadott értékeknek!<br>"+
-        "Az eredményeket most prefixum nélkül, <b style=\"color:red;font-size: 25px;\">Ω</b> -ban add meg!<br>"
+        "Az eredményeket itt prefixum nélkül, <b style=\"color:red;font-size: 25px;\">Ω</b> -ban add meg!<br>"
   },
   "type10": {
     "Áramkör helyes értékeinek megadása II.": 
@@ -156,7 +156,8 @@ $(document).ready(function () {
               for (var i = 0; i < circuitResults.resistorDetails.length; i++){
                 checkUsrResistors.push(false);
               }
-              console.log("checkUsrResistors: "+ checkUsrResistors);
+              
+              console.log("checkUsrResistors generalaskor: "+ checkUsrResistors);
             }
           });
       } else {
@@ -210,6 +211,7 @@ $(document).ready(function () {
       for(var i = 0; i < circuitResults.resistorDetails.length; i++){
         userResistorsResult.push(+$("#usrRes"+(i+1)).val());
       }
+      checkResistorResult(circuitResults.resistorDetails,userResistorsResult);
     }
     console.log("userResistorsResult: " +userResistorsResult);
     if (+select > 0 && +select <= 5){

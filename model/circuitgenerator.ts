@@ -883,16 +883,16 @@ export class CircuitGenerator {
                                 if (this.percentRandom(10) && !oneres){
                                     branch.setBranchElements(new Resistance(this.randomE6Resistance()));
                                 }
-                            } else if (commBrArray[0][0] !== branch.getType() && (type === 4 ? h < circuit.getNumberOfMesh()-1 : ((type === 5) ? true : false))){
+                            } else if (commBrArray[0][0] !== branch.getType() && (type === 4 ? h < circuit.getNumberOfMesh()-1 : ((type === 5) ? true : true))){
                                 //if (!branches[i].getTh2Pole()){
                                     if (branches[i].getCommon() !== meshes[h].getMeshNumber()){
                                         branch.setBranchElements(new Resistance(this.randomE6Resistance()));
-                                    } else if (this.percentRandom(50)){
+                                    } else if (this.percentRandom(70)){
                                         //if (branch.getType() !== commBrArray[0][0]){
                                             branch.setBranchElements(new Resistance(this.randomE6Resistance()));
                                         //}
                                     }
-                                    if (this.percentRandom(10)){
+                                    if (this.percentRandom(30)){
                                        // if (branch.getType() !== commBrArray[0][0]){
                                             branch.setBranchElements(new Resistance(this.randomE6Resistance()));
                                        // }
@@ -1628,22 +1628,22 @@ export class CircuitGenerator {
                         }
                         if (elements[j].getId() === 'W'){
                             if (branches[i].getTh2Pole()){
-                                if (type === 6 || type === 8){
+                                if (type === 6 || type === 8 || type === 7){
                                     if (branchType === 0 || branchType === 2){
                                         halfBranch = (Math.abs(coordinate[1] - coordinate[3]) / 2);
                                         link +='%0Aw+'+coordinate[0]+'+'+coordinate[1]+'+'+(coordinate[0] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[1] + (branchType === 0 ? -20 : 20))+'+0';
                                         link +='%0Aw+'+coordinate[2]+'+'+coordinate[3]+'+'+(coordinate[2] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 0 ? 20 : -20))+'+0';
-                                        link +='%0Ap+'+(coordinate[0] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[1] + (branchType === 0 ? -20 : 20))+'+'+(coordinate[2] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 0 ? 20 : -20))+'+1+0';
                                         link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2] + '+'+(coordinate[3] + (branchType === 0 ? halfBranch : -halfBranch ))+'+0+'+ res;
-                                        link +='%0A'+(type === 6 ? "370" : "v") +'+'+coordinate[2] + '+'+(coordinate[3] + (branchType === 0 ? halfBranch : -halfBranch ))+'+'+coordinate[2] + '+'+coordinate[3]+'+'+(type === 6 ? '+1+0' : '+0+0+40+'+(-volt)+'+0+0.5');
+                                        link +='%0A'+(type === 6 ? "370" : type === 7 ? "s" : "v") +'+'+coordinate[2] + '+'+(coordinate[3] + (branchType === 0 ? halfBranch : -halfBranch ))+'+'+coordinate[2] + '+'+coordinate[3]+'+'+(type === 6 ? '+1+0' : type ===7 ? '+0+1+false' : '+0+0+40+'+(-volt)+'+0+0.5');
+                                        link +='%0Ap+'+(coordinate[0] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[1] + (branchType === 0 ? -20 : 20))+'+'+(coordinate[2] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 0 ? 20 : -20))+'+1+0';
                                         
                                     } else {
                                         halfBranch = (Math.abs(coordinate[0] - coordinate[2]) / 2);
                                         link +='%0Aw+'+coordinate[0]+'+'+coordinate[1]+'+'+(coordinate[0] + (branchType === 1? 20 : -20) )+'+'+(coordinate[1] + (branchType === 1 ? -20 : 20))+'+0';
                                         link +='%0Aw+'+coordinate[2]+'+'+coordinate[3]+'+'+(coordinate[2] + (branchType === 1 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 1 ? -20 : 20))+'+0';
-                                        link +='%0Ap+'+(coordinate[0] + (branchType === 1 ? 20 : -20) )+'+'+(coordinate[1] + (branchType === 1 ? -20 : 20))+'+'+(coordinate[2] + (branchType === 1 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 1 ? -20 : 20))+'+1+0';
                                         link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+(coordinate[2] + (branchType === 1 ? - halfBranch : halfBranch )) + '+'+coordinate[3]+'+0+'+ res;
-                                        link +='%0A'+(type === 6 ? "370" : "v") +'+'+(coordinate[2] + (branchType === 1 ? - halfBranch : halfBranch )) + '+'+coordinate[3]+'+'+coordinate[2] + '+'+coordinate[3]+'+'+(type === 6 ? '+1+0' : '+0+0+40+'+(-volt)+'+0+0.5');
+                                        link +='%0A'+(type === 6 ? "370" : type === 7 ? "s" : "v") +'+'+(coordinate[2] + (branchType === 1 ? - halfBranch : halfBranch )) + '+'+coordinate[3]+'+'+coordinate[2] + '+'+coordinate[3]+'+'+(type === 6 ? '+1+0' : type ===7 ? '+0+1+false' : '+0+0+40+'+(-volt)+'+0+0.5');
+                                        link +='%0Ap+'+(coordinate[0] + (branchType === 1 ? 20 : -20) )+'+'+(coordinate[1] + (branchType === 1 ? -20 : 20))+'+'+(coordinate[2] + (branchType === 1 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 1 ? -20 : 20))+'+1+0';
                                         
                                     }
                                     console.log("halfBranch: " +halfBranch);
@@ -1654,7 +1654,7 @@ export class CircuitGenerator {
                                     //link +='%0A216+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+32+0+0.001';
                                     link +='%0A216+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0+0.0001';
 
-                                } else if (type === 7){
+                                } /*else if (type === 7){
                                     if (branchType === 0 || branchType === 2){
                                         //halfBranch = (Math.abs(coordinate[1] - coordinate[3]) / 2);
                                         link +='%0Aw+'+coordinate[0]+'+'+coordinate[1]+'+'+(coordinate[0] + (branchType === 0 ? -20 : 20) )+'+'+(coordinate[1] + (branchType === 0 ? -20 : 20))+'+0';
@@ -1668,7 +1668,7 @@ export class CircuitGenerator {
                                         link +='%0Ap+'+(coordinate[0] + (branchType === 1 ? 20 : -20) )+'+'+(coordinate[1] + (branchType === 1 ? -20 : 20))+'+'+(coordinate[2] + (branchType === 1 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 1 ? -20 : 20))+'+1+0';
                                         link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+'+res;
                                     }
-                                } else {
+                                } */else {
                                     link +='%0Ap+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+1+0';
                                 }
 
