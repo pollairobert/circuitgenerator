@@ -40,6 +40,7 @@ export class CircuitGenerator {
     private fs = require('fs');
     private circuitCoordinatesToFalstad: string[] = []; 
     private circuitResistorsDetails: string[] = [];
+    private multiplyResistorInBranch: string[] = [];
     //private resTask: boolean = false;
     /**
      * Aramkor generalasaert felelos. Ezzel a metodussal kezdodik a teljes halozat generalasaert felelos tobbi metodus meghivasa
@@ -545,7 +546,7 @@ export class CircuitGenerator {
                                 mesh1branches[1].setBranchElements(new Resistance(this.randomE6Resistance()));
                                 circuitResistanceNumber--;
                             }
-                            if (this.percentRandom(40)){
+                            if (this.percentRandom(70)){
                                 //console.log('RES 1 - 2');
                                 mesh1branches[2].setBranchElements(new Resistance(this.randomE6Resistance()));
                                 //circuitResistanceNumber--;
@@ -563,7 +564,7 @@ export class CircuitGenerator {
                                 mesh1branches[1].setBranchElements(new Resistance(this.randomE6Resistance()));
                                 circuitResistanceNumber--;
                             }
-                            if (this.percentRandom(40)){
+                            if (this.percentRandom(70)){
                                 //console.log('RES 1 - 2');
                                 mesh1branches[2].setBranchElements(new Resistance(this.randomE6Resistance()));
                             }
@@ -584,7 +585,7 @@ export class CircuitGenerator {
                             circuitResistanceNumber--;
                             //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                         }
-                        if (this.percentRandom(40)){
+                        if (this.percentRandom(70)){
                             // console.log('RES 1 - 4');
                              mesh1branches[3].setBranchElements(new Resistance(this.randomE6Resistance()));
                              //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
@@ -605,7 +606,7 @@ export class CircuitGenerator {
                             circuitResistanceNumber--;
                             //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
                         }
-                        if (this.percentRandom(40)){
+                        if (this.percentRandom(70)){
                             // console.log('RES 1 - 4');
                              mesh1branches[3].setBranchElements(new Resistance(this.randomE6Resistance()));
                              //console.log('circuitResistanceNumber: '+circuitResistanceNumber);
@@ -1496,6 +1497,17 @@ export class CircuitGenerator {
     public getCircuitCoordinatesToFalstad():string[]{
         return this.circuitCoordinatesToFalstad;
     }
+    public setMultiplyResistorInBranch(ciruitResDet: string[]): void{
+        for (let i = 0; i < ciruitResDet.length-1; i++){
+            var resistor = ciruitResDet[i].split(" ");
+            //this.multiplyResistorInBranch.push(resistor[2]);
+            if ((resistor[1] !== resistor[2]) && resistor[2] === ciruitResDet[i+1].split(" ")[2]){
+                this.multiplyResistorInBranch.push(resistor[2]+" "+ resistor[0]+" "+ciruitResDet[i+1].split(" ")[0]);
+                //multiplyResistorsInBranch[resistor[2]] = [resistor[0]];
+                //multiplyResistorsInBranch[resistor[2]].push(ciruitResDet[i+1].split(" ")[0]);
+            }
+        }
+    }
     public setCircuitElementCoordinatesArrayToFalstadExport(circuit: Circuit):void{
         this.circuitCoordinatesToFalstad = [];
         let meshes: Mesh[] = circuit.getMeshes();
@@ -1788,6 +1800,9 @@ export class CircuitGenerator {
             circuitelement = new CurrentSource(element.getVoltage(),!element.getDirection());
         }
         return circuitelement;
+    }
+    public getMultiplyResistorInBranch(): string[]{
+        return this.multiplyResistorInBranch;
     }
     public getCircuitResistorsDetails():string[]{
         return this.circuitResistorsDetails;

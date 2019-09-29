@@ -1,3 +1,4 @@
+
 /* 
  * The MIT License
  *
@@ -213,7 +214,7 @@ $(document).ready(function () {
       }
       checkResistorResult(circuitResults.resistorDetails,userResistorsResult);
     }
-    console.log("userResistorsResult: " +userResistorsResult);
+    //console.log("userResistorsResult: " +userResistorsResult);
     if (+select > 0 && +select <= 5){
         wrongElement1 = " feszültség ";
         wrongElement2 = " ellenállás ";
@@ -233,46 +234,74 @@ $(document).ready(function () {
     if (+select === 9){
 
     }
-    if (checkingUsrResult1 && checkingUsrResult2) {
-      let linkOfFalstad = '<b><a href="' + circuitResults.link + '" target="_blank">Falstad</a></b>';
-      $("#timeoutorsolve").html("<h3>Feladat megoldásának ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
-      clearInterval(timer);
-      timeout = true;
-      $(".usrIN").hide();
-      $(".resultOUT").show();
-      $("#checkUsrResult").attr("disabled", "disabled");
-      if (+select >0 && +select <=5 ){
-        $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)).toFixed(3)+"</b>");
-        $("#out2").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thRes,prefixes.thResPrefix)).toFixed(3)+"</b>");
+    if (+select > 0 && +select <= 8){
+      if (checkingUsrResult1 && checkingUsrResult2) {
+        var linkOfFalstad = '<b><a href="' + circuitResults.link + '" target="_blank">Falstad</a></b>';
+        $("#timeoutorsolve").html("<h3>Feladat megoldásának ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
+        clearInterval(timer);
+        timeout = true;
+        $(".usrIN").hide();
+        $(".resultOUT").show();
+        $("#checkUsrResult").attr("disabled", "disabled");
+        if (+select >0 && +select <=5 ){
+          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)).toFixed(3)+"</b>");
+          $("#out2").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thRes,prefixes.thResPrefix)).toFixed(3)+"</b>");
+        }
+        if (+select === 6){
+            $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.resCurrent,prefixes.resCurrPrefix)).toFixed(3)+"</b>");
+            $("#out2").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.resVolt,prefixes.resVoltPrefix)).toFixed(3)+"</b>");
+        }
+        if (+select === 7){
+            $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.absError,prefixes.absErrorPrefix)).toFixed(3)+"</b>");
+            $("#out2").html("<b>" +circuitResults.relError+"</b>");
+        }
+        if (+select === 8){
+            $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)).toFixed(3)+"</b>");
+            $("#out2").hide();
+        }
+        timeout = true;
+        timeOutResult(removeTaskID,+select);
+        alert('Helyes megoldás!');
+        
       }
-      if (+select === 6){
-          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.resCurrent,prefixes.resCurrPrefix)).toFixed(3)+"</b>");
-          $("#out2").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.resVolt,prefixes.resVoltPrefix)).toFixed(3)+"</b>");
+      if (!checkingUsrResult1 && checkingUsrResult2) {
+        $("#value1").val("");
+        alert("Rossz"+wrongElement1+"érték!");
       }
-      if (+select === 7){
-          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.absError,prefixes.absErrorPrefix)).toFixed(3)+"</b>");
-          $("#out2").html("<b>" +circuitResults.relError+"</b>");
+      if (checkingUsrResult1 && !checkingUsrResult2) {
+        $("#value2").val("");
+        alert("Rossz"+wrongElement2+"érték!");
       }
-      if (+select === 8){
-          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)).toFixed(3)+"</b>");
-          $("#out2").hide();
+      if (!checkingUsrResult1 && !checkingUsrResult2) {
+        $(".usrIN").val("");
+        alert('Helytelen megoldás!');
       }
-      timeout = true;
-      timeOutResult(removeTaskID,+select);
-      alert('Helyes megoldás!');
+    }
+    if (+select === 9){
+      var linkOfFalstad = '<b><a href="' + circuitResults.link + '" target="_blank">Falstad</a></b>';
+      var allTrue = true;
+      var falseResistor = [];
+      //
+      //timeOutResult(removeTaskID,+select)
+      console.log("checkUsrResistors az alltrue elott: "+ checkUsrResistors);
+      for (var i = 0; i < checkUsrResistors.length; i++){
+        if (checkUsrResistors[i] === false){
+          allTrue = false;
+        }
+      }
+      if (allTrue) {
+        $("#timeoutorsolve").html("<h3>Feladat megoldásának ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
+        $(".resultOUTRes").show();
+        $(".usrINRes").hide();
+        alert("Helyes megoldas");
+        timeout = true;
+        clearInterval(timer);
+        $("#checkUsrResult").attr("disabled", "disabled");
+        timeOutResult(removeTaskID,+select);
+      } else {
+        alert("Valami nem jo!");
+      }
       
-    }
-    if (!checkingUsrResult1 && checkingUsrResult2) {
-      $("#value1").val("");
-      alert("Rossz"+wrongElement1+"érték!");
-    }
-    if (checkingUsrResult1 && !checkingUsrResult2) {
-      $("#value2").val("");
-      alert("Rossz"+wrongElement2+"érték!");
-    }
-    if (!checkingUsrResult1 && !checkingUsrResult2) {
-      $(".usrIN").val("");
-      alert('Helytelen megoldás!');
     }
     e.preventDefault();
   });

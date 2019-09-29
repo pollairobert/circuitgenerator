@@ -127,8 +127,8 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     //console.log("taskType: "+taskType);
     
     //taskType = Number(taskType);
-    countdownMin = 0;
-    countdownSec = 30;
+    countdownMin = 1;
+    countdownSec = 50;
     $("#checkUsrResult").prop("disabled", false);
     $("#result").html('');
     $("#content").html('');
@@ -190,7 +190,7 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         $("#out2").append("<hr>");
         for (var i = 0; i < circuitResults.resistorDetails.length; i++){
             var resistor = circuitResults.resistorDetails[i].split(" ");
-            $("#resistorResult").append("<span>"+resistor[0]+": </span><input type = 'text' class='usrINRes' id = 'usrRes"+(i+1)+"' value=''><span class='resultOUTRes' id='out"+(i+1)+"'> <b>"+resistor[1]+" </b><b style=\"color:red;\">Ω</b></span><br>");
+            $("#resistorResult").append("<span id= '"+resistor[0]+"' >"+resistor[0]+": </span><input type = 'text' class='usrINRes' id = 'usrRes"+(i+1)+"' value=''><span class='resultOUTRes' id='out"+(i+1)+"'> <b>"+resistor[1]+" </b><b style=\"color:red;\">Ω</b></span><br>");
             //$("#resistorResult").append("<span>"+resistor[0]+": </span><input type = 'text' id = 'result"+(i+1)+"' value=''><span class=\"resultOUT\" id=\"out1\"> eredmeny</span><br>");
         }
         $(".resultOUTRes").hide();
@@ -235,22 +235,64 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         $('#usrTimeCounter').text(countdownMin + ' m ' + countdownSec + " s ");
     }, 1000);
 }
+function isOnlyResistor(multiRes,resNumber){
+    //console.log("multiRes.length: "+multiRes.length);
+    for (var i = 0; i < multiRes.length; i++){
+        //console.log("multiRes[i]: "+multiRes[i]);
+        var branch = multiRes[i].split(" ");
+        for(var j = 1; j < branch.length; j++){
+            if (resNumber === branch[j]){
+                return false;
+            }
+        }
+    }
+    return true;
+}
 function checkResistorResult(resDetail,usrResValues){
     var branchResistance = [];
-    for (var i =0; i < resDetail.length; i++){
-        var resistor = circuitResults.resistorDetails[i].split(" ");
+    /*for (var i = 0; i < resDetail.length-1; i++){
+        var resistor = resDetail[i].split(" ");
+        if ((resistor[1] !== resistor[2]) && resistor[2] === resDetail[i+1].split(" ")[2]){
+            multiplyResistorsInBranch[resistor[2]] = [resistor[0]];
+            multiplyResistorsInBranch[resistor[2]].push(resDetail[i+1].split(" ")[0]);
+        }
         branchResistance.push(resistor[2]);
     }
+    console.log("multiplyResistorsInBranch: " +JSON.stringify(multiplyResistorsInBranch)); */
     for (var i =0; i < resDetail.length; i++){
+
         var resistor = circuitResults.resistorDetails[i].split(" ");
-        console.log("branchResistance: " +branchResistance)
-        if ((+branchResistance[i] - (+usrResValues[i])) === 0){
+        console.log("egyeduli a : "+resistor[0]+" ellenallas: " +isOnlyResistor(circuitResults.multiResInBranch,resistor[0]));
+        if (isOnlyResistor(circuitResults.multiResInBranch,resistor[0]) && ((+usrResValues[i]) >= (+resistor[1])-50 && (+usrResValues[i]) <= (+resistor[1])+50)){
             checkUsrResistors[i] = true;
-        }
-        if ((+branchResistance - (+usrResValues[i])) > 0) {
+        } 
+        
+        /*if ((+branchResistance - (+usrResValues[i])) > 0) {
             branchResistance[i] -=(+usrResValues[i])
-        }
+        }*/
     }
+    for (var i = 0; i < circuitResults.multiResInBranch.length; i++){
+        var multi = circuitResults.multiResInBranch[i].split(" ");
+        console.log("multi: " +multi); 
+        var branchRes = +multi[0];
+        for (var j = 1; j < multi.length; j++){
+            
+            console.log(multi[j].split("")[1]); 
+            //checkUsrResistors[multi[1].split("")[1]] = true; 
+            branchRes -= +$("#usrRes"+multi[j].split("")[1]).val();
+        }
+        if (branchRes >= (0 - 50) && branchRes <= (0 + 50)){
+            for (var j = 1; j < multi.length; j++){
+                //console.log(multi[j].split("")[1])
+                checkUsrResistors[(multi[j].split("")[1])-1] = true;
+                
+            }
+            
+        }   
+        console.log("Kivonas utan a branch: "+branchRes);
+        
+    }
+    
     console.log("checkUsrResistors: " +checkUsrResistors)
 }
 function checkResult(userResult1, userResult2){
@@ -272,6 +314,7 @@ function checkResult(userResult1, userResult2){
     if (+select === 8){
         checkingUsrResult1 = compareResults(userResult1,+Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)));
     }
+    
 }
 function timeOutResult(whereCall) {
     var timeoutURL = host + "/timeout?id=" + removeTaskID;

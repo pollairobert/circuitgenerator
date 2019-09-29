@@ -78,6 +78,7 @@ export class Main {
         this.circuitCoordinateArray = cg.getCircuitCoordinatesToFalstad();
         
         can.analyzeCircuit(circuit);
+        cg.setMultiplyResistorInBranch(cg.getCircuitResistorsDetails());
         this.falstadLink = cg.generateFalstadLink(circuit, type, ((type === 6 || type ===7) ? can.getQuestionRes() : can.getConnectedVoltagesourceResistance()),can.getConnectedVoltagesourceValue());
         if (type === 7){
             measurementError = this.calculateMeasurementError(can.getQuestionResVoltage(),can.getResultOfTheveninVoltage());
@@ -99,6 +100,7 @@ export class Main {
             connVSRes: can.getConnectedVoltagesourceResistance(),
             connVSVolt: can.getConnectedVoltagesourceValue(),
             resistorDetails: cg.getCircuitResistorsDetails(),
+            multiResInBranch: cg.getMultiplyResistorInBranch(),
             timestamp: new Date()
         }
         //console.log(this.taskResults);
