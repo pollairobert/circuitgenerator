@@ -48,6 +48,8 @@ var checkingUsrResult2;
 var canvas, ctx;
 var cloneCanvas; 
 var cloneContext; 
+var checkUsrResistors = [];
+var userResistorsResult = [];
 function compareResults(userCalc, circResult){
     let resultTolerance = [circResult - 0.005, circResult + 0.005];
     //console.log("circuitResults: "+ circResult);
@@ -59,7 +61,7 @@ function compareResults(userCalc, circResult){
     }
 }
 function setPrefixOfResults(resultObj,type){
-    if (+type > 0 && +type <= 5){
+    if (+type > 0 && +type <= 5 || +type === 9){
         scanPrefix(Math.abs(resultObj.thRes),"thResPrefix");
         scanPrefix(Math.abs(resultObj.thVolt),"thVoltPrefix");
     }
@@ -125,23 +127,29 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     //console.log("taskType: "+taskType);
     
     //taskType = Number(taskType);
-    countdownMin = 0;
-    countdownSec = 20;
+    countdownMin = 1;
+    countdownSec = 5;
     $("#checkUsrResult").prop("disabled", false);
     $("#result").html('');
     $("#content").html('');
     $("#timeoutorsolve").html('');
+    $("#searchCirc").html('');
     $("#usrCheck").show();
     $("#value1").show();
     $("#value2").show();
     $("#taskLabel2").show();
+    $("#taskLabel1").show();
     $(".resultOUT").hide();
+    $(".resultOUTRes").hide();
     $("input").val("");
-    $("resultOUT").val("");
+    $(".resultOUT").val("");
+    $(".resultOUTRes").val("");
     $("userIN").val("");
     $("#content").append("<h2>" + title + "</h2>");
-    $("#content").append("<p>" + descript + "</p>");
+    $("#content").append("<p style=\"font-size: 20px;\">" + descript + "</p>");
     $("#hrUP").show();
+    $("#resistorResult").html("");
+    //$("#resistorResult").hide();
     //$("#result").append("<h1>Ide jon majd a megjelenitese a halozatnak (CANVAS?)</h1>");
     $("#drawCircuit").show();
     $("#result").append("<p>A kép egérrel nagyítható és mozgatható.</p>");
@@ -165,35 +173,60 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         $("#value2").hide();
         $("#out2").hide();
     }
+    if (+taskType === 9){
+        //$("#taskLabel1").hide();
+        //$("#taskLabel2").hide();
+        $("#value2").hide();
+        //$("#out2").hide();
+        $("#value1").hide();
+        //$("#out1").hide();
+        $(".resultOUT").show();
+
+        $("#searchCirc").append("<h3>A csatalakozó hálózat bemeneti korlátozásai:</h3>");
+        $("#taskLabel1").html("Bemeneti feszültség: ");
+        $("#taskLabel2").html("Bemeneti terhelő ellenállás: ");
+        $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thVolt,prefixObj.thVoltPrefix)).toFixed(3)+" <b style=\"color:red;\">" + prefixObj.thVoltPrefix + "V</b>");
+        $("#out2").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thRes,prefixObj.thResPrefix)).toFixed(3)+" <b style=\"color:red;\">" + prefixObj.thResPrefix + "Ω</b>");
+        $("#out2").append("<hr>");
+        for (var i = 0; i < circuitResults.resistorDetails.length; i++){
+            var resistor = circuitResults.resistorDetails[i].split(" ");
+            $("#resistorResult").append("<span id= '"+resistor[0]+"' >"+resistor[0]+": </span><input type = 'text' class='usrINRes' id = 'usrRes"+(i+1)+"' value=''><span class='resultOUTRes' id='out"+(i+1)+"'> <b>"+resistor[1]+" </b><b style=\"color:red;\">Ω</b></span><br>");
+            //$("#resistorResult").append("<span>"+resistor[0]+": </span><input type = 'text' id = 'result"+(i+1)+"' value=''><span class=\"resultOUT\" id=\"out1\"> eredmeny</span><br>");
+        }
+        $(".resultOUTRes").hide();
+
+    }
     clearInterval(timer);
     let linkOfFalstad = '<b><a href="' + resultsOfcircuit.link + '" target="_blank">Falstad</a></b>';
     timer = setInterval(function () {
         countdownSec--;
         if (countdownSec === -1) {
             countdownMin--;
-            countdownSec = 9;
+            countdownSec = 59;
         }
         if (countdownSec === 0 && countdownMin === 0) {
             clearInterval(timer);
             $("#timeoutorsolve").append("<h3>Hálózat megtekintése a " + linkOfFalstad + " oldalán.</h3>");
             $("#checkUsrResult").attr("disabled", "disabled");
             $(".resultOUT").show();
+            $(".resultOUTRes").show();
             $(".usrIN").hide();
+            $(".usrINRes").hide();
                 
             if (+taskType >0 && +taskType <=5 ){
-                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thVolt,prefixObj.thVoltPrefix))+"</b>");
-                $("#out2").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thRes,prefixObj.thResPrefix))+"</b>");
+                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thVolt,prefixObj.thVoltPrefix)).toFixed(3)+"</b>");
+                $("#out2").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thRes,prefixObj.thResPrefix)).toFixed(3)+"</b>");
             }
             if (+taskType === 6){
-                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.resCurrent,prefixObj.resCurrPrefix))+"</b>");
-                $("#out2").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.resVolt,prefixObj.resVoltPrefix))+"</b>");
+                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.resCurrent,prefixObj.resCurrPrefix)).toFixed(3)+"</b>");
+                $("#out2").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.resVolt,prefixObj.resVoltPrefix)).toFixed(3)+"</b>");
             }
             if (+taskType === 7){
-                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.absError,prefixObj.absErrorPrefix))+"</b>");
-                $("#out2").html("<b>" +resultsOfcircuit.relError+"</b>");
+                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.absError,prefixObj.absErrorPrefix)).toFixed(3)+"</b>");
+                $("#out2").html("<b>" +resultsOfcircuit.relError.toFixed(3)+"</b>");
             }
             if (+taskType === 8){
-                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.terminalVolt,prefixObj.terminalVoltPrefix))+"</b>");
+                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.terminalVolt,prefixObj.terminalVoltPrefix)).toFixed(3)+"</b>");
                 $("#out2").hide();
             }
             timeout = true;
@@ -201,6 +234,66 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         }
         $('#usrTimeCounter').text(countdownMin + ' m ' + countdownSec + " s ");
     }, 1000);
+}
+function isOnlyResistor(multiRes,resNumber){
+    //console.log("multiRes.length: "+multiRes.length);
+    for (var i = 0; i < multiRes.length; i++){
+        //console.log("multiRes[i]: "+multiRes[i]);
+        var branch = multiRes[i].split(" ");
+        for(var j = 1; j < branch.length; j++){
+            if (resNumber === branch[j]){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+function checkResistorResult(resDetail,usrResValues){
+    var branchResistance = [];
+    /*for (var i = 0; i < resDetail.length-1; i++){
+        var resistor = resDetail[i].split(" ");
+        if ((resistor[1] !== resistor[2]) && resistor[2] === resDetail[i+1].split(" ")[2]){
+            multiplyResistorsInBranch[resistor[2]] = [resistor[0]];
+            multiplyResistorsInBranch[resistor[2]].push(resDetail[i+1].split(" ")[0]);
+        }
+        branchResistance.push(resistor[2]);
+    }
+    console.log("multiplyResistorsInBranch: " +JSON.stringify(multiplyResistorsInBranch)); */
+    for (var i =0; i < resDetail.length; i++){
+
+        var resistor = circuitResults.resistorDetails[i].split(" ");
+        console.log("egyeduli a : "+resistor[0]+" ellenallas: " +isOnlyResistor(circuitResults.multiResInBranch,resistor[0]));
+        if (isOnlyResistor(circuitResults.multiResInBranch,resistor[0]) && ((+usrResValues[i]) >= (+resistor[1])-10 && (+usrResValues[i]) <= (+resistor[1])+10)){
+            checkUsrResistors[i] = true;
+        } 
+        
+        /*if ((+branchResistance - (+usrResValues[i])) > 0) {
+            branchResistance[i] -=(+usrResValues[i])
+        }*/
+    }
+    for (var i = 0; i < circuitResults.multiResInBranch.length; i++){
+        var multi = circuitResults.multiResInBranch[i].split(" ");
+        //console.log("multi: " +multi); 
+        var branchRes = +multi[0];
+        for (var j = 1; j < multi.length; j++){
+            
+            //console.log(multi[j].split("")[1]); 
+            //checkUsrResistors[multi[1].split("")[1]] = true; 
+            branchRes -= +$("#usrRes"+multi[j].split("")[1]).val();
+        }
+        if (branchRes >= (0 - 10) && branchRes <= (0 + 10)){
+            for (var j = 1; j < multi.length; j++){
+                //console.log(multi[j].split("")[1])
+                checkUsrResistors[(multi[j].split("")[1])-1] = true;
+                
+            }
+            
+        }   
+        //console.log("Kivonas utan a branch: "+branchRes);
+        
+    }
+    //checkUsrResistors = [];
+    //console.log("checkUsrResistors: " +checkUsrResistors)
 }
 function checkResult(userResult1, userResult2){
     //console.log("userResult1: "+userResult1)
@@ -221,6 +314,7 @@ function checkResult(userResult1, userResult2){
     if (+select === 8){
         checkingUsrResult1 = compareResults(userResult1,+Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)));
     }
+    
 }
 function timeOutResult(whereCall) {
     var timeoutURL = host + "/timeout?id=" + removeTaskID;

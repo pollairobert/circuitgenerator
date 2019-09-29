@@ -60,6 +60,8 @@ THE SOFTWARE.
       <option value="6" >Ellenálláson eső fesz. és folyó áram megadása (Random hálózat) </option>
       <option value="7" >Mérési hiba megadása (Random hálózat) </option>
       <option value="8" >Feszültséggenerátor beiktatása (Random hálózat) </option>
+      <option value="9" >Áramkör keresése I.</option>
+      <option value="10" >Áramkör keresése II.</option>
 
     </select>
     <button id="generate" >Hálózat generálása</button>
@@ -75,10 +77,11 @@ THE SOFTWARE.
      
     <hr id="hrDown"/>
     <div id="timeoutorsolve"></div>
-    
+    <div id="searchCirc"></div>
     <div id="usrCheck">
       <span id="taskLabel1"></span><input class="usrIN" type = "text" id = "value1" value=""><span class="resultOUT" id="out1"></span><br>
       <span id="taskLabel2"></span><input class="usrIN" type = "text" id = "value2" value=""><span class="resultOUT" id="out2"></span>
+      <div id="resistorResult"></div>
       <!--ID-->
       <input type = "text" id = "taskID" value="" hidden><br>
       <!--Timer-->

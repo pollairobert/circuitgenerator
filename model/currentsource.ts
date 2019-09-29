@@ -25,6 +25,7 @@ import { CircuitElements } from "./interfaceCircElement";
 
 export class CurrentSource implements CircuitElements {
     private id = 'C';
+    private number: number;
     private resistance: number;
     private current: number;
     private subsVoltage: number; //Helyettesito Feszgen feszultsege
@@ -41,7 +42,12 @@ export class CurrentSource implements CircuitElements {
         this.direction = dir;
         this.resistance = Infinity;
     }
-
+    public setNumber(num: number): void {
+        this.number = num;
+    }
+    public getNumber(): number {
+        return this.number;
+    }
     public setVoltage(vol: number): void {
         this.subsVoltage = vol;
     }

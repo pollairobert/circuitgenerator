@@ -25,6 +25,7 @@ import { CircuitElements } from "./interfaceCircElement";
 
 export class VoltageSource implements CircuitElements {
     private id = 'V';
+    private number: number;
     private resistance: number;
     private current: number;
     private voltage: number;
@@ -41,6 +42,12 @@ export class VoltageSource implements CircuitElements {
         var voltageSourceClone: CircuitElements = new VoltageSource(element.getVoltage(),element.getDirection());
         voltageSourceClone.setCurrent(element.getCurrent());
         return voltageSourceClone;
+    }
+    public setNumber(num: number): void {
+        this.number = num;
+    }
+    public getNumber(): number{
+        return this.number;
     }
     public setCurrent(cur: number): void {
         this.current = cur;

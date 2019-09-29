@@ -39,7 +39,16 @@ export class Mesh {
     private meshResistance: number = 0;
     private meshVoltage: number = 0;
     private meshCurrent: number = 0;
-    private commonBranchesArray: number[][] = [];
+
+    /**
+     * 4 elmu tomboket tarol. Ezek a 4 elemu tombok hatarozzak meg a mesh viszonyat a kornyezo mesh-ekkel:
+     * [az aktualis mesh branchtipusa, amihez masik branch csatlakozik,
+     *  a csatlakozo branch tipusa,
+     *  a mesh szama, amihez csatlakozik,
+     *  az aktualis mesh szama
+     * ]
+     */
+    private commonBranchesArray: number[][] = []; 
     private meshBranchesSize: number[] = [0,0,0,0]; //a megfelelo tipusu branchekhez tartozo ertekek (0,1,2,3)
 
     constructor(/*maxmesh: number, res: number, cur: number, volt: number, comm: number*/) {
