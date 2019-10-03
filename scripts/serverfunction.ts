@@ -23,7 +23,7 @@
  */
 export class Serverfunction{
     private fs = require('fs');
-    private checkTimeToSolvedTask: number = 5*60*1000;
+    private checkTimeToSolvedTask: number = 50*60*1000;
     //private format = require('string-format');
     public readDescripiom(type){
 
@@ -46,7 +46,7 @@ export class Serverfunction{
         });*/
     }
     public addDatatoJSONfile(pushData){
-        console.log("pushData: "+pushData);
+        //console.log("pushData: "+JSON.stringify(pushData));
         /*if (!this.fs.existsSync('generateLOG.json')){
             this.fs.writeFileSync('generateLOG.json','{}', (err) => {
                 if (err) {
@@ -55,18 +55,23 @@ export class Serverfunction{
             });
         }*/
         let generateLOG = this.fs.readFileSync('generateLOG.json');
-        console.log("generateLOG: "+ generateLOG);
+        //console.log("generateLOG: "+ generateLOG);
         //let generateLOG = this.fs.readFileSync('descript/description.json');
         if (generateLOG[0] === undefined){
             console.log('Ures file volt');
             generateLOG = '{}';
         }
         let resultLOG = JSON.parse(generateLOG);
-        
+        //let id = pushData.id;
         resultLOG[pushData.id] = pushData;
+        //console.log("resultLOG.resistorDetails: "+ JSON.stringify(resultLOG[id][3]));
         delete resultLOG[pushData.id].falstadTXT;
         delete resultLOG[pushData.id].link;
         delete resultLOG[pushData.id].id;
+        //console.log("resultLOG[pushData.id].resistorDetails: "+ resultLOG[pushData.id].resistorDetails);
+        //console.log("resultLOG[pushData.id].multiResInBranch: "+ resultLOG[pushData.id].multiResInBranch);
+        //resultLOG.remove(pushData.id).resistorDetails;
+        //delete resultLOG[id][multiResInBranch];
         
         let pushlogData = JSON.stringify(resultLOG, null, 2);
         

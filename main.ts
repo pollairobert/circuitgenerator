@@ -68,7 +68,7 @@ export class Main {
             can.setConnectedVoltagesourceValue(cg.randomVoltageSourceValue());
             can.setConnectedVoltagesourceResistance(cg.randomE6Resistance());
         }
-        if (type === 9) {
+        if (type === 10) {
             //temptype = 1;
             
 
@@ -133,7 +133,7 @@ export class Main {
         //console.log(cg.getCircuitCoordinatesToFalstad());
         
         resetMeshCounter();
-        if (type < 0){
+        if (type < 20){
             for (let i = 0; i < circuit.getMeshes().length; i++){
                 console.log('A(z) '+circuit.getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
                 console.log('   Mesh ellenallasa (matrixhoz, a benne levo ellenallasok osszege): '+circuit.getMeshes()[i].getMeshResistance());

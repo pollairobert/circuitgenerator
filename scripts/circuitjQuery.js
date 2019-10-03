@@ -94,7 +94,11 @@ var description = {
   },
   "type10": {
     "Áramkör helyes értékeinek megadása II.": 
-        "Adott a képen balra látható belső ellenállású és feszültségű generátor. Add meg mekkora lesz az A és B pontok közötti kapocsfeszültség, ha rákötjük a generátort ezen pontokra.<br>"+
+        "Az alábbi hálózat egy olyan eszköz áramkörét reprezentálja, melynek az U1-es generátora 0 és 24 V között állítható tápfeszültséget jelöl,<br>"+
+        "vele sorosan R1 egy potenciometer, melyet tételezzük fel, hogy 1 kΩ és 680 kΩ közötti értékekre lehet beállítani.<br>"+ 
+        "U2 egy 24 V-os bipoláris bementet jelöl (pl. mért érték), vele sorosan egy R2-es előtététellenállással (potenciométer, lsd. R1).<br>"+
+        "Az A és B-vel jelölt kimenet egy olyan másik eszközhöz csatlakozik, amelynek bemenetére csak meghetározott nagyságú unipoláris feszültség köthető.<br>"+
+        "A feladat, hogy a megadott U2 bemeneti tartomány és az elvárt A - B kimeneti érték ismeretében megadd a hiányzó elemek értékeit.<br>"+
         "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
         "Legalább 3 tizedesjegy pontosságú legyen!"
   }
@@ -188,7 +192,7 @@ $(document).ready(function () {
     //console.log("checktest");
     var wrongElement1;
     var wrongElement2;
-    if (+select >=1 && +select <8){
+    if (+select >=1 && +select <=8){
       checkResult(+$("#value1").val(),+$("#value2").val());
     }
     if (+select === 9){
@@ -243,7 +247,7 @@ $(document).ready(function () {
         }
         if (+select === 7){
             $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.absError,prefixes.absErrorPrefix)).toFixed(3)+"</b>");
-            $("#out2").html("<b>" +circuitResults.relError+"</b>");
+            $("#out2").html("<b>" +circuitResults.relError.toFixed(3)+"</b>");
         }
         if (+select === 8){
             $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)).toFixed(3)+"</b>");

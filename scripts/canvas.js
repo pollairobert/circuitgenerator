@@ -43,6 +43,7 @@ var img_dot = new Image(); img_dot.src = host+"/char_dot.svg";
 var img_a = new Image(); img_a.src = host+"/char_a.svg";
 var img_b = new Image(); img_b.src = host+"/char_b.svg";
 var img_r = new Image(); img_r.src = host+"/char_r.svg";
+var img_u = new Image(); img_u.src = host+"/char_u.svg";
 var img_vmeter = new Image(); img_vmeter.src = host+"/voltmeter.svg";
 var svgObject = {
     "0" : img_0,
@@ -60,7 +61,8 @@ var svgObject = {
     "." : img_dot,
     "a" : img_a,
     "b" : img_b,
-    "r" : img_r
+    "r" : img_r,
+    "u" : img_u
 }
 var translateX = 600;
 var translateY = 500;
@@ -161,8 +163,13 @@ function loadCanvas(){
                 ctx.fillStyle = 'transparent';
                 ctx.fill();
                 ctx.stroke();
-                drawValueOfElements(voltage,startValueXofVoltageSource,startValueYofVoltageSource,"V");
-                drawVoltageSourceDirection(directionType,arrowX,arrowY,(+select === 9 ? Math.abs(voltage): voltage));
+                if (+select === 10){
+                    drawValueOfElements(+branchCoordinates[12],startValueXofVoltageSource,startValueYofVoltageSource,"V");
+                } else {
+                    drawValueOfElements(voltage,startValueXofVoltageSource,startValueYofVoltageSource,"V");
+                    drawVoltageSourceDirection(directionType,arrowX,arrowY,(+select === 9 ? Math.abs(voltage): voltage));
+                }
+                
             }
             
             if (branchCoordinates[0] === "r"){
@@ -184,7 +191,7 @@ function loadCanvas(){
                 }
             }
             if (branchCoordinates[0] === "p"){
-                if (+select <6 || +select === 8 || +select === 9){
+                if (+select <6 || +select === 8 || +select === 9 || +select === 10){
                     //console.log("branchCoordinates: "+ branchCoordinates);
                     draw2Pole(branchCoordinates,directionType);
                     if (+select === 8){
@@ -698,13 +705,14 @@ function drawValueOfElements(value,startPosX,startPosY,elementType){
     var ohmToString = value.toString();
     var starting = 0;
     var offset = 6;
-    if (elementType === "V"){
+    
+    //if (elementType === "V"){
+        //starting = Number(startPosX);
+    //} else {
         starting = Number(startPosX);
-    } else {
-        starting = Number(startPosX);
-    }
+    //}
     //console.log("starting a for elott: "+ starting);
-    if (+select !== 9){
+    if (+select !== 9 && +select !== 10){
         for (var i = 0; i < ohmToString.length; i++){
             //console.log(typeof(ohmToString[i]));
             //console.log(ohmToString[i]);
@@ -713,6 +721,7 @@ function drawValueOfElements(value,startPosX,startPosY,elementType){
                 starting += offset;
             }
         }
+        
     } else {
         if (elementType === "r"){
             ctx.drawImage(img_r, starting, startPosY);
@@ -727,6 +736,8 @@ function drawValueOfElements(value,startPosX,startPosY,elementType){
             }
         }
         if (elementType === "V"){
+            ctx.drawImage(img_u, starting, startPosY);
+            starting += 10;
             for (var i = 0; i < ohmToString.length; i++){
                 //console.log(typeof(ohmToString[i]));
                 //console.log(ohmToString[i]);
@@ -739,9 +750,11 @@ function drawValueOfElements(value,startPosX,startPosY,elementType){
     }
     
     
-    if (elementType === "V"){
+    
+    
+    if (elementType === "V" && +select < 10){
         ctx.drawImage(img_v, starting, startPosY);
-    } else if (+select !== 9){
+    } else if (+select < 9 && elementType !== "V"){
         ctx.drawImage(img_k, starting, startPosY);
     }
     //console.log("ohmToString: "+ ohmToString);
@@ -752,167 +765,71 @@ function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
     ctx.strokeStyle = "#ff0000";
     ctx.lineWidth = 1;
     if(branchDirectionType === "0"){
-        if (value < 0){
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
+        if (value <= 0){
             ctx.moveTo(startX,startY);
             ctx.lineTo(startX,startY+20);
-            //ctx.strokestyle = "#0f8500";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX,startY+0.5);
             ctx.lineTo(startX-3,startY+0.5+3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX,startY+0.5);
             ctx.lineTo(startX+3,startY+0.5+3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
         } else {
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX,startY+20);
             ctx.lineTo(startX,startY);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX,startY+19.5);
             ctx.lineTo(startX-3,startY+19.5-3);
-           // ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX,startY+19.5);
             ctx.lineTo(startX+3,startY+19.5-3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
         }
     }
     if(branchDirectionType === "1"){
-        if (value < 0){
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
+        if (value <= 0){
             ctx.moveTo(startX,startY);
             ctx.lineTo(startX-20,startY);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX-0.5,startY);
             ctx.lineTo(startX-0.5-3,startY-3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX-0.5,startY);
             ctx.lineTo(startX-0.5-3,startY+3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
         } else {
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX-20,startY);
             ctx.lineTo(startX,startY);
-            //ctx.strokestyle = "#ff0000";
-           // ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX-19.5,startY);
             ctx.lineTo(startX-19.5+3,startY-3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX-19.5,startY);
             ctx.lineTo(startX-19.5+3,startY+3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
         }
     }
     if(branchDirectionType === "2"){
-        if (value > 0){
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
+        if (value >= 0){
             ctx.moveTo(startX,startY);
             ctx.lineTo(startX,startY+20);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX,startY+0.5);
             ctx.lineTo(startX-3,startY+0.5+3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX,startY+0.5);
             ctx.lineTo(startX+3,startY+0.5+3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
         } else {
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX,startY+20);
             ctx.lineTo(startX,startY);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX,startY+19.5);
             ctx.lineTo(startX-3,startY+19.5-3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX,startY+19.5);
             ctx.lineTo(startX+3,startY+19.5-3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
         }
     }
     if(branchDirectionType === "3"){
-        if (value > 0){
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
+        if (value >= 0){
             ctx.moveTo(startX,startY);
             ctx.lineTo(startX-20,startY);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX-0.5,startY);
             ctx.lineTo(startX-0.5-3,startY-3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX-0.5,startY);
             ctx.lineTo(startX-0.5-3,startY+3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
         } else {
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX-20,startY);
             ctx.lineTo(startX,startY);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX-19.5,startY);
             ctx.lineTo(startX-19.5+3,startY-3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
-            //ctx.beginPath();
-            //ctx.lineWidth = 1;
             ctx.moveTo(startX-19.5,startY);
             ctx.lineTo(startX-19.5+3,startY+3);
-            //ctx.strokestyle = "#ff0000";
-            //ctx.stroke();
         }
     }
     ctx.stroke();

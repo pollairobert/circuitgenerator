@@ -50,11 +50,12 @@ var cloneCanvas;
 var cloneContext; 
 var checkUsrResistors = [];
 var userResistorsResult = [];
+
 function compareResults(userCalc, circResult){
     let resultTolerance = [circResult - 0.005, circResult + 0.005];
     //console.log("circuitResults: "+ circResult);
 
-    if (+userCalc >= resultTolerance[0] && +userCalc <= resultTolerance[1]){
+    if (Math.abs(+userCalc) >= resultTolerance[0] && Math.abs(+userCalc) <= resultTolerance[1]){
         return true;
     } else {
         return false;
