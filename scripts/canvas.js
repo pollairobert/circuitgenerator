@@ -155,6 +155,8 @@ function loadCanvas(){
             }
             if (branchCoordinates[0] === "v"){
                 var voltage = +branchCoordinates[8];
+                var number = +branchCoordinates[12]
+                //console.log("number: "+number)
                 setStartingPositionsToElementsDrawing(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4],directionType);
                 ctx.beginPath();
                 ctx.arc(arcX, arcY, 10, 0, 2*Math.PI,false);
@@ -164,7 +166,7 @@ function loadCanvas(){
                 ctx.fill();
                 ctx.stroke();
                 if (+select === 10){
-                    drawValueOfElements(+branchCoordinates[12],startValueXofVoltageSource,startValueYofVoltageSource,"V");
+                    drawValueOfElements(number,startValueXofVoltageSource,startValueYofVoltageSource,"V");
                 } else {
                     drawValueOfElements(voltage,startValueXofVoltageSource,startValueYofVoltageSource,"V");
                     drawVoltageSourceDirection(directionType,arrowX,arrowY,(+select === 9 ? Math.abs(voltage): voltage));
@@ -184,7 +186,7 @@ function loadCanvas(){
                 ctx.fillStyle = 'white';
                 ctx.fill();
                 ctx.stroke();
-                if (+select === 9){
+                if (+select === 9 || +select === 10){
                     drawValueOfElements(number,startValueXofResistor,startValueYofResistor,"r");
                 } else {
                     drawValueOfElements(kiloOhm,startValueXofResistor,startValueYofResistor,"r");
@@ -706,6 +708,87 @@ function drawValueOfElements(value,startPosX,startPosY,elementType){
     var starting = 0;
     var offset = 6;
     
+    if (elementType === "V"){
+        starting = Number(startPosX);
+    } else {
+        starting = Number(startPosX);
+    }
+    //console.log("starting a for elott: "+ starting);
+    if (+select !== 9 && +select !== 10){
+        for (var i = 0; i < ohmToString.length; i++){
+            //console.log(typeof(ohmToString[i]));
+            //console.log(ohmToString[i]);
+            if (ohmToString[i] !== "-"){
+                ctx.drawImage(svgObject[ohmToString[i]], starting, startPosY);
+                starting += offset;
+            }
+        }
+        
+    } else {
+        if (+select === 9) {
+            if (elementType === "r"){
+                ctx.drawImage(img_r, starting, startPosY);
+                starting += 10;
+                for (var i = 0; i < ohmToString.length; i++){
+                    //console.log(typeof(ohmToString[i]));
+                    //console.log(value);
+                    
+                    ctx.drawImage(svgObject[ohmToString[i]], starting, startPosY);
+                    starting += offset;
+                    
+                }
+            }
+            if (elementType === "V"){
+                for (var i = 0; i < ohmToString.length; i++){
+                    //console.log(typeof(ohmToString[i]));
+                    //console.log(ohmToString[i]);
+                    if (ohmToString[i] !== "-"){
+                        ctx.drawImage(svgObject[ohmToString[i]], starting, startPosY);
+                        starting += offset;
+                    }
+                }
+            }
+        }
+        if (+select === 10){
+            if (elementType === "r"){
+                ctx.drawImage(img_r, starting, startPosY);
+                starting += 10;
+                for (var i = 0; i < ohmToString.length; i++){
+                    //console.log(typeof(ohmToString[i]));
+                    //console.log(value);
+                    
+                    ctx.drawImage(svgObject[ohmToString[i]], starting, startPosY);
+                    starting += offset;
+                    
+                }
+            }
+            if (elementType === "V"){
+                ctx.drawImage(img_u, starting, startPosY);
+                starting += 10;
+                for (var i = 0; i < ohmToString.length; i++){
+                    //console.log(typeof(ohmToString[i]));
+                    //console.log(ohmToString[i]);
+                    if (ohmToString[i] !== "-"){
+                        ctx.drawImage(svgObject[ohmToString[i]], starting, startPosY);
+                        starting += offset;
+                    }
+                }
+            }
+        }
+        
+    }
+    if (elementType === "V" && +select < 10){
+        ctx.drawImage(img_v, starting, startPosY);
+    } else if (+select < 9 && elementType !== "V"){
+        ctx.drawImage(img_k, starting, startPosY);
+    }
+    //console.log("ohmToString: "+ ohmToString);
+}
+/*function drawValueOfElements(value,startPosX,startPosY,elementType){
+    var ohmToString = value.toString();
+    var starting = 0;
+    var offset = 6;
+    //console.log("ohmToString: "+ohmToString);
     //if (elementType === "V"){
         //starting = Number(startPosX);
     //} else {
@@ -736,15 +819,18 @@ function drawValueOfElements(value,startPosX,startPosY,elementType){
             }
         }
         if (elementType === "V"){
-            ctx.drawImage(img_u, starting, startPosY);
-            starting += 10;
+            if (+select === 10){
+                ctx.drawImage(img_u, starting, startPosY);
+                starting += 10;
+            }
+            
             for (var i = 0; i < ohmToString.length; i++){
                 //console.log(typeof(ohmToString[i]));
                 //console.log(ohmToString[i]);
-                if (ohmToString[i] !== "-"){
+                //if (ohmToString[i] !== "-"){
                     ctx.drawImage(svgObject[ohmToString[i]], starting, startPosY);
                     starting += offset;
-                }
+                //}
             }
         }
     }
@@ -758,7 +844,7 @@ function drawValueOfElements(value,startPosX,startPosY,elementType){
         ctx.drawImage(img_k, starting, startPosY);
     }
     //console.log("ohmToString: "+ ohmToString);
-}
+}*/
 function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
     //console.log("value: "+value);
     ctx.beginPath();

@@ -263,7 +263,7 @@ function checkResistorResult(resDetail,usrResValues){
     for (var i =0; i < resDetail.length; i++){
 
         var resistor = circuitResults.resistorDetails[i].split(" ");
-        console.log("egyeduli a : "+resistor[0]+" ellenallas: " +isOnlyResistor(circuitResults.multiResInBranch,resistor[0]));
+        //console.log("egyeduli a : "+resistor[0]+" ellenallas: " +isOnlyResistor(circuitResults.multiResInBranch,resistor[0]));
         if (isOnlyResistor(circuitResults.multiResInBranch,resistor[0]) && ((+usrResValues[i]) >= (+resistor[1])-10 && (+usrResValues[i]) <= (+resistor[1])+10)){
             checkUsrResistors[i] = true;
         } 
