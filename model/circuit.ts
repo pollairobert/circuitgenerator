@@ -38,6 +38,7 @@ export class Circuit {
     private numbOfCurrentSource: number;
     private numbOfVoltageSource: number;
     private circuitParameters: number[];
+    private expectedOutputVoltage: number;
     
     /**
      * Aramkor konstruktora, amely beallitja a szukseges ertkeit a prameterek alapjan
@@ -66,6 +67,9 @@ export class Circuit {
     }
     public setThevRes(res: number): void {
         this.theveninResistance = res;
+    }
+    public setExpOutVolt(volt: number): void{
+        this.expectedOutputVoltage = volt;
     }
     /**
      * setNumberOfResistance
@@ -137,6 +141,9 @@ export class Circuit {
     }
     public getParameters(): Object{
         return this.circuitParameters;
+    }
+    public getExpOutVolt(): number {
+        return this.expectedOutputVoltage;
     }
     
 }

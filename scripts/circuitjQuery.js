@@ -99,8 +99,7 @@ var description = {
         "U2 egy 24 V-os bipoláris bementet jelöl (pl. mért érték), vele sorosan egy R2-es előtététellenállással (potenciométer, lsd. R1).<br>"+
         "Az A és B-vel jelölt kimenet egy olyan másik eszközhöz csatlakozik, amelynek bemenetére csak meghetározott nagyságú unipoláris feszültség köthető.<br>"+
         "A feladat, hogy a megadott U2 bemeneti tartomány és az elvárt A - B kimeneti érték ismeretében megadd a hiányzó elemek értékeit.<br>"+
-        "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
-        "Legalább 3 tizedesjegy pontosságú legyen!"
+        "Az eredményeket itt prefixum nélkül, <b style=\"color:red;font-size: 25px;\">Ω</b> -ban és <b style=\"color:red;font-size: 25px;\">V</b> -ban add meg!<br>"
   }
 }
 //const format = require('string-format')
@@ -207,6 +206,9 @@ $(document).ready(function () {
 
       checkResistorResult(circuitResults.resistorDetails,userResistorsResult);
     }
+    if (+select === 10){
+      checkTask10Result(+$("#usrR1").val(),+$("#usrR2").val(),+$("#usrR3").val(),+$("#usrU1").val());
+    }
     //console.log("userResistorsResult: " +userResistorsResult);
     if (+select > 0 && +select <= 5){
         wrongElement1 = " feszültség ";
@@ -224,8 +226,39 @@ $(document).ready(function () {
       wrongElement1 = " kapocsfeszültség  ";
       checkingUsrResult2 = true;
     }
-    if (+select === 9){
+    if (+select === 10){
+      /*var r1 = $("#usrRes1").val()
+      var r2 = $("#usrRes2").val()
+      var r3 = $("#usrRes3").val()
+      var u1 = $("#usrRes4").val();
+      var task10data1 = {
+        r1: r1,
+        r2: r2,
+        r3: r3,
+        u1: u1,
+        u2: task10inputVoltage,
+        expectedResult: task10outputVoltage
+      }
       
+      var task10data2 = JSON.stringify(circuitResults.circuit);
+      console.log(task10data2);
+      var task10dataparse = JSON.parse(task10data2);
+      console.log(task10dataparse);
+      var task10data = JSON.stringify(task10dataparse);
+      console.log(task10data);
+
+      //task10data = JSON.stringify(task10data1, null);
+      //console.log(datacirc);
+      
+      $.post('/task10check',task10dataparse, (data,status) => {
+        alert("Data: " + data + "\nStatus: " + status);
+      });
+      /*$.get('/task10check', frontsidecircuit,
+        function (data, textStatus, jqXHR) {
+          alert("Data: " + data + "\nStatus: " + textStatus);
+        },
+        
+      );*/
       
     }
     if (+select > 0 && +select <= 8){
@@ -253,6 +286,7 @@ $(document).ready(function () {
             $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)).toFixed(3)+"</b>");
             $("#out2").hide();
         }
+        
         timeout = true;
         timeOutResult(removeTaskID,+select);
         alert('Helyes megoldás!');
@@ -284,7 +318,7 @@ $(document).ready(function () {
         }
       }
       if (allTrue) {
-        $("#timeoutorsolve").html("<h3>Feladat megoldásának ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
+        $("#timeoutorsolve").html("<h3>Feladat egy lehetséges megoldásának ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
         $(".resultOUTRes").show();
         $(".usrINRes").hide();
         alert("Helyes megoldás");
@@ -304,6 +338,9 @@ $(document).ready(function () {
         alert("Nem megfelelő értékek: \n "+wrongRes);
       }
       
+    }
+    if (+select === 10){
+
     }
     e.preventDefault();
   });

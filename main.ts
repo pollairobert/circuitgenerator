@@ -42,9 +42,18 @@ export class Main {
     private ohmPrefix: string;
     private measurementVoltPrefix: string;
     private taskResults;
-    public start(type: number){
+    public createCircuitToTask10(r1: number, r2: number, r3: number, u1: number, u2: number, expectedResult: number){
+        let cg: CircuitGenerator = new CircuitGenerator(); 
+        let circuit: Circuit = cg.generateCircuit(10);
+    }
+    public generateFalstadLinkToTask10CorrectResult(falstadTxt: string){
+        let cg: CircuitGenerator = new CircuitGenerator();
+        //this.falstadLink = 
+    }
+    public start(type: number, circ?: Circuit){
         let cg: CircuitGenerator = new CircuitGenerator();
         let can: CircuitAnalyzer = new CircuitAnalyzer();
+        let circuit: Circuit;
         let typeArray: number[] = [2, 3, 3.1, 4, 5];
         let temptype = type;
         let measurementError: number[] = [];
@@ -68,41 +77,80 @@ export class Main {
             can.setConnectedVoltagesourceValue(cg.randomVoltageSourceValue());
             can.setConnectedVoltagesourceResistance(cg.randomE6Resistance());
         }
-        if (type === 10) {
-            //temptype = 1;
-            
+        
+        circuit = cg.generateCircuit(temptype);
+        
+        if (type === 10){
+            let paralellRes: number;
+            let inputVoltage: number;
+            let found: boolean[] = [false,false];
+            for (let i = 0; i < circuit.getMeshes()[0].getBranches().length; i++){
+                for (let j = 0; j < circuit.getMeshes()[0].getBranches()[i].getBranchElements().length; j++){
+                    if (!found[0]){
+                        if (circuit.getMeshes()[0].getBranches()[i].getBranchElements()[j].getId() === "V"){
+                            found[0] = true;
+                            inputVoltage = circuit.getMeshes()[0].getBranches()[i].getBranchElements()[j].getVoltage();
+                        }
+                    }
+                    if (!found[1]){
+                        if (circuit.getMeshes()[0].getBranches()[i].getBranchElements()[j].getId() === "R"){
+                            found[1] = true;
+                            paralellRes = circuit.getMeshes()[0].getBranches()[i].getBranchElements()[j].getResistance();
+                        }
+                    }
+                    
+                }
+            }
+            let r3resistance: number = this.calculateTask10R3resistanceValue(paralellRes,inputVoltage,circuit.getExpOutVolt())
+            for (let i = 0; i < circuit.getMeshes()[1].getBranches().length; i++){
+                if (circuit.getMeshes()[1].getBranches()[i].getType() !== circuit.getMeshes()[1].getCommonBranchesArray()[0][0]){
+                    for (let j = 0; j < circuit.getMeshes()[1].getBranches()[i].getBranchElements().length; j++){
+                        if (circuit.getMeshes()[1].getBranches()[i].getBranchElements()[j].getId() === "R"){
+                            circuit.getMeshes()[1].getBranches()[i].getBranchElements()[j].setResistance(r3resistance);
+                        }
+                    }
+                }
+            }
+            cg.getCircuitResistorsDetails().push("R3 "+r3resistance);
 
         }
-        let circuit: Circuit = cg.generateCircuit(temptype);
+        
+        can.analyzeCircuit(circuit);
+
         cg.setMultiplyResistorInBranch(cg.getCircuitResistorsDetails());
         //cg.setCircuitElementCoordinatesArrayToFalstadExport(circuit);
         //cg.exportToFalstadTxt(cg.getCircuitCoordinatesToFalstad())
         this.circuitCoordinateArray = cg.getCircuitCoordinatesToFalstad();
         
-        can.analyzeCircuit(circuit);
+        
         this.falstadLink = cg.generateFalstadLink(circuit, type, ((type === 6 || type ===7) ? can.getQuestionRes() : can.getConnectedVoltagesourceResistance()),can.getConnectedVoltagesourceValue());
         if (type === 7){
             measurementError = this.calculateMeasurementError(can.getQuestionResVoltage(),can.getResultOfTheveninVoltage());
             console.log("measurementError: "+measurementError);
         }
         let randomID = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        this.taskResults = {
-            falstadTXT: this.getCircuitCoordinateArray(),
-            link: this.getFalstadLink(),
-            id: randomID,
-            thVolt: can.getResultOfTheveninVoltage(),
-            thRes:can.getResultOfTheveninResistance(),
-            resCurrent: can.getQuestionResCurrent(),
-            resVolt: can.getQuestionResVoltage(),
-            absError: measurementError[0],
-            relError: measurementError[1],
-            terminalVolt: can.getOutputVoltageWithConnectedVoltageSource(),
-            resValue: can.getQuestionRes(),
-            connVSRes: can.getConnectedVoltagesourceResistance(),
-            connVSVolt: can.getConnectedVoltagesourceValue(),
-            resistorDetails: cg.getCircuitResistorsDetails(),
-            multiResInBranch: cg.getMultiplyResistorInBranch(),
-            timestamp: new Date()
+        //if (type < 10){
+            this.taskResults = {
+                falstadTXT: this.getCircuitCoordinateArray(),
+                link: this.getFalstadLink(),
+                id: randomID,
+                thVolt: can.getResultOfTheveninVoltage(),
+                thRes:can.getResultOfTheveninResistance(),
+                resCurrent: can.getQuestionResCurrent(),
+                resVolt: can.getQuestionResVoltage(),
+                absError: measurementError[0],
+                relError: measurementError[1],
+                terminalVolt: can.getOutputVoltageWithConnectedVoltageSource(),
+                resValue: can.getQuestionRes(),
+                connVSRes: can.getConnectedVoltagesourceResistance(),
+                connVSVolt: can.getConnectedVoltagesourceValue(),
+                resistorDetails: cg.getCircuitResistorsDetails(),
+                multiResInBranch: cg.getMultiplyResistorInBranch(),
+                expectedOutVoltage: undefined,
+                timestamp: new Date()
+            }
+        if (type === 10){
+            this.taskResults["expectedOutVoltage"] = circuit.getExpOutVolt();
         }
         //console.log(this.taskResults);
         
@@ -133,7 +181,7 @@ export class Main {
         //console.log(cg.getCircuitCoordinatesToFalstad());
         
         resetMeshCounter();
-        if (type < 20){
+        if (type < 0){
             for (let i = 0; i < circuit.getMeshes().length; i++){
                 console.log('A(z) '+circuit.getMeshes()[i].getMeshNumber()+ '. HUROK ADATAI:');
                 console.log('   Mesh ellenallasa (matrixhoz, a benne levo ellenallasok osszege): '+circuit.getMeshes()[i].getMeshResistance());
@@ -275,6 +323,12 @@ export class Main {
         console.log('Az aramkor Thevenin helyettesito feszultsege: '+can.getResultOfTheveninVoltage().toFixed(6)+ ' V');
     //}
         //console.log(cg.percentRandom(10));
+    }
+    public calculateTask10R3resistanceValue(paralellResistorsValue: number, inputVoltage: number, expextedOutputVoltage: number, ): number {
+        
+        let resultingResistance: number = ((paralellResistorsValue*paralellResistorsValue)/(paralellResistorsValue+paralellResistorsValue));
+        let r3resistance: number = ((resultingResistance*expextedOutputVoltage)/(inputVoltage-expextedOutputVoltage));
+        return r3resistance;
     }
     public calculateMeasurementError(measuredVoltage: number, realVoltage: number): number[]{
         let measurementErr: number[] = [];

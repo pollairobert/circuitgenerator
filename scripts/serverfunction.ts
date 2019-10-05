@@ -68,6 +68,11 @@ export class Serverfunction{
         delete resultLOG[pushData.id].falstadTXT;
         delete resultLOG[pushData.id].link;
         delete resultLOG[pushData.id].id;
+        //if (resultLOG[pushData.id]["circuit"] !== undefined){
+            //delete resultLOG[pushData.id].circuit[0];
+        //}
+        //
+
         //console.log("resultLOG[pushData.id].resistorDetails: "+ resultLOG[pushData.id].resistorDetails);
         //console.log("resultLOG[pushData.id].multiResInBranch: "+ resultLOG[pushData.id].multiResInBranch);
         //resultLOG.remove(pushData.id).resistorDetails;

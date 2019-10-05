@@ -50,7 +50,8 @@ var cloneCanvas;
 var cloneContext; 
 var checkUsrResistors = [];
 var userResistorsResult = [];
-
+var task10outputVoltage;
+var task10inputVoltage;
 function compareResults(userCalc, circResult){
     let resultTolerance = [circResult - 0.005, circResult + 0.005];
     //console.log("circuitResults: "+ circResult);
@@ -128,8 +129,8 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     //console.log("taskType: "+taskType);
     
     //taskType = Number(taskType);
-    countdownMin = 1;
-    countdownSec = 5;
+    countdownMin = 0;
+    countdownSec = 10;
     $("#checkUsrResult").prop("disabled", false);
     $("#result").html('');
     $("#content").html('');
@@ -197,6 +198,48 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         $(".resultOUTRes").hide();
 
     }
+    if (+taskType === 10){
+        //task10inputVoltage;
+        
+        for (var i = 0; i < circuitResults.falstadTXT.length; i++){
+            var element = circuitResults.falstadTXT[i].split(" ");
+            
+            if (element[0] === "v" && element[12] === "2"){
+                task10inputVoltage = +element[8];
+                //$("#resistorResult").append("<span id= 'R"+element[12]+"' >"+resistor[0]+": </span><input type = 'text' class='usrINRes' id = 'usrRes"+(i+1)+"' value=''><span class='resultOUTRes' id='out"+(i+1)+"'> <b>"+resistor[1]+" </b><b style=\"color:red;\">Ω</b></span><br>");
+            }
+            if (element[0] === "p"){
+                //task10outputVoltage = +element[7];
+            }
+        }
+        
+        //task10outputVoltage = Math.floor(Math.random() * ((task10inputVoltage-1) - 1 + 1) + 1);
+        //$("#taskLabel1").hide();
+        //$("#taskLabel2").hide();
+        $("#value2").hide();
+        //$("#out2").hide();
+        $("#value1").hide();
+        //$("#out1").hide();
+        $(".resultOUT").show();
+
+        $("#searchCirc").append("<h3>A hálózat rendelkezésre álló adatai:</h3>");
+        $("#taskLabel1").html("U2 bemenet bipoláris feszültség tartománya: ");
+        $("#taskLabel2").html("A - B pontok között megengedett unipoláris feszültség tartomány: ");
+        $("#out1").html("<b> -"+task10inputVoltage+ " - +" +task10inputVoltage+ " <b style=\"color:red;\">V</b>");
+        $("#out2").html("<b> 0 - "+circuitResults.expectedOutVoltage+" <b style=\"color:red;\">V</b>");
+        $("#out2").append("<hr>");
+        /*for (var i = 0; i < circuitResults.falstadTXT.length; i++){
+            var resistor = circuitResults.resistorDetails[i].split(" ");
+            $("#resistorResult").append("<span id= '"+resistor[0]+"' >"+resistor[0]+": </span><input type = 'text' class='usrINRes' id = 'usrRes"+(i+1)+"' value=''><span class='resultOUTRes' id='out"+(i+1)+"'> <b>"+resistor[1]+" </b><b style=\"color:red;\">Ω</b></span><br>");
+            //$("#resistorResult").append("<span>"+resistor[0]+": </span><input type = 'text' id = 'result"+(i+1)+"' value=''><span class=\"resultOUT\" id=\"out1\"> eredmeny</span><br>");
+        }*/
+        $("#resistorResult").append("<span id= 'R1' >R1: </span><input type = 'text' class='usrINRes' id = 'usrR1' value=''><span class='resultOUTRes' id='out3'></span><br>");
+        $("#resistorResult").append("<span id= 'R2' >R2: </span><input type = 'text' class='usrINRes' id = 'usrR2' value=''><span class='resultOUTRes' id='out4'></span><br>");
+        $("#resistorResult").append("<span id= 'R3' >R3: </span><input type = 'text' class='usrINRes' id = 'usrR3' value=''><span class='resultOUTRes' id='out5'></span><br>");
+        $("#resistorResult").append("<span id= 'U1' >U1: </span><input type = 'text' class='usrINRes' id = 'usrU1' value=''><span class='resultOUTRes' id='out6'></span><br>");
+        $(".resultOUTRes").hide();
+
+    }
     clearInterval(timer);
     let linkOfFalstad = '<b><a href="' + resultsOfcircuit.link + '" target="_blank">Falstad</a></b>';
     timer = setInterval(function () {
@@ -207,7 +250,11 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         }
         if (countdownSec === 0 && countdownMin === 0) {
             clearInterval(timer);
-            $("#timeoutorsolve").append("<h3>Hálózat megtekintése a " + linkOfFalstad + " oldalán.</h3>");
+            if (+taskType === 9 || +taskType === 10){
+                $("#timeoutorsolve").append("<h3>Hálózat egy lehetséges megoldásának megtekintése a " + linkOfFalstad + " oldalán.</h3>");
+            } else {
+                $("#timeoutorsolve").append("<h3>Hálózat megtekintése a " + linkOfFalstad + " oldalán.</h3>");
+            }
             $("#checkUsrResult").attr("disabled", "disabled");
             $(".resultOUT").show();
             $(".resultOUTRes").show();
@@ -229,6 +276,14 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
             if (+taskType === 8){
                 $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.terminalVolt,prefixObj.terminalVoltPrefix)).toFixed(3)+"</b>");
                 $("#out2").hide();
+            }
+            if (+taskType === 10){
+                $("#out2").append("<b>Egy lehetséges megoldás: </b><hr>");
+                $("#out3").html("<b>"+ circuitResults.resistorDetails[0].split(" ")[1]+"</b> <b style=\"color:red;\">Ω</b>");
+                $("#out4").html("<b>"+ circuitResults.resistorDetails[1].split(" ")[1]+"</b> <b style=\"color:red;\">Ω</b>");
+                $("#out5").html("<b>"+ (+circuitResults.resistorDetails[2].split(" ")[1]).toFixed(3)+"</b> <b style=\"color:red;\">Ω</b>");
+                $("#out6").html("<b>" +task10inputVoltage+ "</b> <b style=\"color:red;\">V</b>");
+
             }
             timeout = true;
             timeOutResult("timeout");
@@ -316,6 +371,12 @@ function checkResult(userResult1, userResult2){
         checkingUsrResult1 = compareResults(userResult1,+Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)));
     }
     
+}
+function checkTask10Result(r1, r2, r3, u1) {
+    console.log(r1);
+    console.log(r2);
+    console.log(r3);
+    console.log(u1);
 }
 function timeOutResult(whereCall) {
     var timeoutURL = host + "/timeout?id=" + removeTaskID;
