@@ -96,7 +96,7 @@ var description = {
     "Áramkör helyes értékeinek megadása II.": 
         "Az alábbi hálózat egy olyan eszköz áramkörét reprezentálja, melynek az U1-es generátora 0 és 24 V között állítható tápfeszültséget jelöl,<br>"+
         "vele sorosan R1 egy potenciometer, melyet tételezzük fel, hogy 1 kΩ és 680 kΩ közötti értékekre lehet beállítani.<br>"+ 
-        "U2 egy 24 V-os bipoláris bementet jelöl (pl. mért érték), vele sorosan egy R2-es előtététellenállással (potenciométer, lsd. R1).<br>"+
+        "U2 egy maximum 24 V-os bipoláris bementet jelöl (pl. mért érték), vele sorosan egy R2-es előtététellenállással (potenciométer, lsd. R1).<br>"+
         "Az A és B-vel jelölt kimenet egy olyan másik eszközhöz csatlakozik, amelynek bemenetére csak meghetározott nagyságú unipoláris feszültség köthető.<br>"+
         "A feladat, hogy a megadott U2 bemeneti tartomány és az elvárt A - B kimeneti érték ismeretében megadd a hiányzó elemek értékeit.<br>"+
         "Az eredményeket itt prefixum nélkül, <b style=\"color:red;font-size: 25px;\">Ω</b> -ban és <b style=\"color:red;font-size: 25px;\">V</b> -ban add meg!<br>"
@@ -207,7 +207,9 @@ $(document).ready(function () {
       checkResistorResult(circuitResults.resistorDetails,userResistorsResult);
     }
     if (+select === 10){
-      checkTask10Result(+$("#usrR1").val(),+$("#usrR2").val(),+$("#usrR3").val(),+$("#usrU1").val());
+      if (checkTask10Result(+$("#usrR1").val(),+$("#usrR2").val(),+$("#usrR3").val(),+$("#usrU1").val())){
+
+      }
     }
     //console.log("userResistorsResult: " +userResistorsResult);
     if (+select > 0 && +select <= 5){
@@ -266,7 +268,7 @@ $(document).ready(function () {
         var linkOfFalstad = '<b><a href="' + circuitResults.link + '" target="_blank">Falstad</a></b>';
         $("#timeoutorsolve").html("<h3>Feladat megoldásának ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
         clearInterval(timer);
-        timeout = true;
+        //timeout = true;
         $(".usrIN").hide();
         $(".resultOUT").show();
         $("#checkUsrResult").attr("disabled", "disabled");

@@ -1818,9 +1818,9 @@ export class CircuitGenerator {
                         
                         if (elements[j].getId() === 'R'){
                             let resistance: number = elements[j].getResistance();
-                            link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+'+resistance;
+                            link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+'+resistance + (type === 10 ? '+'+elements[j].getNumber() : '');
                             if ((type >= 1 && type < 6) || type === 9 || type === 10){
-                                link +='%0Ar+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0+'+resistance;
+                                link +='%0Ar+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0+'+resistance + (type === 10 ? '+'+elements[j].getNumber() : '');
                             }
                         }
                         if (elements[j].getId() === 'V'){
@@ -1835,12 +1835,12 @@ export class CircuitGenerator {
                                     link +='%0Aw+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0';
                                 } else {
                                     if (branches[i].getCommon() !== meshes[h].getMeshNumber()){
-                                        link +='%0Av+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0+0+40+'+(-voltage)+'+0+0.5';
+                                        link +='%0Av+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0+0+40+'+(-voltage)+'+0+0+0.5'+ (type === 10 ? '+'+elements[j].getNumber() : '');
                                     } else {
-                                        link +='%0Av+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0+0+40+'+voltage+'+0+0.5';
+                                        link +='%0Av+'+(coordinate[0]+offsetX)+'+'+coordinate[1]+'+'+(coordinate[2]+offsetX)+'+'+coordinate[3]+'+0+0+40+'+voltage+'+0+0+0.5'+(type === 10 ? '+'+elements[j].getNumber() : '');
                                     }
                                 }
-                                link +='%0Av+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+0+40+'+voltage+'+0+0.5';
+                                link +='%0Av+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+0+40+'+voltage+'+0+0+0.5'+(type === 10 ? '+'+elements[j].getNumber() : '');
                                 
                                 //link +='%0Aw+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0';
 

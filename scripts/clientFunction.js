@@ -127,10 +127,14 @@ function setResultWithPrefix(originalResult ,prefix){
 }
 function startTimer(taskType, resultsOfcircuit, prefixObj){
     //console.log("taskType: "+taskType);
-    
+    /*console.log(circuitResults.link.split("%0A"));
+    for (var i = 1; i < circuitResults.link.split("%0A").length-1; i++){
+        var tempArray = circuitResults.link.split("%0A")[i].split("+");
+        console.log(tempArray);
+    }*/
     //taskType = Number(taskType);
     countdownMin = 0;
-    countdownSec = 10;
+    countdownSec = 50;
     $("#checkUsrResult").prop("disabled", false);
     $("#result").html('');
     $("#content").html('');
@@ -373,10 +377,115 @@ function checkResult(userResult1, userResult2){
     
 }
 function checkTask10Result(r1, r2, r3, u1) {
+    var expectedVoltageTolerance = [(+circuitResults.expectedOutVoltage-0.005),(+circuitResults.expectedOutVoltage+0.005)];
+    console.log(expectedVoltageTolerance);
+    if ((+r1 < 1000 || +r1 > 680000) || (+r2 < 1000 || +r2 > 680000)){
+        alert("R1 és R2 minimum 1 KΩ,\n maximum 680 kΩ lehet.");
+        return false;
+    }
+    if ((r1 !== r2 && u1 !== task10inputVoltage) /*&& ((+r1 > 1000 && +r1 < 680000) && (+r2 > 1000 && +r2 < 680000))*/){
+        alert("Nem megfelelő R1, R2 ás U1 értékek!");
+        return false;
+    }
+    if (r1 !== r2 /*&& ((+r1 > 1000 && +r1 < 680000) && (+r2 > 1000 && +r2 < 680000))*/){
+        alert("Nem megfelelő R1 és R2 értékek!");
+        return false;
+    }
+    if (u1 !== task10inputVoltage /*&& ((+r1 > 1000 && +r1 < 680000) && (+r2 > 1000 && +r2 < 680000))*/){
+        alert("Nem megfelelő U1 érték!");
+        return false;
+    }
+    if (calculateTask10Result(r1,r2,r3,u1,expectedVoltageTolerance)){
+        //var linkOfFalstad = '<b><a href="' + circuitResults.link + '" target="_blank">Falstad</a></b>';
+        var splitedFalstadLink = circuitResults.link.split("%0A");
+        var link = splitedFalstadLink[0]+"%0A";
+        var tempsplited = [];
+        for (var i = 1; i < splitedFalstadLink.length-1; i++){
+            var tempArray = splitedFalstadLink[i].split("+");
+            //console.log(tempArray);
+            /*if (tempArray[0] === "v"){
+                splitedFalstadLink[i] = "";
+
+                //var tempArray = splitedFalstadLink[i].split("+");
+                if (+tempArray[tempArray.length-1] === 1){
+                    tempArray[8] = u1;
+                }
+                if (+tempArray[tempArray.length-1] === 2){
+                    if (+tempArray[8] < 0){
+                        tempArray[8] = -u1;
+                    }else {
+                        tempArray[8] = u1;
+                    }
+                }
+                splitedFalstadLink[i] += tempArray[0];
+                for (var j = 1; j < tempArray.length; j++){
+                    splitedFalstadLink[i] += "+"+tempArray[j];
+                }
+                
+            }*/
+            if (tempArray[0] === "r"){
+                
+                splitedFalstadLink[i] = "";
+                //var tempArray = splitedFalstadLink[i].split("+");
+                if (+tempArray[tempArray.length-1] === 1){
+                    //console.log(tempArray);
+                    tempArray[6] = ""+r1+ "" ;
+                    //console.log(tempArray[6]);
+                }
+                if (+tempArray[tempArray.length-1] === 2){
+                    tempArray[6] = ""+r2+ "" ;
+                }
+                if (+tempArray[tempArray.length-1] === 3){
+                    tempArray[6] = ""+r3+ "" ;
+                }
+                //console.log(tempArray);
+                splitedFalstadLink[i] += tempArray[0];
+                //console.log(splitedFalstadLink[i]);
+                for (var j = 1; j < tempArray.length; j++){
+                    splitedFalstadLink[i] += "+"+tempArray[j];
+                }
+                //console.log(splitedFalstadLink[i]);
+                //splitedFalstadLink[i].split("+").length-1 
+            }
+            link += splitedFalstadLink[i]+"%0A"
+        }
+        //console.log(link);
+        var linkOfFalstad = '<b><a href="' + link + '" target="_blank">Falstad</a></b>';
+        $("#timeoutorsolve").html("<h3>Helyes megoldásod ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
+
+        $("#checkUsrResult").attr("disabled", "disabled");
+        $(".resultOUT").show();
+        $(".resultOUTRes").show();
+        $(".usrIN").hide();
+        $(".usrINRes").hide();
+        $("#out2").append("<b>Megadott értékeid: </b><hr>");
+        $("#out3").html("<b>"+ r1+"</b> <b style=\"color:red;\">Ω</b>");
+        $("#out4").html("<b>"+ r2+"</b> <b style=\"color:red;\">Ω</b>");
+        $("#out5").html("<b>"+ r3+"</b> <b style=\"color:red;\">Ω</b>");
+        $("#out6").html("<b>" +u1+ "</b> <b style=\"color:red;\">V</b>");
+        alert('Helyes megoldás!');
+        timeout = true;
+        clearInterval(timer);
+        timeOutResult(removeTaskID,+select);
+        return true;
+    } else {
+        alert('Helytelen megoldás!');
+        return false;
+    }
     console.log(r1);
     console.log(r2);
     console.log(r3);
     console.log(u1);
+}
+function calculateTask10Result(r1, r2, r3, u1, expOutTol){
+    var resultingResistance = ((r1*r2)/(r1+r2));
+    var calculatedOutputVoltage = u1*(r3/(r3+resultingResistance));
+    console.log(calculatedOutputVoltage);
+    if (calculatedOutputVoltage >= expOutTol[0] && calculatedOutputVoltage <= expOutTol[1]){
+        return true;
+    } else {
+        return false;
+    }
 }
 function timeOutResult(whereCall) {
     var timeoutURL = host + "/timeout?id=" + removeTaskID;
