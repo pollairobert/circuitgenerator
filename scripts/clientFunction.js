@@ -50,11 +50,13 @@ var cloneCanvas;
 var cloneContext; 
 var checkUsrResistors = [];
 var userResistorsResult = [];
+var task10outputVoltage;
+var task10inputVoltage;
 function compareResults(userCalc, circResult){
     let resultTolerance = [circResult - 0.005, circResult + 0.005];
     //console.log("circuitResults: "+ circResult);
 
-    if (+userCalc >= resultTolerance[0] && +userCalc <= resultTolerance[1]){
+    if (Math.abs(+userCalc) >= resultTolerance[0] && Math.abs(+userCalc) <= resultTolerance[1]){
         return true;
     } else {
         return false;
@@ -125,10 +127,14 @@ function setResultWithPrefix(originalResult ,prefix){
 }
 function startTimer(taskType, resultsOfcircuit, prefixObj){
     //console.log("taskType: "+taskType);
-    
+    /*console.log(circuitResults.link.split("%0A"));
+    for (var i = 1; i < circuitResults.link.split("%0A").length-1; i++){
+        var tempArray = circuitResults.link.split("%0A")[i].split("+");
+        console.log(tempArray);
+    }*/
     //taskType = Number(taskType);
-    countdownMin = 1;
-    countdownSec = 5;
+    countdownMin = 0;
+    countdownSec = 50;
     $("#checkUsrResult").prop("disabled", false);
     $("#result").html('');
     $("#content").html('');
@@ -196,6 +202,48 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         $(".resultOUTRes").hide();
 
     }
+    if (+taskType === 10){
+        //task10inputVoltage;
+        
+        for (var i = 0; i < circuitResults.falstadTXT.length; i++){
+            var element = circuitResults.falstadTXT[i].split(" ");
+            
+            if (element[0] === "v" && element[12] === "2"){
+                task10inputVoltage = +element[8];
+                //$("#resistorResult").append("<span id= 'R"+element[12]+"' >"+resistor[0]+": </span><input type = 'text' class='usrINRes' id = 'usrRes"+(i+1)+"' value=''><span class='resultOUTRes' id='out"+(i+1)+"'> <b>"+resistor[1]+" </b><b style=\"color:red;\">Ω</b></span><br>");
+            }
+            if (element[0] === "p"){
+                //task10outputVoltage = +element[7];
+            }
+        }
+        
+        //task10outputVoltage = Math.floor(Math.random() * ((task10inputVoltage-1) - 1 + 1) + 1);
+        //$("#taskLabel1").hide();
+        //$("#taskLabel2").hide();
+        $("#value2").hide();
+        //$("#out2").hide();
+        $("#value1").hide();
+        //$("#out1").hide();
+        $(".resultOUT").show();
+
+        $("#searchCirc").append("<h3>A hálózat rendelkezésre álló adatai:</h3>");
+        $("#taskLabel1").html("U2 bemenet bipoláris feszültség tartománya: ");
+        $("#taskLabel2").html("A - B pontok között megengedett unipoláris feszültség tartomány: ");
+        $("#out1").html("<b> -"+task10inputVoltage+ " - +" +task10inputVoltage+ " <b style=\"color:red;\">V</b>");
+        $("#out2").html("<b> 0 - "+circuitResults.expectedOutVoltage+" <b style=\"color:red;\">V</b>");
+        $("#out2").append("<hr>");
+        /*for (var i = 0; i < circuitResults.falstadTXT.length; i++){
+            var resistor = circuitResults.resistorDetails[i].split(" ");
+            $("#resistorResult").append("<span id= '"+resistor[0]+"' >"+resistor[0]+": </span><input type = 'text' class='usrINRes' id = 'usrRes"+(i+1)+"' value=''><span class='resultOUTRes' id='out"+(i+1)+"'> <b>"+resistor[1]+" </b><b style=\"color:red;\">Ω</b></span><br>");
+            //$("#resistorResult").append("<span>"+resistor[0]+": </span><input type = 'text' id = 'result"+(i+1)+"' value=''><span class=\"resultOUT\" id=\"out1\"> eredmeny</span><br>");
+        }*/
+        $("#resistorResult").append("<span id= 'R1' >R1: </span><input type = 'text' class='usrINRes' id = 'usrR1' value=''><span class='resultOUTRes' id='out3'></span><br>");
+        $("#resistorResult").append("<span id= 'R2' >R2: </span><input type = 'text' class='usrINRes' id = 'usrR2' value=''><span class='resultOUTRes' id='out4'></span><br>");
+        $("#resistorResult").append("<span id= 'R3' >R3: </span><input type = 'text' class='usrINRes' id = 'usrR3' value=''><span class='resultOUTRes' id='out5'></span><br>");
+        $("#resistorResult").append("<span id= 'U1' >U1: </span><input type = 'text' class='usrINRes' id = 'usrU1' value=''><span class='resultOUTRes' id='out6'></span><br>");
+        $(".resultOUTRes").hide();
+
+    }
     clearInterval(timer);
     let linkOfFalstad = '<b><a href="' + resultsOfcircuit.link + '" target="_blank">Falstad</a></b>';
     timer = setInterval(function () {
@@ -206,7 +254,11 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         }
         if (countdownSec === 0 && countdownMin === 0) {
             clearInterval(timer);
-            $("#timeoutorsolve").append("<h3>Hálózat megtekintése a " + linkOfFalstad + " oldalán.</h3>");
+            if (+taskType === 9 || +taskType === 10){
+                $("#timeoutorsolve").append("<h3>Hálózat egy lehetséges megoldásának megtekintése a " + linkOfFalstad + " oldalán.</h3>");
+            } else {
+                $("#timeoutorsolve").append("<h3>Hálózat megtekintése a " + linkOfFalstad + " oldalán.</h3>");
+            }
             $("#checkUsrResult").attr("disabled", "disabled");
             $(".resultOUT").show();
             $(".resultOUTRes").show();
@@ -228,6 +280,14 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
             if (+taskType === 8){
                 $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.terminalVolt,prefixObj.terminalVoltPrefix)).toFixed(3)+"</b>");
                 $("#out2").hide();
+            }
+            if (+taskType === 10){
+                $("#out2").append("<b>Egy lehetséges megoldás: </b><hr>");
+                $("#out3").html("<b>"+ circuitResults.resistorDetails[0].split(" ")[1]+"</b> <b style=\"color:red;\">Ω</b>");
+                $("#out4").html("<b>"+ circuitResults.resistorDetails[1].split(" ")[1]+"</b> <b style=\"color:red;\">Ω</b>");
+                $("#out5").html("<b>"+ (+circuitResults.resistorDetails[2].split(" ")[1]).toFixed(3)+"</b> <b style=\"color:red;\">Ω</b>");
+                $("#out6").html("<b>" +task10inputVoltage+ "</b> <b style=\"color:red;\">V</b>");
+
             }
             timeout = true;
             timeOutResult("timeout");
@@ -262,7 +322,7 @@ function checkResistorResult(resDetail,usrResValues){
     for (var i =0; i < resDetail.length; i++){
 
         var resistor = circuitResults.resistorDetails[i].split(" ");
-        console.log("egyeduli a : "+resistor[0]+" ellenallas: " +isOnlyResistor(circuitResults.multiResInBranch,resistor[0]));
+        //console.log("egyeduli a : "+resistor[0]+" ellenallas: " +isOnlyResistor(circuitResults.multiResInBranch,resistor[0]));
         if (isOnlyResistor(circuitResults.multiResInBranch,resistor[0]) && ((+usrResValues[i]) >= (+resistor[1])-10 && (+usrResValues[i]) <= (+resistor[1])+10)){
             checkUsrResistors[i] = true;
         } 
@@ -315,6 +375,117 @@ function checkResult(userResult1, userResult2){
         checkingUsrResult1 = compareResults(userResult1,+Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)));
     }
     
+}
+function checkTask10Result(r1, r2, r3, u1) {
+    var expectedVoltageTolerance = [(+circuitResults.expectedOutVoltage-0.005),(+circuitResults.expectedOutVoltage+0.005)];
+    console.log(expectedVoltageTolerance);
+    if ((+r1 < 1000 || +r1 > 680000) || (+r2 < 1000 || +r2 > 680000)){
+        alert("R1 és R2 minimum 1 KΩ,\n maximum 680 kΩ lehet.");
+        return false;
+    }
+    if ((r1 !== r2 && u1 !== task10inputVoltage) /*&& ((+r1 > 1000 && +r1 < 680000) && (+r2 > 1000 && +r2 < 680000))*/){
+        alert("Nem megfelelő R1, R2 ás U1 értékek!");
+        return false;
+    }
+    if (r1 !== r2 /*&& ((+r1 > 1000 && +r1 < 680000) && (+r2 > 1000 && +r2 < 680000))*/){
+        alert("Nem megfelelő R1 és R2 értékek!");
+        return false;
+    }
+    if (u1 !== task10inputVoltage /*&& ((+r1 > 1000 && +r1 < 680000) && (+r2 > 1000 && +r2 < 680000))*/){
+        alert("Nem megfelelő U1 érték!");
+        return false;
+    }
+    if (calculateTask10Result(r1,r2,r3,u1,expectedVoltageTolerance)){
+        //var linkOfFalstad = '<b><a href="' + circuitResults.link + '" target="_blank">Falstad</a></b>';
+        var splitedFalstadLink = circuitResults.link.split("%0A");
+        var link = splitedFalstadLink[0]+"%0A";
+        var tempsplited = [];
+        for (var i = 1; i < splitedFalstadLink.length-1; i++){
+            var tempArray = splitedFalstadLink[i].split("+");
+            //console.log(tempArray);
+            /*if (tempArray[0] === "v"){
+                splitedFalstadLink[i] = "";
+
+                //var tempArray = splitedFalstadLink[i].split("+");
+                if (+tempArray[tempArray.length-1] === 1){
+                    tempArray[8] = u1;
+                }
+                if (+tempArray[tempArray.length-1] === 2){
+                    if (+tempArray[8] < 0){
+                        tempArray[8] = -u1;
+                    }else {
+                        tempArray[8] = u1;
+                    }
+                }
+                splitedFalstadLink[i] += tempArray[0];
+                for (var j = 1; j < tempArray.length; j++){
+                    splitedFalstadLink[i] += "+"+tempArray[j];
+                }
+                
+            }*/
+            if (tempArray[0] === "r"){
+                
+                splitedFalstadLink[i] = "";
+                //var tempArray = splitedFalstadLink[i].split("+");
+                if (+tempArray[tempArray.length-1] === 1){
+                    //console.log(tempArray);
+                    tempArray[6] = ""+r1+ "" ;
+                    //console.log(tempArray[6]);
+                }
+                if (+tempArray[tempArray.length-1] === 2){
+                    tempArray[6] = ""+r2+ "" ;
+                }
+                if (+tempArray[tempArray.length-1] === 3){
+                    tempArray[6] = ""+r3+ "" ;
+                }
+                //console.log(tempArray);
+                splitedFalstadLink[i] += tempArray[0];
+                //console.log(splitedFalstadLink[i]);
+                for (var j = 1; j < tempArray.length; j++){
+                    splitedFalstadLink[i] += "+"+tempArray[j];
+                }
+                //console.log(splitedFalstadLink[i]);
+                //splitedFalstadLink[i].split("+").length-1 
+            }
+            link += splitedFalstadLink[i]+"%0A"
+        }
+        //console.log(link);
+        var linkOfFalstad = '<b><a href="' + link + '" target="_blank">Falstad</a></b>';
+        $("#timeoutorsolve").html("<h3>Helyes megoldásod ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
+
+        $("#checkUsrResult").attr("disabled", "disabled");
+        $(".resultOUT").show();
+        $(".resultOUTRes").show();
+        $(".usrIN").hide();
+        $(".usrINRes").hide();
+        $("#out2").append("<b>Megadott értékeid: </b><hr>");
+        $("#out3").html("<b>"+ r1+"</b> <b style=\"color:red;\">Ω</b>");
+        $("#out4").html("<b>"+ r2+"</b> <b style=\"color:red;\">Ω</b>");
+        $("#out5").html("<b>"+ r3+"</b> <b style=\"color:red;\">Ω</b>");
+        $("#out6").html("<b>" +u1+ "</b> <b style=\"color:red;\">V</b>");
+        alert('Helyes megoldás!');
+        timeout = true;
+        clearInterval(timer);
+        timeOutResult(removeTaskID,+select);
+        return true;
+    } else {
+        alert('Helytelen megoldás!');
+        return false;
+    }
+    console.log(r1);
+    console.log(r2);
+    console.log(r3);
+    console.log(u1);
+}
+function calculateTask10Result(r1, r2, r3, u1, expOutTol){
+    var resultingResistance = ((r1*r2)/(r1+r2));
+    var calculatedOutputVoltage = u1*(r3/(r3+resultingResistance));
+    console.log(calculatedOutputVoltage);
+    if (calculatedOutputVoltage >= expOutTol[0] && calculatedOutputVoltage <= expOutTol[1]){
+        return true;
+    } else {
+        return false;
+    }
 }
 function timeOutResult(whereCall) {
     var timeoutURL = host + "/timeout?id=" + removeTaskID;
