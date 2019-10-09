@@ -32,31 +32,73 @@
    * Betolti a halozat kirajzolasat megjelnito feluletet.
    */
 function loadCanvas(){	
+    //$("#canvas").show();
     
     /**
      * Ebben a reszben van beallitva, hogy a generalt halozat a kanvas kozepere keruljon.
      * A kiszamolt ket ellentetes sarokpont segitsegevel.
      */
+    //var xscale = 3.9;
+    //var yscale = 3.9;
+    //ctx.scale(2,2);
     var coordinateArray = circuitResults.falstadTXT;
-    translateX = 600;
-    translateY = 500;
+    //translateX = 375;
+    //translateY = 375;
     negativX = Infinity;
     negativY = Infinity;
     positiveX = -Infinity;
     positiveY = -Infinity;
     findDrawingCircuitPositivAndNegativCorners(coordinateArray);
+    var scale;
+    //ctx.scale(xscale,yscale);
+    var circuitMaxWidth = Math.abs(negativX - positiveX);
+    var circuitMaxHeight = Math.abs(negativY - positiveY);
+    if (circuitMaxWidth > circuitMaxHeight) {
+        scale = 750 / circuitMaxWidth;
+        if (scale > 2){
+            scale = 2;
+        }
+    } else {
+        scale = 750 / circuitMaxHeight;
+        if (scale > 2){
+            scale = 2;
+        }
+    }
+    console.log("scale:" +scale);
+   
+    ctx.canvas.width = scale*(Math.abs(negativX - positiveX) + (+select === 8 ? 170: 100));
+    ctx.canvas.height = scale*(Math.abs(negativY - positiveY) + 50);
+    console.log("ctx.canvas.width:" +ctx.canvas.width);
+    console.log("ctx.canvas.height:" +ctx.canvas.height);
+    ctx.scale(scale,scale);
+    //ctx.canvas.height = 750;
+    //ctx.canvas.width = 750;
+    //ctx.scale(xscale,yscale);
+    translateX = ctx.canvas.width / 2;
+    translateY = ctx.canvas.height / 2;
+    console.log("translateX:" +translateX)
+    console.log("translateY:" +translateY)
     translateOffset = [(negativX + positiveX)/2,(negativY + positiveY)/2];
-    translateX -= translateOffset[0];
-    translateY -= translateOffset[1];
-    
-    ctx.translate(translateX, translateY);
-    trackTransforms(ctx);
+    //translateX -= translateOffset[0];
+    //translateY -= translateOffset[1];
+    translateX = (translateX / scale) - translateOffset[0];
+    translateY = (translateY / scale) - translateOffset[1];
+    ctx.translate(translateX + ((+select === 8 ? 40 : 0)), translateY);
+    //ctx.canvas.width = Math.abs(negativX - positiveX);
+    //ctx.canvas.height = Math.abs(negativY - positiveY);
+    console.log("negativX:" +negativX)
+    console.log("negativY:" +negativX)
+    console.log("positiveX:" +positiveX)
+    console.log("positiveY:" +positiveY)
+    console.log("kozeppontX:" +translateOffset[0])
+    console.log("kozeppontY:" +translateOffset[1])
+    //trackTransforms(ctx);
     
     /**
      * A halozat megrajzolasat vegzo fuggveny.
      */
-    function redraw(){
-        
+    //function redraw(){
+       
         // Alternatively:
         ctx.save();
         ctx.setTransform(1,0,0,1,0,0);
@@ -153,7 +195,7 @@ function loadCanvas(){
                 }
             }
         }
-        /*
+        
         //Az aramkori rajz bal felso sarka
         //-x -y
         ctx.beginPath();
@@ -163,6 +205,7 @@ function loadCanvas(){
         ctx.fillStyle = '#ff0000';
         ctx.fill();
         ctx.stroke();
+        
         
         //Az aramkori rajz jobb also sarka
         //+x +y
@@ -191,10 +234,10 @@ function loadCanvas(){
         ctx.fillStyle = '#4df50a';
         ctx.fill();
         ctx.stroke();
-        */
-    }
-    redraw();
-    
+        
+    //}
+    //redraw();
+    /*
     var lastX=canvas.width, lastY=canvas.height;
     var dragStart,dragged;
     canvas.addEventListener('mousedown',function(evt){
@@ -237,9 +280,9 @@ function loadCanvas(){
         return evt.preventDefault() && false;
     };
     canvas.addEventListener('DOMMouseScroll',handleScroll,false);
-    canvas.addEventListener('mousewheel',handleScroll,false);
+    canvas.addEventListener('mousewheel',handleScroll,false);*/
 };
-
+/*
 // Adds ctx.getTransform() - returns an SVGMatrix
 // Adds ctx.transformedPoint(x,y) - returns an SVGPoint
 function trackTransforms(ctx){
@@ -296,7 +339,7 @@ function trackTransforms(ctx){
         pt.x=x; pt.y=y;
         return pt.matrixTransform(xform.inverse());
     }
-}
+}*/
 function clearCanvas() {  
     canvas.width = canvas.width;
 }

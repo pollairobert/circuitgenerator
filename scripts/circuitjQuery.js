@@ -23,7 +23,7 @@
  */
 
 $(document).ready(function () {
-
+  
   //egyelore nem torlom , mert ezzel lehet a kivalasztott legordulonel esemenyt letrehozni
   /*$('select').on('change', function() {
     //alert( $(this).find(":selected").val() );
@@ -37,10 +37,13 @@ $(document).ready(function () {
   });*/
   refresingAndLoadingPage();
   $("#generate").click(function () {
+    //$("canvas").width(300);
+     // $("canvas").height(300);
+      //clearCanvas();
       getTaskDescription();
       var generate;
       if ($("#usrCheck").is(":hidden") || timeout){
-          clearCanvas();
+          //clearCanvas();
           generate = host + '/generate?type=' + select;
           $.get(generate, function (data, status) {
             console.log(JSON.parse(data));
@@ -48,13 +51,14 @@ $(document).ready(function () {
             removeTaskID = circuitResults.id;
             setPrefixOfResults(circuitResults,select);
             startTimer(select,circuitResults,prefixes);
+            
             loadCanvas();
           });
       } else {
           generate = host + '/generate?type=' + select + '&id=' + removeTaskID;
           var confirmation = confirm('Biztos szeretnél újat generálni?');
           if (confirmation) {
-            clearCanvas();
+            //clearCanvas();
             $.get(generate, function (data, status) {
               console.log(JSON.parse(data));
               circuitResults = JSON.parse(data);

@@ -50,8 +50,8 @@ var timer, timeout, thr, thv, countdownMin, countdownSec, select, removeTaskID,
  * igy zoomolaskor vagy mozgataskor eltunne.
  * 
  */
-var translateX = 600; //A Canvas bal felso sarkabol 
-var translateY = 500; //eltolja a 0,0 kezdokoordinatat.
+var translateX;// = 375; //A Canvas bal felso sarkabol 
+var translateY;// = 375; //eltolja a 0,0 kezdokoordinatat.
 
 var img_0 = new Image(); img_0.src = host+"/number0.svg";
 var img_1 = new Image(); img_1.src = host+"/number1.svg";
@@ -142,13 +142,15 @@ var description = {
     },
     "type7": {
         "Mérési hiba megadása": 
-            "Adott egy <b style=\"color:red;font-size: 25px;\">2 MΩ</b> belső ellenállású feszültségmérő. Mekkora lesz az abszolút és relatív mérési hiba, ha az alábbi hálózat  A - B pontján mérjük meg a feszültséget?<br>"+
+            "Adott egy <b style=\"color:red;font-size: 25px;\">2 MΩ</b> belső ellenállású feszültségmérő.<br>"+
+            "Mekkora lesz az abszolút és relatív mérési hiba, ha az alábbi hálózat  A - B pontján mérjük meg a feszültséget?<br>"+
             "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
             "Legalább 3 tizedesjegy pontosságú legyen!"
     },
     "type8": {
         "Megadott belső ellenállású feszültséggenerátor beiktatása": 
-            "Adott a képen balra látható belső ellenállású és feszültségű generátor. Add meg mekkora lesz az A és B pontok közötti kapocsfeszültség, ha rákötjük a generátort ezen pontokra.<br>"+
+            "Adott a képen balra látható belső ellenállású és feszültségű generátor.<br>"+
+            "Add meg mekkora lesz az A és B pontok közötti kapocsfeszültség, ha rákötjük a generátort ezen pontokra.<br>"+
             "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
             "Legalább 3 tizedesjegy pontosságú legyen!"
     },

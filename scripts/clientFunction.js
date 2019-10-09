@@ -40,6 +40,7 @@ function compareResults(userCalc, circResult){
  * Lap betoltesekor elrejti a nem szukseges html elemeket. 
  */
 function refresingAndLoadingPage(){
+    
     canvas = document.getElementById('drawCircuit');
     ctx = canvas.getContext('2d');
     $("#usrCheck").hide();
@@ -279,8 +280,8 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     $("#hrUP").show();
     $("#resistorResult").html("");
     $("#drawCircuit").show();
-    $("#result").append("<p>A kép egérrel nagyítható és mozgatható.</p>");
-    $("#hrDown").show();
+    //$("#result").append("<p>A kép egérrel nagyítható és mozgatható.</p>");
+    //$("#hrDown").show();
     if (+taskType >0 && +taskType <=5 ){
         $("#taskLabel1").html("Thevenin feszültség (<b style=\"color:red;\">" + prefixObj.thVoltPrefix + "V</b>): ");
         $("#taskLabel2").html("Thevenin ellenállás (<b style=\"color:red;\">" + prefixObj.thResPrefix + "Ω</b>): ");
