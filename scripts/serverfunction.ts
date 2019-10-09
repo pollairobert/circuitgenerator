@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+/**
+ * A server oldali fuggvenyeket osszegyujto osztaly.
+ */
 export class Serverfunction{
     private fs = require('fs');
-    private checkTimeToSolvedTask: number = 50*60*1000;
-    //private format = require('string-format');
-    public readDescripiom(type){
-
-    }
-
+    private checkTimeToSolvedTask: number = 50*60*1000; //ennyi ideig hagyja meg a generateLOG fajlban a generalt de valamiert nem torolt (pl oldal ujratoltes) feladatot.
+    
     public selectDescription(){
         
         //let valami = "IDE JON EGY VALTOZO";
@@ -45,42 +45,24 @@ export class Serverfunction{
             console.log("student: "+data);
         });*/
     }
+
+    /**
+     * A kapott adatot (feladat informaciok) lementi a generateLOG.json fajlba.  
+     * @param pushData a menteni kivant adat
+     */
     public addDatatoJSONfile(pushData){
-        //console.log("pushData: "+JSON.stringify(pushData));
-        /*if (!this.fs.existsSync('generateLOG.json')){
-            this.fs.writeFileSync('generateLOG.json','{}', (err) => {
-                if (err) {
-                    return console.error(err);
-                }
-            });
-        }*/
         let generateLOG = this.fs.readFileSync('generateLOG.json');
-        //console.log("generateLOG: "+ generateLOG);
-        //let generateLOG = this.fs.readFileSync('descript/description.json');
+
         if (generateLOG[0] === undefined){
-            console.log('Ures file volt');
             generateLOG = '{}';
         }
         let resultLOG = JSON.parse(generateLOG);
-        //let id = pushData.id;
         resultLOG[pushData.id] = pushData;
-        //console.log("resultLOG.resistorDetails: "+ JSON.stringify(resultLOG[id][3]));
         delete resultLOG[pushData.id].falstadTXT;
         delete resultLOG[pushData.id].link;
         delete resultLOG[pushData.id].id;
-        //if (resultLOG[pushData.id]["circuit"] !== undefined){
-            //delete resultLOG[pushData.id].circuit[0];
-        //}
-        //
-
-        //console.log("resultLOG[pushData.id].resistorDetails: "+ resultLOG[pushData.id].resistorDetails);
-        //console.log("resultLOG[pushData.id].multiResInBranch: "+ resultLOG[pushData.id].multiResInBranch);
-        //resultLOG.remove(pushData.id).resistorDetails;
-        //delete resultLOG[id][multiResInBranch];
-        
         let pushlogData = JSON.stringify(resultLOG, null, 2);
-        
-    
+
         this.fs.writeFileSync('generateLOG.json',pushlogData, (err) => {
             if (err) {
                 return console.error(err);
@@ -88,14 +70,18 @@ export class Serverfunction{
         });
         
     }
+
+    /**
+     * A megadott ID-val rendelkezo feladat torleset vegzi el a LOG fajlbol
+     * (megoldott feladat, lejart ido, valamint idokorlatun tul tarolt feladatokra)
+     * @param id feladat ID
+     */
     public deleteDatatoJSONfile(id: string){
-        console.log("Ezt kellene torolni: "+id);
         let generateLOG = this.fs.readFileSync('generateLOG.json');
         let resultLOG = JSON.parse(generateLOG);
-        console.log("torlos fuggvenyben");
-        console.log(resultLOG);
         delete resultLOG[id];
         let refreshlogData = JSON.stringify(resultLOG, null, 2);
+
         this.fs.writeFileSync('generateLOG.json',refreshlogData, (err) => {
             if (err){
                 return console.error(err);
@@ -103,60 +89,46 @@ export class Serverfunction{
         });
         
     }
-    
+    /**
+     * Ezt a fuggvenyt egy idozitoben hivja a fuggveny, hogy a LOG-olt feladatok letrehozasanak idejet ellenorizze.
+     * Ha pedig bent ragadt valamilyen okbol egy feladat a LOG fajlban, akkor az idokorlatot meghaladot torli.
+     */
     public checkSolving(){
         let generateLOG = this.fs.readFileSync('generateLOG.json');
-        /*if (generateLOG[0] === undefined){
-            this.fs.writeFileSync('generateLOG.json',"{}", (err) => {
-                if (err) {
-                    return console.error(err);
-                }
-            });
-            generateLOG = this.fs.readFileSync('generateLOG.json');
-        }*/
         let resultLOG = JSON.parse(generateLOG);
         let deleted: boolean = false;
         let difference; 
-        console.log(Object.keys(resultLOG).length);
         
         if (Object.keys(resultLOG).length > 0){
-            console.log('resultLOG elotte: ');
-            console.log(resultLOG);
             for (let key in resultLOG) {
                 if (resultLOG.hasOwnProperty(key)) {
                     difference = this.timeDifference(new Date(),new Date(resultLOG[key].timestamp));
-                    console.log(key+': '+difference[0]+ ' day '+difference[1]+ ' hour '+difference[2]+ ' minute '+difference[3]+ ' sec.');
                     if (difference[0] > 0 || difference[1] > 0 || difference[2] > 5 /*|| difference[3] > 25 */ ){
-                        console.log('van torolni vali');
                         deleted = true;
                         delete resultLOG[key];
-                        //deleteDatatoJSONfile(key);
                     }
                 }
             }
-            console.log('resultLOG torles utan: ');
-            console.log(resultLOG);
             if (deleted){
-                console.log('resultLOG utana: ');
-                //setTimeout(() =>{
-                    let refreshlogData = JSON.stringify(resultLOG, null, 2);
-                    console.log(refreshlogData);
-                    this.fs.writeFileSync('generateLOG.json',refreshlogData, (err) => {
-                        console.log(refreshlogData);
-                        if (err) {
-                            return console.error(err);
-                        }
-                    });
-                //},200);
+                let refreshlogData = JSON.stringify(resultLOG, null, 2);
+                this.fs.writeFileSync('generateLOG.json',refreshlogData, (err) => {
+                    if (err) {
+                        return console.error(err);
+                    }
+                });
                 console.log('Idokorlaton tuli feladatok torolve!')
-            } else {
-                console.log('Minden feladat aktiv');
-            }
+            } 
         } else {
             console.log('Kiadott feladatok listaja ures!');
         }
         return;
     }
+
+    /**
+     * Kiszamolja ket idopont kozott eltelt ido.
+     * @param date1 egyik idopont
+     * @param date2 masik idopont
+     */
     public timeDifference(date1,date2) {
         let difference = date1 - date2;
         let daysDifference = Math.floor(difference/1000/60/60/24);
@@ -170,9 +142,12 @@ export class Serverfunction{
     
         let secondsDifference = Math.floor(difference/1000);
     
-        //return daysDifference+ ' day '+hoursDifference+ ' hour '+minutesDifference+ ' minute '+secondsDifference+ ' sec.';
         return [daysDifference, hoursDifference, minutesDifference, secondsDifference];
     }
+
+    /**
+     * Megviszgalja server inditasakor, hogy letezik-e a generateLOG.json fajl es ha nem akkor letrehozza.
+     */
     public checkExistTaskLOGfile(): void{
         if (!this.fs.existsSync('generateLOG.json')){
             this.fs.writeFileSync('generateLOG.json','{}', (err) => {
@@ -182,14 +157,18 @@ export class Serverfunction{
             });
         }
     }
+
+    /**
+     * Idozito, ami megadott idonkent lefuttatja a feladat ellenorzo fuggvenyt.
+     */
     public intervalTimer(){
         setInterval(() =>this.checkSolving(),this.checkTimeToSolvedTask);
         //return setInterval(this.checkSolving(),this.checkTimeToSolvedTask);
     }
-    public getCheckTime():number {
+    /*public getCheckTime():number {
         return this.checkTimeToSolvedTask;
     }
     public getFs(){
         return this.fs;
-    }
+    }*/
 }

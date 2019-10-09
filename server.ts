@@ -22,12 +22,10 @@
  * THE SOFTWARE.
  */
 
-import { CircuitGenerator } from './model/circuitgenerator';
-import { Circuit } from './model/circuit';
-import { CircuitAnalyzer } from './model/circuitanalyzer';
+ /**
+  * NODE Szerver letrehozasa itt tortenik. Itt van lekezelve a kliens - szerver kapcsolat.
+  */
 import { Main } from './main';
-import * as math from 'mathjs';
-import { finished } from 'stream';
 import { Serverfunction } from './scripts/serverfunction';
 
 
@@ -51,9 +49,9 @@ app.get('/', (req,res)=> {
 app.get('/scripts/circuitjQuery.js', (req,res)=> {
     res.sendFile(path.join(__dirname + '/scripts/circuitjQuery.js'));
 });
-/*app.get('description.json', (req,res)=> {
-    res.sendFile(path.join(__dirname + 'description.json'));
-});*/
+app.get('/scripts/clientVariables.js', (req,res)=> {
+    res.sendFile(path.join(__dirname + '/scripts/clientVariables.js'));
+});
 app.get('/scripts/clientFunction.js', function (req, res) {
     res.sendFile(path.join(__dirname + '/scripts/clientFunction.js'));
 });
@@ -64,52 +62,23 @@ app.get('/css/generator.css', function (req, res) {
     res.sendFile(path.join(__dirname + '/css/generator.css'));
 });
 app.get('/generate', function (req, res) {
-    //let circuitCoordinateArray: string[];
-    //let link: string;
     let main: Main = new Main();
-    console.log('req.query.id: '+req.query.id);
     let type: number;
     type = +req.query.type;
-    console.log(typeof(type));
-    console.log(type);
-    
     if (req.query.id !== undefined){
         serverFunction.deleteDatatoJSONfile(req.query.id);
         console.log('nem megoldott feladat, ujrageneralas tortent');
     }
-    if (type <= 10){
-        main.start(type);
-        //link = main.getFalstadLink();
-        //circuitCoordinateArray = main.getCircuitCoordinateArray();
-        let generateResponse = main.getTaskResults();
-        //console.log('response: ');
-        //console.log(generateResponse);
-        
-        res.send(JSON.stringify(generateResponse));
-    } 
-    if (type === 10){
-        //res.send(JSON.stringify(generateResponse));
-    }
+    main.start(type);
+    let generateResponse = main.getTaskResults();
+    res.send(JSON.stringify(generateResponse));
     serverFunction.addDatatoJSONfile(main.getTaskResults());
-    //serverFunction.selectDescription();
 });
-
-
 app.get('/timeout', (req, res) => {
     let id = req.query.id;
-    console.log(id);
     serverFunction.deleteDatatoJSONfile(id);
     res.send('Task removed!');
 });
-/*app.post('/task10check', (req, res) => {
-    //let reqCirc = JSON.parse(req.body);
-    let main: Main = new Main();
-    //let reqData = JSON.parse(req.body);
-    console.log(typeof(req));
-    console.log(req.body);
-    //console.log(main);
-    res.send('atjott');
-});*/
 let port = process.env.PORT || 3000;
 let server=app.listen(port,function() {
     console.log('Listening to '+port+' port');

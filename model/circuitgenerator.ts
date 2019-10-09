@@ -185,7 +185,7 @@ export class CircuitGenerator {
      */
     public buildFinalCircuit(circuit: Circuit, type: number): Circuit{
         let circParam: Object = circuit.getParameters();
-        console.log("circParam: "+ circParam);
+        //console.log("circParam: "+ circParam);
         /**
          * [[sajat branch type, kapcsolodo branch type, sajt meshnumber]]
          */
@@ -383,16 +383,16 @@ export class CircuitGenerator {
             this.setCommonBranchesInCircuit(circuit);
             this.setThevenin2PoleInCircuit(circuit, type);
             this.setVoltageSourceInCircuit(circuit, type);
-            for (let i = 0; i < circuit.getNumberOfMesh(); i++){
+            /*for (let i = 0; i < circuit.getNumberOfMesh(); i++){
                 let branches: Branch[] = meshes[i].getBranches();
                 //this.setCommonBranchesInMesh(circuit, meshes[i].getCommonBranchesArray());
-                console.log(meshes[i].getCommonBranchesArray());
+                //console.log(meshes[i].getCommonBranchesArray());
                 //console.log(meshes[i].getMeshBranchesSize());
                 //console.log(branches);
                 for (let j = 0; j < branches.length; j++){
-                    console.log(branches[j].getBranchElements());
+                    //console.log(branches[j].getBranchElements());
                 }
-            }
+            }*/
             this.setResistanceInCircuit(circuit, type);
             this.setCommonBranchesCloneElement(circuit);
             //this.setThevenin2PoleInCircuit(circuit, type);
@@ -1871,7 +1871,7 @@ export class CircuitGenerator {
                                         link +='%0Ap+'+(coordinate[0] + (branchType === 1 ? 20 : -20) )+'+'+(coordinate[1] + (branchType === 1 ? -20 : 20))+'+'+(coordinate[2] + (branchType === 1 ? -20 : 20) )+'+'+(coordinate[3] + (branchType === 1 ? -20 : 20))+'+1+0';
                                         
                                     }
-                                    console.log("halfBranch: " +halfBranch);
+                                    //console.log("halfBranch: " +halfBranch);
                                     //link +='%0Ar+'+coordinate[0]+'+'+coordinate[1]+'+'+coordinate[2]+'+'+coordinate[3]+'+0+'+ res;
                                 } else if ((type >= 1 && type < 6) || type === 9 || type === 10){
                                     ohmMeterCoord.push(coordinate[0],coordinate[1],coordinate[2],coordinate[3])

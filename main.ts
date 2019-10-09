@@ -126,7 +126,7 @@ export class Main {
         this.falstadLink = cg.generateFalstadLink(circuit, type, ((type === 6 || type ===7) ? can.getQuestionRes() : can.getConnectedVoltagesourceResistance()),can.getConnectedVoltagesourceValue());
         if (type === 7){
             measurementError = this.calculateMeasurementError(can.getQuestionResVoltage(),can.getResultOfTheveninVoltage());
-            console.log("measurementError: "+measurementError);
+            //console.log("measurementError: "+measurementError);
         }
         let randomID = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         //if (type < 10){
@@ -144,13 +144,17 @@ export class Main {
                 resValue: can.getQuestionRes(),
                 connVSRes: can.getConnectedVoltagesourceResistance(),
                 connVSVolt: can.getConnectedVoltagesourceValue(),
-                resistorDetails: cg.getCircuitResistorsDetails(),
-                multiResInBranch: cg.getMultiplyResistorInBranch(),
+                resistorDetails: undefined,
+                multiResInBranch: undefined,
                 expectedOutVoltage: undefined,
                 timestamp: new Date()
             }
         if (type === 10){
             this.taskResults["expectedOutVoltage"] = circuit.getExpOutVolt();
+        }
+        if (type === 9 || type === 10){
+            this.taskResults["resistorDetails"] = cg.getCircuitResistorsDetails();
+            this.taskResults["multiResInBranch"] = cg.getMultiplyResistorInBranch();
         }
         //console.log(this.taskResults);
         
@@ -293,34 +297,35 @@ export class Main {
                 }
                 console.log();
             }
-    }
-    
-        console.log('Az aramkor '+ circuit.getNumbOfRes()+' db ellenallast tartalmaz.');
-    
-        console.log();
-        //console.log('Az aramkor Thevenin ellenalasa: '+circuit.getThevRes().toFixed(6)+ ' Ohm');
-        console.log('Az aramkor Thevenin ellenalasa: '+can.getResultOfTheveninResistance().toFixed(6)+ ' Ohm');
-        //console.log('Az aramkor Thevenin helyettesito feszultsege: '+circuit.getThevVolt().toFixed(6)+ ' V');
-        console.log('Az aramkor Thevenin helyettesito feszultsege: '+can.getResultOfTheveninVoltage().toFixed(6)+ ' V');
-    
-        //console.log('A keresett ellenallas arama: '+c.getQuestionResCurrent().toFixed(4)+ ' A');
-        if (can.getQuestionRes() !== undefined){
-            console.log('A mert feszultseg, vagy a keresett ellenallas feszultsege: '+can.getQuestionResVoltage().toFixed(6)+ ' V');
-            console.log('A keresett ellenallason folyo aram: '+can.getQuestionResCurrent().toFixed(8)+ ' A');
+            //console.log('Az aramkor '+ circuit.getNumbOfRes()+' db ellenallast tartalmaz.');
+                
+            console.log();
+            //console.log('Az aramkor Thevenin ellenalasa: '+circuit.getThevRes().toFixed(6)+ ' Ohm');
+            console.log('Az aramkor Thevenin ellenalasa: '+can.getResultOfTheveninResistance().toFixed(6)+ ' Ohm');
+            //console.log('Az aramkor Thevenin helyettesito feszultsege: '+circuit.getThevVolt().toFixed(6)+ ' V');
+            console.log('Az aramkor Thevenin helyettesito feszultsege: '+can.getResultOfTheveninVoltage().toFixed(6)+ ' V');
+
+            //console.log('A keresett ellenallas arama: '+c.getQuestionResCurrent().toFixed(4)+ ' A');
+            if (can.getQuestionRes() !== undefined){
+                console.log('A mert feszultseg, vagy a keresett ellenallas feszultsege: '+can.getQuestionResVoltage().toFixed(6)+ ' V');
+                console.log('A keresett ellenallason folyo aram: '+can.getQuestionResCurrent().toFixed(8)+ ' A');
+            }
+            if (can.getOutputVoltageWithConnectedVoltageSource() !== undefined){
+                console.log('A '+ can.getConnectedVoltagesourceValue()+ ' V-os es ' +can.getConnectedVoltagesourceResistance()+ ' Ohm belso ellenallasu feszgen csatlakoztatasa eseten:');
+                console.log('   A halozat kapocsfeszultseges a keresett pontok kozott: ' +can.getOutputVoltageWithConnectedVoltageSource());
+            }
+
+
+            //if (type > 4){
+            //can.analyzeCircuituit(circuit);
+
+            //console.log('Az aramkor Thevenin ellenalasa: '+circuit.getThevRes().toFixed(6)+ ' Ohm');
+            console.log('Az aramkor Thevenin ellenalasa: '+can.getResultOfTheveninResistance().toFixed(6)+ ' Ohm');
+            //console.log('Az aramkor Thevenin helyettesito feszultsege: '+circuit.getThevVolt().toFixed(6)+ ' V');
+            console.log('Az aramkor Thevenin helyettesito feszultsege: '+can.getResultOfTheveninVoltage().toFixed(6)+ ' V');
         }
-        if (can.getOutputVoltageWithConnectedVoltageSource() !== undefined){
-            console.log('A '+ can.getConnectedVoltagesourceValue()+ ' V-os es ' +can.getConnectedVoltagesourceResistance()+ ' Ohm belso ellenallasu feszgen csatlakoztatasa eseten:');
-            console.log('   A halozat kapocsfeszultseges a keresett pontok kozott: ' +can.getOutputVoltageWithConnectedVoltageSource());
-        }
     
-    
-    //if (type > 4){
-        //can.analyzeCircuituit(circuit);
-    
-        //console.log('Az aramkor Thevenin ellenalasa: '+circuit.getThevRes().toFixed(6)+ ' Ohm');
-        console.log('Az aramkor Thevenin ellenalasa: '+can.getResultOfTheveninResistance().toFixed(6)+ ' Ohm');
-        //console.log('Az aramkor Thevenin helyettesito feszultsege: '+circuit.getThevVolt().toFixed(6)+ ' V');
-        console.log('Az aramkor Thevenin helyettesito feszultsege: '+can.getResultOfTheveninVoltage().toFixed(6)+ ' V');
+        
     //}
         //console.log(cg.percentRandom(10));
     }

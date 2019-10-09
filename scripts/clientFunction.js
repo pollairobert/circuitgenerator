@@ -21,47 +21,158 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var host = "http://localhost:3000";
-var timer;
-var timeout;
-var setTimer = false;
-var thr;
-var thv;
-var prefixes = {
-    thResPrefix: undefined,
-    thVoltPrefix: undefined,
-    resCurrPrefix: undefined,
-    resVoltPrefix: undefined,
-    absErrorPrefix: undefined,
-    terminalVoltPrefix: undefined
-};
-var countdownMin;
-var countdownSec;
-var select;
-var removeTaskID;
-var title;
-var descript;
-var circuitResults; //A servertol kapott valasz Obj
-//var select;
-var checkingUsrResult1;
-var checkingUsrResult2;
-var canvas, ctx;
-var cloneCanvas; 
-var cloneContext; 
-var checkUsrResistors = [];
-var userResistorsResult = [];
-var task10outputVoltage;
-var task10inputVoltage;
+ /**
+  * A felhasznalo altal beirt erteket hasonlitja ossze a tenyleges ertekkel. 
+  * Legtobb esetben 5 ezrelekes hibahatar megengedett
+  * @param {*} userCalc fehasznalo eredmenye
+  * @param {*} circResult tenyleges erteke a keresett valtozonak.
+  */
 function compareResults(userCalc, circResult){
     let resultTolerance = [circResult - 0.005, circResult + 0.005];
-    //console.log("circuitResults: "+ circResult);
-
     if (Math.abs(+userCalc) >= resultTolerance[0] && Math.abs(+userCalc) <= resultTolerance[1]){
         return true;
     } else {
         return false;
     }
 }
+
+/**
+ * Lap betoltesekor elrejti a nem szukseges html elemeket. 
+ */
+function refresingAndLoadingPage(){
+    canvas = document.getElementById('drawCircuit');
+    ctx = canvas.getContext('2d');
+    $("#usrCheck").hide();
+    $("#drawCircuit").hide();
+    $("#drawCircuit").closest();
+    $("#hrUP").hide();
+    $("#hrDown").hide();
+}
+
+/**
+ * Felhasznalo altal beirt eredmeny ellenorzeseset vegzo fuggveny a feladattipusoknak megfeleloen.
+ */
+function userSolutionCheck(){
+    var wrongElement1;
+    var wrongElement2;
+    if (+select >=1 && +select <=8){
+      checkResult(+$("#value1").val(),+$("#value2").val());
+    }
+    if (+select === 9){
+      userResistorsResult = [];
+      checkUsrResistors = [];
+      for(var i = 0; i < circuitResults.resistorDetails.length; i++){
+        userResistorsResult.push(+$("#usrRes"+(i+1)).val());
+        checkUsrResistors.push(false);
+      }
+      checkResistorResult(circuitResults.resistorDetails,userResistorsResult);
+    }
+    if (+select === 10){
+      checkTask10Result(+$("#usrR1").val(),+$("#usrR2").val(),+$("#usrR3").val(),+$("#usrU1").val())
+    }
+    if (+select > 0 && +select <= 5){
+        wrongElement1 = " feszültség ";
+        wrongElement2 = " ellenállás ";
+    }
+    if (+select === 6){
+      wrongElement1 = " áram ";
+      wrongElement2 = " feszültseg ";
+    }
+    if (+select === 7){
+      wrongElement1 = " abszolút hiba ";
+      wrongElement2 = " relatív hiba ";
+    }
+    if (+select === 8){
+      wrongElement1 = " kapocsfeszültség  ";
+      checkingUsrResult2 = true;
+    }
+    
+    if (+select > 0 && +select <= 8){
+      if (checkingUsrResult1 && checkingUsrResult2) {
+        var linkOfFalstad = '<b><a href="' + circuitResults.link + '" target="_blank">Falstad</a></b>';
+        $("#timeoutorsolve").html("<h3>Feladat megoldásának ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
+        clearInterval(timer);
+        $(".usrIN").hide();
+        $(".resultOUT").show();
+        $("#checkUsrResult").attr("disabled", "disabled");
+        if (+select >0 && +select <=5 ){
+          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)).toFixed(3)+"</b>");
+          $("#out2").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thRes,prefixes.thResPrefix)).toFixed(3)+"</b>");
+        }
+        if (+select === 6){
+            $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.resCurrent,prefixes.resCurrPrefix)).toFixed(3)+"</b>");
+            $("#out2").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.resVolt,prefixes.resVoltPrefix)).toFixed(3)+"</b>");
+        }
+        if (+select === 7){
+            $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.absError,prefixes.absErrorPrefix)).toFixed(3)+"</b>");
+            $("#out2").html("<b>" +circuitResults.relError.toFixed(3)+"</b>");
+        }
+        if (+select === 8){
+            $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)).toFixed(3)+"</b>");
+            $("#out2").hide();
+        }
+        timeout = true;
+        timeOutResult(removeTaskID,+select);
+        alert('Helyes megoldás!');
+      }
+      if (!checkingUsrResult1 && checkingUsrResult2) {
+        $("#value1").val("");
+        alert("Rossz"+wrongElement1+"érték!");
+      }
+      if (checkingUsrResult1 && !checkingUsrResult2) {
+        $("#value2").val("");
+        alert("Rossz"+wrongElement2+"érték!");
+      }
+      if (!checkingUsrResult1 && !checkingUsrResult2) {
+        $(".usrIN").val("");
+        alert('Helytelen megoldás!');
+      }
+    }
+    if (+select === 9){
+      var linkOfFalstad = '<b><a href="' + circuitResults.link + '" target="_blank">Falstad</a></b>';
+      var allTrue = true;
+      var falseResistor = [];
+      
+      for (var i = 0; i < checkUsrResistors.length; i++){
+        if (checkUsrResistors[i] === false){
+          allTrue = false;
+        }
+      }
+      if (allTrue) {
+        $("#timeoutorsolve").html("<h3>Feladat egy lehetséges megoldásának ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
+        $(".resultOUTRes").show();
+        $(".usrINRes").hide();
+        alert("Helyes megoldás");
+        timeout = true;
+        clearInterval(timer);
+        $("#checkUsrResult").attr("disabled", "disabled");
+        timeOutResult(removeTaskID,+select);
+      } else {
+        var wrongRes = [];
+        for (var i = 0; i < checkUsrResistors.length; i++){
+          if (checkUsrResistors[i] === false){
+            wrongRes.push("R"+(i+1));
+          }
+        }
+        alert("Nem megfelelő értékek: \n "+wrongRes);
+      }
+    }
+}
+/**
+ * Feladathoz tartozo leiras betolteset vegzi a JSON objektumbol a generalaskor.
+ */
+function getTaskDescription(){
+    select = $("select").val();
+    var descriptSelect = "type" + select;
+    $("#drawCircuit").closest();
+    title = Object.keys(description[descriptSelect])[0];
+    descript = description[descriptSelect][title];
+}
+/**
+ * Beallitja feladattipusnak megfeleloen a tenyleges vegeredmenyek megfelelo prefixumat.
+ * @param {*} resultObj a solver altal kiszamolt eredmenyeket tartalmazo objektum
+ * @param {*} type feladat tipusa
+ */
 function setPrefixOfResults(resultObj,type){
     if (+type > 0 && +type <= 5 || +type === 9){
         scanPrefix(Math.abs(resultObj.thRes),"thResPrefix");
@@ -78,6 +189,12 @@ function setPrefixOfResults(resultObj,type){
         scanPrefix(Math.abs(resultObj.terminalVolt),"terminalVoltPrefix");
     }
 }
+/**
+ * A parameterul kapott ertek prefikszumat keresi meg. (mili, mikro, stb)
+ * Majd egy JSON objektben eltarolja a hozza tartozo keresett valtozo tipusaval.
+ * @param {*} result a halozat keresett valtozojanak tenyleges erteke
+ * @param {*} typeOfPrefix es annak tipusa (thevenin ellenallas, ellenallas arama, stb)
+ */
 function scanPrefix(result, typeOfPrefix){
     //console.log("circuit result a scanprefixben: "+ result);
     let prefix = "";
@@ -103,6 +220,11 @@ function scanPrefix(result, typeOfPrefix){
     prefixes[typeOfPrefix] = prefix;
     
 }
+/**
+ * A halozat szamolt erteket atalakitja a megfelelo prefixumu alakra a megadott parameterek segitsegevel.
+ * @param {*} originalResult eredeti erteke a keresett valtozonak
+ * @param {*} prefix a scanPrefix() fuggveny altal beallitott perfixumokat tartalmazo objektum
+ */
 function setResultWithPrefix(originalResult ,prefix){
     let result = originalResult;
     if (prefix ==="m"){
@@ -125,16 +247,17 @@ function setResultWithPrefix(originalResult ,prefix){
     }
     return result;
 }
+
+/**
+ * A feladat vegrehajtasara adott idoszamlalot inditja. 
+ * Valamint ebben tortenik a megfelelo HTML elemek feladattipustol fuggo megjelenite, vagy elrejtese (SPA).
+ * @param {*} taskType feladat tipusa
+ * @param {*} resultsOfcircuit a halozatanalizis utan a szervertol kapott eredmeny objektum
+ * @param {*} prefixObj a scanPrefix() fuggveny altal beallitott perfixumokat tartalmazo objektum
+ */
 function startTimer(taskType, resultsOfcircuit, prefixObj){
-    //console.log("taskType: "+taskType);
-    /*console.log(circuitResults.link.split("%0A"));
-    for (var i = 1; i < circuitResults.link.split("%0A").length-1; i++){
-        var tempArray = circuitResults.link.split("%0A")[i].split("+");
-        console.log(tempArray);
-    }*/
-    //taskType = Number(taskType);
     countdownMin = 0;
-    countdownSec = 50;
+    countdownSec = 40;
     $("#checkUsrResult").prop("disabled", false);
     $("#result").html('');
     $("#content").html('');
@@ -155,11 +278,8 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     $("#content").append("<p style=\"font-size: 20px;\">" + descript + "</p>");
     $("#hrUP").show();
     $("#resistorResult").html("");
-    //$("#resistorResult").hide();
-    //$("#result").append("<h1>Ide jon majd a megjelenitese a halozatnak (CANVAS?)</h1>");
     $("#drawCircuit").show();
     $("#result").append("<p>A kép egérrel nagyítható és mozgatható.</p>");
-    //$("#result").append("<canvas id=\"drawCircuit\" ></canvas>");
     $("#hrDown").show();
     if (+taskType >0 && +taskType <=5 ){
         $("#taskLabel1").html("Thevenin feszültség (<b style=\"color:red;\">" + prefixObj.thVoltPrefix + "V</b>): ");
@@ -180,14 +300,9 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         $("#out2").hide();
     }
     if (+taskType === 9){
-        //$("#taskLabel1").hide();
-        //$("#taskLabel2").hide();
         $("#value2").hide();
-        //$("#out2").hide();
         $("#value1").hide();
-        //$("#out1").hide();
         $(".resultOUT").show();
-
         $("#searchCirc").append("<h3>A csatalakozó hálózat bemeneti korlátozásai:</h3>");
         $("#taskLabel1").html("Bemeneti feszültség: ");
         $("#taskLabel2").html("Bemeneti terhelő ellenállás: ");
@@ -197,55 +312,37 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         for (var i = 0; i < circuitResults.resistorDetails.length; i++){
             var resistor = circuitResults.resistorDetails[i].split(" ");
             $("#resistorResult").append("<span id= '"+resistor[0]+"' >"+resistor[0]+": </span><input type = 'text' class='usrINRes' id = 'usrRes"+(i+1)+"' value=''><span class='resultOUTRes' id='out"+(i+1)+"'> <b>"+resistor[1]+" </b><b style=\"color:red;\">Ω</b></span><br>");
-            //$("#resistorResult").append("<span>"+resistor[0]+": </span><input type = 'text' id = 'result"+(i+1)+"' value=''><span class=\"resultOUT\" id=\"out1\"> eredmeny</span><br>");
         }
         $(".resultOUTRes").hide();
-
     }
     if (+taskType === 10){
-        //task10inputVoltage;
-        
         for (var i = 0; i < circuitResults.falstadTXT.length; i++){
             var element = circuitResults.falstadTXT[i].split(" ");
-            
             if (element[0] === "v" && element[12] === "2"){
                 task10inputVoltage = +element[8];
-                //$("#resistorResult").append("<span id= 'R"+element[12]+"' >"+resistor[0]+": </span><input type = 'text' class='usrINRes' id = 'usrRes"+(i+1)+"' value=''><span class='resultOUTRes' id='out"+(i+1)+"'> <b>"+resistor[1]+" </b><b style=\"color:red;\">Ω</b></span><br>");
-            }
-            if (element[0] === "p"){
-                //task10outputVoltage = +element[7];
             }
         }
-        
-        //task10outputVoltage = Math.floor(Math.random() * ((task10inputVoltage-1) - 1 + 1) + 1);
-        //$("#taskLabel1").hide();
-        //$("#taskLabel2").hide();
         $("#value2").hide();
-        //$("#out2").hide();
         $("#value1").hide();
-        //$("#out1").hide();
         $(".resultOUT").show();
-
         $("#searchCirc").append("<h3>A hálózat rendelkezésre álló adatai:</h3>");
         $("#taskLabel1").html("U2 bemenet bipoláris feszültség tartománya: ");
         $("#taskLabel2").html("A - B pontok között megengedett unipoláris feszültség tartomány: ");
         $("#out1").html("<b> -"+task10inputVoltage+ " - +" +task10inputVoltage+ " <b style=\"color:red;\">V</b>");
         $("#out2").html("<b> 0 - "+circuitResults.expectedOutVoltage+" <b style=\"color:red;\">V</b>");
         $("#out2").append("<hr>");
-        /*for (var i = 0; i < circuitResults.falstadTXT.length; i++){
-            var resistor = circuitResults.resistorDetails[i].split(" ");
-            $("#resistorResult").append("<span id= '"+resistor[0]+"' >"+resistor[0]+": </span><input type = 'text' class='usrINRes' id = 'usrRes"+(i+1)+"' value=''><span class='resultOUTRes' id='out"+(i+1)+"'> <b>"+resistor[1]+" </b><b style=\"color:red;\">Ω</b></span><br>");
-            //$("#resistorResult").append("<span>"+resistor[0]+": </span><input type = 'text' id = 'result"+(i+1)+"' value=''><span class=\"resultOUT\" id=\"out1\"> eredmeny</span><br>");
-        }*/
         $("#resistorResult").append("<span id= 'R1' >R1: </span><input type = 'text' class='usrINRes' id = 'usrR1' value=''><span class='resultOUTRes' id='out3'></span><br>");
         $("#resistorResult").append("<span id= 'R2' >R2: </span><input type = 'text' class='usrINRes' id = 'usrR2' value=''><span class='resultOUTRes' id='out4'></span><br>");
         $("#resistorResult").append("<span id= 'R3' >R3: </span><input type = 'text' class='usrINRes' id = 'usrR3' value=''><span class='resultOUTRes' id='out5'></span><br>");
         $("#resistorResult").append("<span id= 'U1' >U1: </span><input type = 'text' class='usrINRes' id = 'usrU1' value=''><span class='resultOUTRes' id='out6'></span><br>");
         $(".resultOUTRes").hide();
-
     }
     clearInterval(timer);
     let linkOfFalstad = '<b><a href="' + resultsOfcircuit.link + '" target="_blank">Falstad</a></b>';
+
+    /**
+     * Az a fuggveny figyeli a a feladatra kiadott idot es mikor lejar, elerhetove teszi a megfelelo HTML elemeket.
+     */
     timer = setInterval(function () {
         countdownSec--;
         if (countdownSec === -1) {
@@ -264,7 +361,6 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
             $(".resultOUTRes").show();
             $(".usrIN").hide();
             $(".usrINRes").hide();
-                
             if (+taskType >0 && +taskType <=5 ){
                 $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thVolt,prefixObj.thVoltPrefix)).toFixed(3)+"</b>");
                 $("#out2").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thRes,prefixObj.thResPrefix)).toFixed(3)+"</b>");
@@ -287,7 +383,6 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
                 $("#out4").html("<b>"+ circuitResults.resistorDetails[1].split(" ")[1]+"</b> <b style=\"color:red;\">Ω</b>");
                 $("#out5").html("<b>"+ (+circuitResults.resistorDetails[2].split(" ")[1]).toFixed(3)+"</b> <b style=\"color:red;\">Ω</b>");
                 $("#out6").html("<b>" +task10inputVoltage+ "</b> <b style=\"color:red;\">V</b>");
-
             }
             timeout = true;
             timeOutResult("timeout");
@@ -295,10 +390,13 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         $('#usrTimeCounter').text(countdownMin + ' m ' + countdownSec + " s ");
     }, 1000);
 }
+/**
+ * Megallapitja, hogy a parameterul kapott ellenallas egyeduli-e az adott agban.
+ * @param {*} multiRes tobb ellenallast is tartalmazo ag adat tombje
+ * @param {*} resNumber a vizsgalt ellenallas szama.
+ */
 function isOnlyResistor(multiRes,resNumber){
-    //console.log("multiRes.length: "+multiRes.length);
     for (var i = 0; i < multiRes.length; i++){
-        //console.log("multiRes[i]: "+multiRes[i]);
         var branch = multiRes[i].split(" ");
         for(var j = 1; j < branch.length; j++){
             if (resNumber === branch[j]){
@@ -308,58 +406,40 @@ function isOnlyResistor(multiRes,resNumber){
     }
     return true;
 }
-function checkResistorResult(resDetail,usrResValues){
-    var branchResistance = [];
-    /*for (var i = 0; i < resDetail.length-1; i++){
-        var resistor = resDetail[i].split(" ");
-        if ((resistor[1] !== resistor[2]) && resistor[2] === resDetail[i+1].split(" ")[2]){
-            multiplyResistorsInBranch[resistor[2]] = [resistor[0]];
-            multiplyResistorsInBranch[resistor[2]].push(resDetail[i+1].split(" ")[0]);
-        }
-        branchResistance.push(resistor[2]);
-    }
-    console.log("multiplyResistorsInBranch: " +JSON.stringify(multiplyResistorsInBranch)); */
-    for (var i =0; i < resDetail.length; i++){
 
+/**
+ * Az "Áramkör helyes értékeinek megadása I." tipusu feladat felhasznalo altal megadott eredmenyeinek ellenorzeset vegzi.
+ * @param {*} resDetail a halozatban szereplo ellenallasok szamat es ertekeit tartalmazo objektum
+ * @param {*} usrResValues a felhasznalo altal megadott ellenalas ertekek tombje.
+ */
+function checkResistorResult(resDetail,usrResValues){
+    for (var i =0; i < resDetail.length; i++){
         var resistor = circuitResults.resistorDetails[i].split(" ");
-        //console.log("egyeduli a : "+resistor[0]+" ellenallas: " +isOnlyResistor(circuitResults.multiResInBranch,resistor[0]));
         if (isOnlyResistor(circuitResults.multiResInBranch,resistor[0]) && ((+usrResValues[i]) >= (+resistor[1])-10 && (+usrResValues[i]) <= (+resistor[1])+10)){
             checkUsrResistors[i] = true;
         } 
-        
-        /*if ((+branchResistance - (+usrResValues[i])) > 0) {
-            branchResistance[i] -=(+usrResValues[i])
-        }*/
     }
     for (var i = 0; i < circuitResults.multiResInBranch.length; i++){
         var multi = circuitResults.multiResInBranch[i].split(" ");
-        //console.log("multi: " +multi); 
         var branchRes = +multi[0];
         for (var j = 1; j < multi.length; j++){
-            
-            //console.log(multi[j].split("")[1]); 
-            //checkUsrResistors[multi[1].split("")[1]] = true; 
             branchRes -= +$("#usrRes"+multi[j].split("")[1]).val();
         }
         if (branchRes >= (0 - 10) && branchRes <= (0 + 10)){
             for (var j = 1; j < multi.length; j++){
-                //console.log(multi[j].split("")[1])
                 checkUsrResistors[(multi[j].split("")[1])-1] = true;
-                
             }
-            
         }   
-        //console.log("Kivonas utan a branch: "+branchRes);
-        
     }
-    //checkUsrResistors = [];
-    //console.log("checkUsrResistors: " +checkUsrResistors)
 }
+
+/**
+ * Az aramkor keresese tipusu feladatok kiveteleval a tobbi feladat megoldasanak helyesseget ellenorzo fuggveny. 
+ * @param {*} userResult1 felhasznalo ertekmegadasa
+ * @param {*} userResult2 felhasznalo ertekmegadasa
+ */
 function checkResult(userResult1, userResult2){
-    //console.log("userResult1: "+userResult1)
-    //console.log("userResult2: "+userResult2)
     if (+select > 0 && +select <= 5){
-        //console.log("VALAMIJE: "+Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)));
         checkingUsrResult1 = compareResults(userResult1,+Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)));
         checkingUsrResult2 = compareResults(userResult2,+Math.abs(setResultWithPrefix(circuitResults.thRes,prefixes.thResPrefix)));
     }
@@ -376,61 +456,41 @@ function checkResult(userResult1, userResult2){
     }
     
 }
+/**
+ * Az "Áramkör helyes értékeinek megadása II." tipusu feladat felhasznalo altal megadott eredmenyeinek ellenorzeset vegzi.
+ * @param {*} r1 falhasznalo altal megadott ellenallas ertek
+ * @param {*} r2 falhasznalo altal megadott ellenallas ertek
+ * @param {*} r3 falhasznalo altal megadott ellenallas ertek
+ * @param {*} u1 falhasznalo altal megadott generator ertek
+ */
 function checkTask10Result(r1, r2, r3, u1) {
     var expectedVoltageTolerance = [(+circuitResults.expectedOutVoltage-0.005),(+circuitResults.expectedOutVoltage+0.005)];
-    console.log(expectedVoltageTolerance);
     if ((+r1 < 1000 || +r1 > 680000) || (+r2 < 1000 || +r2 > 680000)){
         alert("R1 és R2 minimum 1 KΩ,\n maximum 680 kΩ lehet.");
         return false;
     }
-    if ((r1 !== r2 && u1 !== task10inputVoltage) /*&& ((+r1 > 1000 && +r1 < 680000) && (+r2 > 1000 && +r2 < 680000))*/){
+    if ((r1 !== r2 && u1 !== task10inputVoltage)){
         alert("Nem megfelelő R1, R2 ás U1 értékek!");
         return false;
     }
-    if (r1 !== r2 /*&& ((+r1 > 1000 && +r1 < 680000) && (+r2 > 1000 && +r2 < 680000))*/){
+    if (r1 !== r2){
         alert("Nem megfelelő R1 és R2 értékek!");
         return false;
     }
-    if (u1 !== task10inputVoltage /*&& ((+r1 > 1000 && +r1 < 680000) && (+r2 > 1000 && +r2 < 680000))*/){
+    if (u1 !== task10inputVoltage){
         alert("Nem megfelelő U1 érték!");
         return false;
     }
     if (calculateTask10Result(r1,r2,r3,u1,expectedVoltageTolerance)){
-        //var linkOfFalstad = '<b><a href="' + circuitResults.link + '" target="_blank">Falstad</a></b>';
         var splitedFalstadLink = circuitResults.link.split("%0A");
         var link = splitedFalstadLink[0]+"%0A";
         var tempsplited = [];
         for (var i = 1; i < splitedFalstadLink.length-1; i++){
             var tempArray = splitedFalstadLink[i].split("+");
-            //console.log(tempArray);
-            /*if (tempArray[0] === "v"){
-                splitedFalstadLink[i] = "";
-
-                //var tempArray = splitedFalstadLink[i].split("+");
-                if (+tempArray[tempArray.length-1] === 1){
-                    tempArray[8] = u1;
-                }
-                if (+tempArray[tempArray.length-1] === 2){
-                    if (+tempArray[8] < 0){
-                        tempArray[8] = -u1;
-                    }else {
-                        tempArray[8] = u1;
-                    }
-                }
-                splitedFalstadLink[i] += tempArray[0];
-                for (var j = 1; j < tempArray.length; j++){
-                    splitedFalstadLink[i] += "+"+tempArray[j];
-                }
-                
-            }*/
             if (tempArray[0] === "r"){
-                
                 splitedFalstadLink[i] = "";
-                //var tempArray = splitedFalstadLink[i].split("+");
                 if (+tempArray[tempArray.length-1] === 1){
-                    //console.log(tempArray);
                     tempArray[6] = ""+r1+ "" ;
-                    //console.log(tempArray[6]);
                 }
                 if (+tempArray[tempArray.length-1] === 2){
                     tempArray[6] = ""+r2+ "" ;
@@ -438,21 +498,15 @@ function checkTask10Result(r1, r2, r3, u1) {
                 if (+tempArray[tempArray.length-1] === 3){
                     tempArray[6] = ""+r3+ "" ;
                 }
-                //console.log(tempArray);
                 splitedFalstadLink[i] += tempArray[0];
-                //console.log(splitedFalstadLink[i]);
                 for (var j = 1; j < tempArray.length; j++){
                     splitedFalstadLink[i] += "+"+tempArray[j];
                 }
-                //console.log(splitedFalstadLink[i]);
-                //splitedFalstadLink[i].split("+").length-1 
             }
             link += splitedFalstadLink[i]+"%0A"
         }
-        //console.log(link);
         var linkOfFalstad = '<b><a href="' + link + '" target="_blank">Falstad</a></b>';
         $("#timeoutorsolve").html("<h3>Helyes megoldásod ellenőrzése a " + linkOfFalstad + " oldalán.</h3>");
-
         $("#checkUsrResult").attr("disabled", "disabled");
         $(".resultOUT").show();
         $(".resultOUTRes").show();
@@ -472,56 +526,37 @@ function checkTask10Result(r1, r2, r3, u1) {
         alert('Helytelen megoldás!');
         return false;
     }
-    console.log(r1);
-    console.log(r2);
-    console.log(r3);
-    console.log(u1);
 }
+/**
+ * Az "Áramkör helyes értékeinek megadása II." tipusu feladat felhasznalo altal beirt ertekeivel a halozat analiziset vegzi.
+ * Ez az egy tipusu feladat, aminel a kliens oladlon tortenik a halozatanalizis, mivel nem amugy sem igenyel sok szamolast.
+ * Viszont a feledatban megadott kimeneti erteket a szerveren torteno halozatanilizis szabja meg.
+ * @param {*} r1 falhasznalo altal megadott ellenallas ertek
+ * @param {*} r2 falhasznalo altal megadott ellenallas ertek
+ * @param {*} r3 falhasznalo altal megadott ellenallas ertek
+ * @param {*} u1 falhasznalo altal megadott generator ertek
+ * @param {*} expOutTol elvart kimeneti erteke a halozatnak
+ */
 function calculateTask10Result(r1, r2, r3, u1, expOutTol){
     var resultingResistance = ((r1*r2)/(r1+r2));
     var calculatedOutputVoltage = u1*(r3/(r3+resultingResistance));
-    console.log(calculatedOutputVoltage);
     if (calculatedOutputVoltage >= expOutTol[0] && calculatedOutputVoltage <= expOutTol[1]){
         return true;
     } else {
         return false;
     }
 }
+
+/**
+ * A feladatraadott ido lejartakor, vagy a helyes megoldaskor meghivott fuggveny, 
+ * mely elkuldi a szervernek az aktualis feladat ID-t,hogy torlesre keruljon.
+ * @param {*} whereCall egy string, amit akkor kap, ha tenylegesen az ido jart le ami a feladatra lett kiadva
+ */
 function timeOutResult(whereCall) {
     var timeoutURL = host + "/timeout?id=" + removeTaskID;
-    //console.log(timeoutURL);
     $.get(timeoutURL, function (data, status) {
-        //console.log(status);
         if (whereCall === "timeout"){
             alert("Lejárt az idő! Feladat törölve! ");
         }
     });
-}
-function wichBiger(num1, num2){
-    if (+num1 >= +num2){
-        return num1;
-    } else {
-        return num2;
-    }
-}
-function setDirectionTypeToCircuitElementInCanvas(startX,startY,endX,endY){
-    if(startX === endX){
-        //console.log("melyik nagyobb: "+wichBiger(startY,endY));
-        if (wichBiger(startY,endY) === startY) {
-            return "0"
-        } else {
-            return "2";
-        }
-    } else {
-        //console.log("melyik nagyobb: "+wichBiger(startX,endX));
-        if (wichBiger(startX,endX) === startX) {
-            return "3";
-        } else {
-            return "1";
-        }
-    }
-}
-function meanOfCoordinates(coord1, coord2){
-    //console.log("meanofcoord: "+ (+coord1 + coord2)/2);
-    return ((Number(coord1)+Number(coord2))/2);
 }
