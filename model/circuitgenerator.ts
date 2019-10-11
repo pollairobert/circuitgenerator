@@ -128,14 +128,14 @@ export class CircuitGenerator {
                 break;
             }
             case 4: {
-                parameters = [this.randomIntNumber(7,3),
+                parameters = [this.randomIntNumber(8,3),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(15,8)];
                 break;
             }
             case 5: {
-                parameters = [this.randomIntNumber(7,3),
+                parameters = [this.randomIntNumber(30,30),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(15,8)];
@@ -187,6 +187,9 @@ export class CircuitGenerator {
         let circParam: Object = circuit.getParameters();
         //console.log("circParam: "+ circParam);
         /**
+         * Azokat az ag tipusokat es hozzajuk tartozo hurok szamokat tartalmazza, 
+         * amielyekhez megengedtt a kovetkezo hurok csatlakoztatatsa.
+         * A halozat epito algoritmus hasznalja.
          * [[sajat branch type, kapcsolodo branch type, sajt meshnumber]]
          */
         let acceptebleCommonBranchArray: number[][] = [];

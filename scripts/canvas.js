@@ -64,20 +64,20 @@ function loadCanvas(){
             scale = 2;
         }
     }
-    console.log("scale:" +scale);
+    //console.log("scale:" +scale);
    
     ctx.canvas.width = scale*(Math.abs(negativX - positiveX) + (+select === 8 ? 170: 100));
     ctx.canvas.height = scale*(Math.abs(negativY - positiveY) + 50);
-    console.log("ctx.canvas.width:" +ctx.canvas.width);
-    console.log("ctx.canvas.height:" +ctx.canvas.height);
+    //console.log("ctx.canvas.width:" +ctx.canvas.width);
+    //console.log("ctx.canvas.height:" +ctx.canvas.height);
     ctx.scale(scale,scale);
     //ctx.canvas.height = 750;
     //ctx.canvas.width = 750;
     //ctx.scale(xscale,yscale);
     translateX = ctx.canvas.width / 2;
     translateY = ctx.canvas.height / 2;
-    console.log("translateX:" +translateX)
-    console.log("translateY:" +translateY)
+    //console.log("translateX:" +translateX)
+    //console.log("translateY:" +translateY)
     translateOffset = [(negativX + positiveX)/2,(negativY + positiveY)/2];
     //translateX -= translateOffset[0];
     //translateY -= translateOffset[1];
@@ -86,18 +86,19 @@ function loadCanvas(){
     ctx.translate(translateX + ((+select === 8 ? 40 : 0)), translateY);
     //ctx.canvas.width = Math.abs(negativX - positiveX);
     //ctx.canvas.height = Math.abs(negativY - positiveY);
-    console.log("negativX:" +negativX)
-    console.log("negativY:" +negativX)
-    console.log("positiveX:" +positiveX)
-    console.log("positiveY:" +positiveY)
-    console.log("kozeppontX:" +translateOffset[0])
-    console.log("kozeppontY:" +translateOffset[1])
-    //trackTransforms(ctx);
+    //console.log("negativX:" +negativX)
+    //console.log("negativY:" +negativX)
+    //console.log("positiveX:" +positiveX)
+    //console.log("positiveY:" +positiveY)
+    //console.log("kozeppontX:" +translateOffset[0])
+    //console.log("kozeppontY:" +translateOffset[1])
+
+    trackTransforms(ctx);
     
     /**
      * A halozat megrajzolasat vegzo fuggveny.
      */
-    //function redraw(){
+    function redraw(){
        
         // Alternatively:
         ctx.save();
@@ -195,7 +196,7 @@ function loadCanvas(){
                 }
             }
         }
-        
+        /*
         //Az aramkori rajz bal felso sarka
         //-x -y
         ctx.beginPath();
@@ -234,10 +235,10 @@ function loadCanvas(){
         ctx.fillStyle = '#4df50a';
         ctx.fill();
         ctx.stroke();
-        
-    //}
-    //redraw();
-    /*
+        */
+    }
+    redraw();
+    
     var lastX=canvas.width, lastY=canvas.height;
     var dragStart,dragged;
     canvas.addEventListener('mousedown',function(evt){
@@ -280,9 +281,9 @@ function loadCanvas(){
         return evt.preventDefault() && false;
     };
     canvas.addEventListener('DOMMouseScroll',handleScroll,false);
-    canvas.addEventListener('mousewheel',handleScroll,false);*/
+    canvas.addEventListener('mousewheel',handleScroll,false);
 };
-/*
+
 // Adds ctx.getTransform() - returns an SVGMatrix
 // Adds ctx.transformedPoint(x,y) - returns an SVGPoint
 function trackTransforms(ctx){
@@ -339,7 +340,10 @@ function trackTransforms(ctx){
         pt.x=x; pt.y=y;
         return pt.matrixTransform(xform.inverse());
     }
-}*/
+}
+/**
+ * Torli  canvas tartalmat.
+ */
 function clearCanvas() {  
     canvas.width = canvas.width;
 }
