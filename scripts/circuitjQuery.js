@@ -23,23 +23,92 @@
  */
 
 $(document).ready(function () {
-  
-  //egyelore nem torlom , mert ezzel lehet a kivalasztott legordulonel esemenyt letrehozni
-  /*$('select').on('change', function() {
-    //alert( $(this).find(":selected").val() );
-    if ($(this).find(":selected").val() === "8"){
-      $("#generateTask8").show();
-      $("#generate").hide();
+  //console.log("$(\"#usrSetTime\").val():" +$("#usrSetTime").val());
+  //$("#usrSetTime").val("");
+  stdTime = 5
+  $("#task").val("1");
+  $("#stdTime").html(stdTime);
+  //$("#usrSetTime").val(stdTime);
+  $('#meshSelect').change(function() {
+    // this will contain a reference to the checkbox   
+    if (this.checked) {
+      //alert("sajat ido")
+      $("#meshChoise").show();
+      //$("#labst").hide();
+        // the checkbox is now checked 
     } else {
-      $("#generateTask8").hide();
-      $("#generate").show();
+      $("#meshChoise").hide();
+      //$("#labst").show();
+        // the checkbox is now no longer checked
     }
-  });*/
+  });
+  $('#setTime').change(function() {
+    // this will contain a reference to the checkbox   
+    if (this.checked) {
+      //alert("sajat ido")
+      $("#usrSetTime").show();
+      //$("#labst").hide();
+        // the checkbox is now checked 
+    } else {
+      $("#usrSetTime").hide();
+      //$("#labst").show();
+        // the checkbox is now no longer checked
+    }
+  });
+
+  //egyelore nem torlom , mert ezzel lehet a kivalasztott legordulonel esemenyt letrehozni
+  $("#task").on('change', function() {
+    //stdTime;
+    $("#usrSetTime").hide();
+    //$("#usrSetTime").val("1");
+    $(".checkbox").prop("checked", false);
+    $("#meshChoise").val("rnd");
+    $("#meshChoise").hide();
+    var selected = +$(this).find(":selected").val();
+    //alert( $(this).find(":selected").val() );
+    if (selected === 1 || selected === 1.1){
+      stdTime = 5;
+      tempStdTime = stdTime;
+      $("#usrSetTime").val(stdTime);
+    }
+    if (selected === 2 || selected === 3 || selected === 3.1){
+      stdTime = 10;
+      tempStdTime = stdTime;
+      $("#usrSetTime").val(stdTime);
+    }
+    if (selected >= 4 && selected < 9){
+      
+      //stdTime = "10 - 30";
+      $("#meshSelect").show();
+      $("#labms").show();
+    } else {
+      $("#meshSelect").hide();
+      $("#labms").hide();
+      $("#meshChoise").hide();
+    }
+    if (selected === 9){
+      stdTime = 10;
+      tempStdTime = stdTime;
+      $("#usrSetTime").val(stdTime);
+    }
+    if (selected === 10){
+      stdTime = 15;
+      tempStdTime = stdTime;
+      $("#usrSetTime").val(stdTime);
+    }
+    if (selected >= 4 && selected < 9){
+      $("#stdTime").html("10 - 30");
+    } else {
+      $("#stdTime").html(stdTime);
+    }
+
+  });
   refresingAndLoadingPage();
   $("#generate").click(function () {
     //$("canvas").width(300);
      // $("canvas").height(300);
       //clearCanvas();
+      console.log("$(\"#usrSetTime\").val() generate:" +$("#usrSetTime").val());
       getTaskDescription();
       var generate;
       if ($("#usrCheck").is(":hidden") || timeout){
@@ -47,6 +116,8 @@ $(document).ready(function () {
           generate = host + '/generate?type=' + select;
           $.get(generate, function (data, status) {
             console.log(JSON.parse(data));
+            console.log("stdTime:" +stdTime);
+
             circuitResults = JSON.parse(data);
             removeTaskID = circuitResults.id;
             setPrefixOfResults(circuitResults,select);
@@ -61,6 +132,7 @@ $(document).ready(function () {
             //clearCanvas();
             $.get(generate, function (data, status) {
               console.log(JSON.parse(data));
+              console.log("stdTime:" +stdTime);
               circuitResults = JSON.parse(data);
               removeTaskID = circuitResults.id;
               setPrefixOfResults(circuitResults,select);
@@ -70,7 +142,17 @@ $(document).ready(function () {
           } 
       }
       timeout = false;
-      $("select").val("1");
+      $(".checkbox").prop("checked", false);
+      $("#meshChoise").val("rnd");
+      $("#meshChoise").hide();
+      $("#usrSetTime").hide();
+      
+      console.log("stdTime a generalasban a req res utan:" +stdTime);
+      //$("#usrSetTime").val(stdTime);
+      //$("#setTime").show();
+      //$("#labst").show();
+      //$('input:checkbox').removeAttr('checked');
+      //$("task").val("1");
   });
   $("#checkUsrResult").click(function (e) {
     userSolutionCheck();    

@@ -50,7 +50,7 @@ THE SOFTWARE.
     
     <!--Task type (difficulty):-->
     <span >Feladattípus: </span> 
-    <select size=”1”>
+    <select id="task" size=”1”>
       <option value="1" selected>Egyszerű fesz.osztó</option>
       <option value="1.1">Egyszerű fesz.osztó (2 generátor)</option>
       <option value="2" >Kettős fesz.osztó</option>
@@ -65,7 +65,26 @@ THE SOFTWARE.
       <option value="10" >Áramkör keresése II.</option>
 
     </select>
-    <button  id="generate" >Hálózat generálása</button>
+    
+    <button  id="generate" >Hálózat generálása</button><br>
+    <input class="checkbox" id="setTime" type="checkbox" name="time" value="time"><label for="setTime" id="labst">Saját időkorlát megadása percben (alap: <span id="stdTime"></span> perc) </label>
+    <input id="usrSetTime" type="number" value="" min="1" hidden><br>
+    
+    
+    
+    <input class="checkbox" id="meshSelect" type="checkbox" name="meshnumb" value="ownmesh" hidden><label for="meshSelect" id="labms" hidden>Hurokszám kiválasztás (alap: random 3 - 5) </label>
+    <select id="meshChoise" size=”1” hidden>
+      <option value="rnd" selected>Random(3-10)</option>
+      <option value="3">3</option>
+      <option value="4" >4</option>
+      <option value="5" >5</option>
+      <option value="6" >6</option>
+      <option value="7" >7</option>
+      <option value="8" >8</option>
+      <option value="9" >9</option>
+      <option value="10" >10</option>
+      <option value="10" >Random(11 - 30)</option>
+    </select>
     <!--<button id="clear" >Clear Canvas</button> -->
     <br>
     

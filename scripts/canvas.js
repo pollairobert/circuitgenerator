@@ -55,15 +55,22 @@ function loadCanvas(){
     var circuitMaxHeight = Math.abs(negativY - positiveY);
     if (circuitMaxWidth > circuitMaxHeight) {
         scale = 750 / circuitMaxWidth;
-        if (scale > 2){
-            scale = 2;
+        if (scale > 1.5){
+            scale = 1.5;
         }
     } else {
         scale = 750 / circuitMaxHeight;
-        if (scale > 2){
-            scale = 2;
+        if (scale > 1.5){
+            scale = 1.5;
         }
     }
+    scale = 1.5;
+    if (circuitMaxHeight > 350){
+        scale = 1.2;
+    }
+    /*if (+select >= 4 && +select < 9){
+        scale = 1.5;
+    }*/
     //console.log("scale:" +scale);
    
     ctx.canvas.width = scale*(Math.abs(negativX - positiveX) + (+select === 8 ? 170: 100));
@@ -93,12 +100,12 @@ function loadCanvas(){
     //console.log("kozeppontX:" +translateOffset[0])
     //console.log("kozeppontY:" +translateOffset[1])
 
-    trackTransforms(ctx);
+    //trackTransforms(ctx);
     
     /**
      * A halozat megrajzolasat vegzo fuggveny.
      */
-    function redraw(){
+    //function redraw(){
        
         // Alternatively:
         ctx.save();
@@ -106,12 +113,13 @@ function loadCanvas(){
         ctx.clearRect(0,0,canvas.width,canvas.height);
         ctx.restore();
         var directionType;
-        
+        var isCommonBranch = [];
         /**
          * Ebben a ciklusban tortenik a halozat komponenseinek kirajzolasa a canvasra feladattipusokkent kicsit elteroen.
          */
         for(var i = 0; i < coordinateArray.length; i++){
             var branchCoordinates = coordinateArray[i].split(" ");
+            //console.log("branchCoordinates:" + branchCoordinates);
             directionType = setDirectionTypeToCircuitElementInCanvas(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4]);
             if (branchCoordinates[0] !== "p"){
                 ctx.beginPath();
@@ -195,7 +203,28 @@ function loadCanvas(){
                     ctx.drawImage(img_vmeter, centerOfbranch[0] - 20, centerOfbranch[1] - 20);
                 }
             }
+            
+            if (branchCoordinates[branchCoordinates.length-2] === "com"){
+                isCommonBranch.push(coordinateArray[i]);
+                /*ctx.beginPath();
+                ctx.arc(branchCoordinates[1], branchCoordinates[2], 3, 0, 2*Math.PI,false);
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 2;
+                ctx.fillStyle = '#000000';
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(branchCoordinates[3], branchCoordinates[4], 3, 0, 2*Math.PI,false);
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 2;
+                ctx.fillStyle = '#000000';
+                ctx.fill();
+                ctx.stroke();*/
+            }
         }
+        drawJunction(isCommonBranch);
+        //console.log(junction);
         /*
         //Az aramkori rajz bal felso sarka
         //-x -y
@@ -236,10 +265,10 @@ function loadCanvas(){
         ctx.fill();
         ctx.stroke();
         */
-    }
-    redraw();
+    //}
+    //redraw();
     
-    var lastX=canvas.width, lastY=canvas.height;
+    /*var lastX=canvas.width, lastY=canvas.height;
     var dragStart,dragged;
     canvas.addEventListener('mousedown',function(evt){
         document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
@@ -281,12 +310,12 @@ function loadCanvas(){
         return evt.preventDefault() && false;
     };
     canvas.addEventListener('DOMMouseScroll',handleScroll,false);
-    canvas.addEventListener('mousewheel',handleScroll,false);
+    canvas.addEventListener('mousewheel',handleScroll,false);*/
 };
 
 // Adds ctx.getTransform() - returns an SVGMatrix
 // Adds ctx.transformedPoint(x,y) - returns an SVGPoint
-function trackTransforms(ctx){
+/*function trackTransforms(ctx){
     var svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
     var xform = svg.createSVGMatrix();
     ctx.getTransform = function(){ return xform; };
@@ -340,12 +369,55 @@ function trackTransforms(ctx){
         pt.x=x; pt.y=y;
         return pt.matrixTransform(xform.inverse());
     }
-}
+}*/
 /**
  * Torli  canvas tartalmat.
  */
 function clearCanvas() {  
     canvas.width = canvas.width;
+}
+/**
+ * Megrajzolja a halozat againak csatlakozasi pontjat a szakirodalom szerinte csatlakozasi jelolessel (pont)
+ * @param {*} commonBranchDetails a kozos agak adatait tartalmazo tomb
+ */
+function drawJunction(commonBranchDetails) {
+    var junction = [];
+    var newCommon = true;
+    for (var i = 0; i < commonBranchDetails.length; i++){
+        if (newCommon) {
+            junction.push(+commonBranchDetails[i].split(" ")[1]+","+commonBranchDetails[i].split(" ")[2]);
+        }
+        var branchDetails = commonBranchDetails[i].split(" ");
+        if (commonBranchDetails[i+1] !== undefined){
+            var iplus1 = +commonBranchDetails[i+1].split(" ")[+commonBranchDetails[i+1].split(" ").length-1];
+            if (iplus1 !== +branchDetails[branchDetails.length-1]){
+                junction.push(+commonBranchDetails[i].split(" ")[3]+","+commonBranchDetails[i].split(" ")[4]);
+                newCommon = true;
+            } else {
+                newCommon = false;
+            }
+        } else if (commonBranchDetails.length > 1){
+            if (+commonBranchDetails[i-1].split(" ")[+commonBranchDetails[i-1].split(" ").length-1] !== +branchDetails[branchDetails.length-1]){
+                junction.push(+commonBranchDetails[i].split(" ")[1]+","+commonBranchDetails[i].split(" ")[2]);
+                junction.push(+commonBranchDetails[i].split(" ")[3]+","+commonBranchDetails[i].split(" ")[4]);
+            } else {
+                junction.push(+commonBranchDetails[i].split(" ")[3]+","+commonBranchDetails[i].split(" ")[4]);
+            }
+        } else {
+            junction.push(+commonBranchDetails[i].split(" ")[1]+","+commonBranchDetails[i].split(" ")[2]);
+            junction.push(+commonBranchDetails[i].split(" ")[3]+","+commonBranchDetails[i].split(" ")[4]);
+        }
+    }
+    for (var i = 0; i < junction.length; i++){
+        var junctoinCoord = junction[i].split(",");
+        ctx.beginPath();
+        ctx.arc(junctoinCoord[0], junctoinCoord[1], 2, 0, 2*Math.PI,false);
+        //ctx.strokeStyle = '#000000';
+        //ctx.lineWidth = 2;
+        ctx.fillStyle = '#000000';
+        ctx.fill();
+        ctx.stroke();
+    }
 }
 /**
  * A "feszultseggenerator hozzadasa" tipusu feladathoz rajzolja ki a kapcsolodo halozatreszt,
@@ -529,8 +601,8 @@ function setStartingPositionsToElementsDrawing(startPosX,startPosY,endPosX,endPo
         arcY = +(meanOfCoordinates(startPosY,endPosY));
         startValueXofVoltageSource = +startPosX + 11;
         startValueYofVoltageSource = +(meanOfCoordinates(startPosY,endPosY) -8);
-        arrowX = +startPosX - 14;
-        arrowY = +(meanOfCoordinates(startPosY,endPosY) -10);
+        arrowX = +startPosX + 5;
+        arrowY = +(meanOfCoordinates(startPosY,endPosY) -14);
 
         startRectX = +startPosX - 5;
         startRectY = +(meanOfCoordinates(startPosY,endPosY) - 15);
@@ -545,8 +617,8 @@ function setStartingPositionsToElementsDrawing(startPosX,startPosY,endPosX,endPo
         arcY = +startPosY;
         startValueXofVoltageSource = +(meanOfCoordinates(startPosX,endPosX) - 11);
         startValueYofVoltageSource = +startPosY - 21.5;
-        arrowX = +(meanOfCoordinates(startPosX,endPosX) + 10);
-        arrowY = +startPosY + 14;
+        arrowX = +(meanOfCoordinates(startPosX,endPosX) + 14);
+        arrowY = +startPosY + 5;
 
         startRectX = +(meanOfCoordinates(startPosX,endPosX) - 15);
         startRectY = +startPosY - 5;
@@ -658,82 +730,139 @@ function setDirectionTypeToCircuitElementInCanvas(startX,startY,endX,endY){
 }
 
 /**
- * A fesz.generatoron eso feszultseg iranyat megjelolo nyil kirajzolasaert felel.
+ * A fesz.generator polaritasat kirajzolo fuggveny (+ -).
  * @param {*} branchDirectionType Az ag iranyanak tipusa, ami a generatort tartalmazza
- * @param {*} startX A generator iranyat jelolo nyil
- * @param {*} startY kezdo koordinatai
+ * @param {*} startX A generator + vegenek 
+ * @param {*} startY koordinataja
  * @param {*} value a generator fesz. erteke.
  */
 function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
     ctx.beginPath();
     ctx.strokeStyle = "#ff0000";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1.6;
     if(branchDirectionType === "0"){
         if (value <= 0){
-            ctx.moveTo(startX,startY);
-            ctx.lineTo(startX,startY+20);
+            ctx.moveTo(startX-3,startY);
+            ctx.lineTo(startX+3,startY);
+            ctx.moveTo(startX,startY-3+28);
+            ctx.lineTo(startX,startY+3+28);
+            ctx.moveTo(startX-3,startY+28);
+            ctx.lineTo(startX+3,startY+28);
+            
+            /*ctx.moveTo(startX,startY);
+            ctx.lineTo(startX,startY+28);
             ctx.moveTo(startX,startY+0.5);
             ctx.lineTo(startX-3,startY+0.5+3);
             ctx.moveTo(startX,startY+0.5);
-            ctx.lineTo(startX+3,startY+0.5+3);
+            ctx.lineTo(startX+3,startY+0.5+3);*/
         } else {
-            ctx.moveTo(startX,startY+20);
+            ctx.moveTo(startX-3,startY);
+            ctx.lineTo(startX+3,startY);
+            ctx.moveTo(startX,startY-3);
+            ctx.lineTo(startX,startY+3);
+            ctx.moveTo(startX-3,startY+28);
+            ctx.lineTo(startX+3,startY+28);
+
+            /*ctx.moveTo(startX,startY+20);
             ctx.lineTo(startX,startY);
             ctx.moveTo(startX,startY+19.5);
             ctx.lineTo(startX-3,startY+19.5-3);
             ctx.moveTo(startX,startY+19.5);
-            ctx.lineTo(startX+3,startY+19.5-3);
+            ctx.lineTo(startX+3,startY+19.5-3);*/
         }
     }
     if(branchDirectionType === "1"){
-        if (value <= 0){
-            ctx.moveTo(startX,startY);
+        if (value <= 0){ 
+            ctx.moveTo(startX-3,startY);
+            ctx.lineTo(startX+3,startY);
+            ctx.moveTo(startX-28,startY-3);
+            ctx.lineTo(startX-28,startY+3);
+            ctx.moveTo(startX-31,startY);
+            ctx.lineTo(startX-25,startY);
+
+            /*ctx.moveTo(startX,startY);
             ctx.lineTo(startX-20,startY);
             ctx.moveTo(startX-0.5,startY);
             ctx.lineTo(startX-0.5-3,startY-3);
             ctx.moveTo(startX-0.5,startY);
-            ctx.lineTo(startX-0.5-3,startY+3);
+            ctx.lineTo(startX-0.5-3,startY+3);*/
         } else {
-            ctx.moveTo(startX-20,startY);
+            ctx.moveTo(startX-3,startY);
+            ctx.lineTo(startX+3,startY);
+            ctx.moveTo(startX,startY-3);
+            ctx.lineTo(startX,startY+3);
+            ctx.moveTo(startX-31,startY);
+            ctx.lineTo(startX-25,startY);
+
+            /*ctx.moveTo(startX-20,startY);
             ctx.lineTo(startX,startY);
             ctx.moveTo(startX-19.5,startY);
             ctx.lineTo(startX-19.5+3,startY-3);
             ctx.moveTo(startX-19.5,startY);
-            ctx.lineTo(startX-19.5+3,startY+3);
+            ctx.lineTo(startX-19.5+3,startY+3);*/
         }
     }
     if(branchDirectionType === "2"){
         if (value >= 0){
-            ctx.moveTo(startX,startY);
+            ctx.moveTo(startX-3,startY);
+            ctx.lineTo(startX+3,startY);
+            ctx.moveTo(startX,startY-3+28);
+            ctx.lineTo(startX,startY+3+28);
+            ctx.moveTo(startX-3,startY+28);
+            ctx.lineTo(startX+3,startY+28);
+
+            /*ctx.moveTo(startX,startY);
             ctx.lineTo(startX,startY+20);
             ctx.moveTo(startX,startY+0.5);
             ctx.lineTo(startX-3,startY+0.5+3);
             ctx.moveTo(startX,startY+0.5);
-            ctx.lineTo(startX+3,startY+0.5+3);
+            ctx.lineTo(startX+3,startY+0.5+3);*/
         } else {
-            ctx.moveTo(startX,startY+20);
+            ctx.moveTo(startX-3,startY);
+            ctx.lineTo(startX+3,startY);
+            ctx.moveTo(startX,startY-3);
+            ctx.lineTo(startX,startY+3);
+            ctx.moveTo(startX-3,startY+28);
+            ctx.lineTo(startX+3,startY+28);
+
+            /*ctx.moveTo(startX,startY+20);
             ctx.lineTo(startX,startY);
             ctx.moveTo(startX,startY+19.5);
             ctx.lineTo(startX-3,startY+19.5-3);
             ctx.moveTo(startX,startY+19.5);
-            ctx.lineTo(startX+3,startY+19.5-3);
+            ctx.lineTo(startX+3,startY+19.5-3);*/
         }
     }
     if(branchDirectionType === "3"){
         if (value >= 0){
-            ctx.moveTo(startX,startY);
+            ctx.moveTo(startX-3,startY);
+            ctx.lineTo(startX+3,startY);
+            ctx.moveTo(startX-28,startY-3);
+            ctx.lineTo(startX-28,startY+3);
+            ctx.moveTo(startX-31,startY);
+            ctx.lineTo(startX-25,startY);
+
+            /*ctx.moveTo(startX,startY);
             ctx.lineTo(startX-20,startY);
             ctx.moveTo(startX-0.5,startY);
             ctx.lineTo(startX-0.5-3,startY-3);
             ctx.moveTo(startX-0.5,startY);
-            ctx.lineTo(startX-0.5-3,startY+3);
+            ctx.lineTo(startX-0.5-3,startY+3);*/
         } else {
-            ctx.moveTo(startX-20,startY);
+            ctx.moveTo(startX-3,startY);
+            ctx.lineTo(startX+3,startY);
+            ctx.moveTo(startX,startY-3);
+            ctx.lineTo(startX,startY+3);
+            ctx.moveTo(startX-31,startY);
+            ctx.lineTo(startX-25,startY);
+            
+
+            /*ctx.moveTo(startX-20,startY);
             ctx.lineTo(startX,startY);
             ctx.moveTo(startX-19.5,startY);
             ctx.lineTo(startX-19.5+3,startY-3);
             ctx.moveTo(startX-19.5,startY);
-            ctx.lineTo(startX-19.5+3,startY+3);
+            ctx.lineTo(startX-19.5+3,startY+3);*/
         }
     }
     ctx.stroke();

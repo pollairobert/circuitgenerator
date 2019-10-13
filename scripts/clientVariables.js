@@ -42,7 +42,7 @@ var userResistorsResult = [];
 var timer, timeout, thr, thv, countdownMin, countdownSec, select, removeTaskID, 
     title, descript, circuitResults, //A servertol kapott valasz Obj
     checkingUsrResult1, checkingUsrResult2, canvas, ctx, /*cloneCanvas, 
-    cloneContext,*/ task10outputVoltage,task10inputVoltage;
+    cloneContext,*/ task10outputVoltage,task10inputVoltage, stdTime, tempStdTime;
 
 /**
  * Megjeleniteshez (CANVAS) tartozo valtozok.
@@ -138,14 +138,15 @@ var description = {
         "Ellenálláson eső feszültség és a rajta folyó áram megadása": 
             "Thevenin helyettesítés segíségével határozd meg a jelölt ellenalláson folyó áramot, valamint annak feszültségét!<br>"+
             "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
-            "Legalább 3 tizedesjegy pontosságú legyen!"
+            "Legalább 3 tizedesjegy pontosságú legyen és abszolút értékben add meg!"
     },
     "type7": {
         "Mérési hiba megadása": 
-            "Adott egy <b style=\"color:red;font-size: 25px;\">2 MΩ</b> belső ellenállású feszültségmérő.<br>"+
-            "Mekkora lesz az abszolút és relatív mérési hiba, ha az alábbi hálózat  A - B pontján mérjük meg a feszültséget?<br>"+
+            "Adott egy <b style=\"color:red;font-size: 25px;\">10 MΩ</b> belső ellenállású feszültségmérő.<br>"+
+            "Mekkora lesz az eltérés a tényleges és mért érték között (abszolút hiba), ha az alábbi hálózat  A - B pontján mérjük meg a feszültséget?<br>"+
+            "Add meg százalékosan is az eltérés nagyságát (relatív hiba). <br>"+
             "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
-            "Legalább 3 tizedesjegy pontosságú legyen!"
+            "Legalább 3 tizedesjegy pontosságú legyen és abszolút értékben add meg!!"
     },
     "type8": {
         "Megadott belső ellenállású feszültséggenerátor beiktatása": 

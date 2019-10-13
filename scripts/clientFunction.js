@@ -29,7 +29,7 @@
   */
 function compareResults(userCalc, circResult){
     let resultTolerance = [circResult - 0.005, circResult + 0.005];
-    if (Math.abs(+userCalc) >= resultTolerance[0] && Math.abs(+userCalc) <= resultTolerance[1]){
+    if (+userCalc >= resultTolerance[0] && +userCalc <= resultTolerance[1]){
         return true;
     } else {
         return false;
@@ -97,8 +97,8 @@ function userSolutionCheck(){
         $(".resultOUT").show();
         $("#checkUsrResult").attr("disabled", "disabled");
         if (+select >0 && +select <=5 ){
-          $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)).toFixed(3)+"</b>");
-          $("#out2").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.thRes,prefixes.thResPrefix)).toFixed(3)+"</b>");
+          $("#out1").html("<b>" +(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)).toFixed(3)+"</b>");
+          $("#out2").html("<b>" +(setResultWithPrefix(circuitResults.thRes,prefixes.thResPrefix)).toFixed(3)+"</b>");
         }
         if (+select === 6){
             $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.resCurrent,prefixes.resCurrPrefix)).toFixed(3)+"</b>");
@@ -109,7 +109,7 @@ function userSolutionCheck(){
             $("#out2").html("<b>" +circuitResults.relError.toFixed(3)+"</b>");
         }
         if (+select === 8){
-            $("#out1").html("<b>" +Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)).toFixed(3)+"</b>");
+            $("#out1").html("<b>" +(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)).toFixed(3)+"</b>");
             $("#out2").hide();
         }
         timeout = true;
@@ -163,7 +163,7 @@ function userSolutionCheck(){
  * Feladathoz tartozo leiras betolteset vegzi a JSON objektumbol a generalaskor.
  */
 function getTaskDescription(){
-    select = $("select").val();
+    select = $("#task").val();
     var descriptSelect = "type" + select;
     $("#drawCircuit").closest();
     title = Object.keys(description[descriptSelect])[0];
@@ -257,8 +257,14 @@ function setResultWithPrefix(originalResult ,prefix){
  * @param {*} prefixObj a scanPrefix() fuggveny altal beallitott perfixumokat tartalmazo objektum
  */
 function startTimer(taskType, resultsOfcircuit, prefixObj){
-    countdownMin = 0;
-    countdownSec = 40;
+    //console.log("$(\"#usrSetTime\").val():" +$("#usrSetTime").val());
+    //if ($("#usrSetTime").val() !== ""){
+        stdTime = $("#usrSetTime").val();
+    //} 
+    console.log("$(\"#usrSetTime\").val() starttimer:" +$("#usrSetTime").val());
+    countdownMin = +stdTime - 1;
+    countdownSec = 59;
+    //$("#usrSetTime").val(tempStdTime);
     $("#checkUsrResult").prop("disabled", false);
     $("#result").html('');
     $("#content").html('');
@@ -276,7 +282,7 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     $(".resultOUTRes").val("");
     $("userIN").val("");
     $("#content").append("<h2>" + title + "</h2>");
-    $("#content").append("<p style=\"font-size: 20px;\">" + descript + "</p>");
+    $("#content").append("<p style=\"font-size: 18px;\">" + descript + "</p>");
     $("#hrUP").show();
     $("#resistorResult").html("");
     $("#drawCircuit").show();
@@ -363,8 +369,8 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
             $(".usrIN").hide();
             $(".usrINRes").hide();
             if (+taskType >0 && +taskType <=5 ){
-                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thVolt,prefixObj.thVoltPrefix)).toFixed(3)+"</b>");
-                $("#out2").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.thRes,prefixObj.thResPrefix)).toFixed(3)+"</b>");
+                $("#out1").html("<b>" +(setResultWithPrefix(resultsOfcircuit.thVolt,prefixObj.thVoltPrefix)).toFixed(3)+"</b>");
+                $("#out2").html("<b>" +(setResultWithPrefix(resultsOfcircuit.thRes,prefixObj.thResPrefix)).toFixed(3)+"</b>");
             }
             if (+taskType === 6){
                 $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.resCurrent,prefixObj.resCurrPrefix)).toFixed(3)+"</b>");
@@ -375,7 +381,7 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
                 $("#out2").html("<b>" +resultsOfcircuit.relError.toFixed(3)+"</b>");
             }
             if (+taskType === 8){
-                $("#out1").html("<b>" +Math.abs(setResultWithPrefix(resultsOfcircuit.terminalVolt,prefixObj.terminalVoltPrefix)).toFixed(3)+"</b>");
+                $("#out1").html("<b>" +(setResultWithPrefix(resultsOfcircuit.terminalVolt,prefixObj.terminalVoltPrefix)).toFixed(3)+"</b>");
                 $("#out2").hide();
             }
             if (+taskType === 10){
@@ -390,6 +396,7 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
         }
         $('#usrTimeCounter').text(countdownMin + ' m ' + countdownSec + " s ");
     }, 1000);
+    
 }
 /**
  * Megallapitja, hogy a parameterul kapott ellenallas egyeduli-e az adott agban.
@@ -441,8 +448,8 @@ function checkResistorResult(resDetail,usrResValues){
  */
 function checkResult(userResult1, userResult2){
     if (+select > 0 && +select <= 5){
-        checkingUsrResult1 = compareResults(userResult1,+Math.abs(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)));
-        checkingUsrResult2 = compareResults(userResult2,+Math.abs(setResultWithPrefix(circuitResults.thRes,prefixes.thResPrefix)));
+        checkingUsrResult1 = compareResults(userResult1,+(setResultWithPrefix(circuitResults.thVolt,prefixes.thVoltPrefix)));
+        checkingUsrResult2 = compareResults(userResult2,+(setResultWithPrefix(circuitResults.thRes,prefixes.thResPrefix)));
     }
     if (+select === 6){
         checkingUsrResult1 = compareResults(userResult1,+Math.abs(setResultWithPrefix(circuitResults.resCurrent,prefixes.resCurrPrefix)));
@@ -453,7 +460,7 @@ function checkResult(userResult1, userResult2){
         checkingUsrResult2 = compareResults(userResult2,+circuitResults.relError);
     }
     if (+select === 8){
-        checkingUsrResult1 = compareResults(userResult1,+Math.abs(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)));
+        checkingUsrResult1 = compareResults(userResult1,+(setResultWithPrefix(circuitResults.terminalVolt,prefixes.terminalVoltPrefix)));
     }
     
 }

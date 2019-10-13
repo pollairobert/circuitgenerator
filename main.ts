@@ -71,12 +71,13 @@ export class Main {
             temptype = cg.randomChoiseTwoNumber(2,2.1);
         }
         if (type === 6){
-            temptype = cg.randomChoiseTwoNumber(4,5);
+            //temptype = cg.randomChoiseTwoNumber(4,5);
+            temptype = 6;
             can.setQuestionOrVoltmeterResistance(cg.randomE6Resistance());
         }
         if (type === 7){
             temptype = cg.randomChoiseTwoNumber(4,5);
-            can.setQuestionOrVoltmeterResistance(2000000);
+            can.setQuestionOrVoltmeterResistance(10000000);
         }
         if (type === 8){
             temptype = cg.randomChoiseInAnyArray(typeArray);

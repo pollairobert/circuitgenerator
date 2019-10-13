@@ -103,7 +103,7 @@ var CircuitGenerator = /** @class */ (function () {
                 break;
             }
             case 4: {
-                parameters = [this.randomIntNumber(8, 3),
+                parameters = [this.randomIntNumber(10, 10),
                     this.randomIntNumber(15, 4),
                     this.randomIntNumber(0, 0),
                     this.randomIntNumber(15, 8)];
@@ -188,7 +188,7 @@ var CircuitGenerator = /** @class */ (function () {
         //console.log(typeof(meshPieceArray));
         var multiConnection = true;
         var meshes = circuit.getMeshes();
-        if (type < 6 || type === 9 || type === 10) {
+        if (type <= 6 || type === 9 || type === 10) {
             for (var h = 1; h <= numberOfMeshes; h++) {
                 //this.removeElementInAnyArray(h,meshPieceArray);
                 //console.log('FOR - meshPieceArray: '+meshPieceArray+ ',for: '+h);
@@ -219,7 +219,7 @@ var CircuitGenerator = /** @class */ (function () {
                 else {
                     //randomFor = this.randomIntNumber(tempPieceArray.length,1)
                 }
-                if (type > 3.1 && type <= 5) {
+                if (type > 3.1 && type <= 6) {
                     choiseMeshNumber = (h + 1);
                     for (var i = 0; i < 4; i++) {
                         acceptebleCommonBranchArray.push([commonBranchPairs[i][0], commonBranchPairs[i][1], h]);
@@ -504,6 +504,9 @@ var CircuitGenerator = /** @class */ (function () {
         }
         if (type === 9) {
             tempType = 1;
+        }
+        if (type === 6) {
+            tempType = 4;
         }
         /*if (type === 10){
             tempType = 3;
@@ -865,14 +868,14 @@ var CircuitGenerator = /** @class */ (function () {
                                         branch.setBranchElements(new resistance_1.Resistance(this.randomE6Resistance()));
                                         oneres = true;
                                     }
-                                    if (this.percentRandom(50)) {
+                                    if (this.percentRandom(70)) {
                                         branch.setBranchElements(new resistance_1.Resistance(this.randomE6Resistance()));
                                     }
                                     if (this.percentRandom(10) && !oneres) {
                                         branch.setBranchElements(new resistance_1.Resistance(this.randomE6Resistance()));
                                     }
                                 }
-                                else if (commBrArray[0][0] !== branch.getType() && (type === 4 ? h < circuit.getNumberOfMesh() - 1 : ((type === 5) ? true : true))) {
+                                else if (commBrArray[0][0] !== branch.getType() && (type === 4 ? h < circuit.getNumberOfMesh() - 1 : /*((type === 5) ? true :*/ true)) {
                                     //if (!branches[i].getTh2Pole()){
                                     if (branches[i_4].getCommon() !== meshes[h].getMeshNumber()) {
                                         branch.setBranchElements(new resistance_1.Resistance(this.randomE6Resistance()));
@@ -1004,7 +1007,7 @@ var CircuitGenerator = /** @class */ (function () {
         var mesh1branches = meshes[0].getBranches();
         var msh1CommBrArray = meshes[0].getCommonBranchesArray();
         var tempType = type;
-        if (type > 3.1 && type <= 5) {
+        if (type > 3.1 && type <= 6) {
             tempType = 4;
         }
         if (type === 9) {
@@ -1120,7 +1123,7 @@ var CircuitGenerator = /** @class */ (function () {
                     var branches = meshes[h].getBranches();
                     var commBrArray = meshes[h].getCommonBranchesArray();
                     var voltageSourceCounter = 0;
-                    var percent = this.randomIntNumber(100, 1);
+                    var percent = this.randomIntNumber(100, 40);
                     for (var i = 0; i < branches.length; i++) {
                         if (!branches[i].getTh2Pole()) {
                             if (h === 0) {
@@ -1131,10 +1134,11 @@ var CircuitGenerator = /** @class */ (function () {
                                     percent = 0;
                                 }
                                 if (percent != 0) {
-                                    percent += 40;
+                                    percent += 30;
                                 }
                             }
                             else if (commBrArray[0][0] !== branches[i].getType() && (type === 5 ? true : h < circuit.getNumberOfMesh() - 1)) {
+                                //percent = this.randomIntNumber(100,1);
                                 //if (!branches[i].getTh2Pole()){
                                 if (maxVoltageSource > 0) {
                                     if (this.percentRandom(percent)) {
@@ -1222,6 +1226,9 @@ var CircuitGenerator = /** @class */ (function () {
         var tempType = type;
         if (type <= 4 || type === 9 || type === 10) {
             tempType = 1;
+        }
+        if (type === 6) {
+            tempType = this.randomChoiseTwoNumber(1, 5);
         }
         switch (tempType) {
             case 1: {
@@ -1656,6 +1663,13 @@ var CircuitGenerator = /** @class */ (function () {
             }
             for (var i = 0; i < branches.length; i++) {
                 var elements = branches[i].getBranchElements();
+                var isCommon = false;
+                if (branches[i].getCommon() !== meshes[h].getMeshNumber()) {
+                    isCommon = true;
+                }
+                //console.log("branches[i].getCommon():" +branches[i].getCommon());
+                //console.log("meshes[h].getMeshNumber():" +meshes[h].getMeshNumber());
+                //console.log("isCommon:" +isCommon);
                 //let branchResistanceCounter: number = 0;
                 for (var j = 0; j < elements.length; j++) {
                     if (elements[j].getCoordinate()[0] !== undefined) {
@@ -1666,11 +1680,26 @@ var CircuitGenerator = /** @class */ (function () {
                                 //let task10outputVoltage: number = this.randomIntNumber(task10inputVoltage-1,1);
                                 //this.circuitCoordinatesToFalstad.push('p '+coordinate[0]+' '+coordinate[1]+' '+coordinate[2]+' '+coordinate[3]+' 1 0 '+task10outputVoltage);
                                 //} else {
-                                this.circuitCoordinatesToFalstad.push('p ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 1 0');
+                                if (type === 6 || type === 5) {
+                                    if (isCommon) {
+                                        this.circuitCoordinatesToFalstad.push('p ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 1 0 com ' + meshes[h].getMeshNumber() + '' + branches[i].getType());
+                                    }
+                                    else {
+                                        this.circuitCoordinatesToFalstad.push('p ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 1 0');
+                                    }
+                                }
+                                else {
+                                    this.circuitCoordinatesToFalstad.push('p ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 1 0');
+                                }
                                 //}
                             }
                             else {
-                                this.circuitCoordinatesToFalstad.push('w ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 0');
+                                if (isCommon) {
+                                    this.circuitCoordinatesToFalstad.push('w ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 0 com ' + meshes[h].getMeshNumber() + '' + branches[i].getType());
+                                }
+                                else {
+                                    this.circuitCoordinatesToFalstad.push('w ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 0');
+                                }
                             }
                         }
                         if (elements[j].getId() === 'R') {
@@ -1692,7 +1721,12 @@ var CircuitGenerator = /** @class */ (function () {
                                     this.circuitResistorsDetails.push("R" + allResistanceCounter + " " + elements[j].getResistance() + " " + (meshes[h].getMeshResistance() - commonBranchRes));
                                 }
                             }
-                            this.circuitCoordinatesToFalstad.push('r ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 0 ' + resistance + ' ' + elements[j].getNumber());
+                            if (isCommon) {
+                                this.circuitCoordinatesToFalstad.push('r ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 0 ' + resistance + ' ' + elements[j].getNumber() + ' com ' + meshes[h].getMeshNumber() + '' + branches[i].getType());
+                            }
+                            else {
+                                this.circuitCoordinatesToFalstad.push('r ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 0 ' + resistance + ' ' + elements[j].getNumber());
+                            }
                         }
                         if (elements[j].getId() === 'V') {
                             if (type < 10) {
@@ -1709,10 +1743,20 @@ var CircuitGenerator = /** @class */ (function () {
                             if (type === 10) {
                                 task10inputVoltage = Math.abs(voltage);
                             }
-                            this.circuitCoordinatesToFalstad.push('v ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 0 0 40 ' + voltage + ' 0 0 0.5 ' + elements[j].getNumber());
+                            if (isCommon) {
+                                this.circuitCoordinatesToFalstad.push('v ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 0 0 40 ' + voltage + ' 0 0 0.5 ' + elements[j].getNumber() + ' com ' + meshes[h].getMeshNumber() + '' + branches[i].getType());
+                            }
+                            else {
+                                this.circuitCoordinatesToFalstad.push('v ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 0 0 40 ' + voltage + ' 0 0 0.5 ' + elements[j].getNumber());
+                            }
                         }
                         if (elements[j].getId() === 'C') {
-                            this.circuitCoordinatesToFalstad.push('c ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 0');
+                            if (isCommon) {
+                                this.circuitCoordinatesToFalstad.push('c ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 0 com ' + meshes[h].getMeshNumber() + '' + branches[i].getType());
+                            }
+                            else {
+                                this.circuitCoordinatesToFalstad.push('c ' + coordinate[0] + ' ' + coordinate[1] + ' ' + coordinate[2] + ' ' + coordinate[3] + ' 0');
+                            }
                         }
                     }
                 }
