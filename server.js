@@ -26,7 +26,7 @@ exports.__esModule = true;
 /**
  * NODE Szerver letrehozasa itt tortenik. Itt van lekezelve a kliens - szerver kapcsolat.
  */
-var main_1 = require("./main");
+var main_1 = require("./model/main");
 var serverfunction_1 = require("./serverfunction");
 var path = require('path');
 var express = require('express');

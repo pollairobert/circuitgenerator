@@ -22,10 +22,10 @@
  * THE SOFTWARE.
  */
 
-import { resetMeshCounter } from "./model/mesh";
-import { Circuit } from './model/circuit';
-import { CircuitGenerator } from './model/circuitgenerator';
-import { CircuitAnalyzer } from './model/circuitanalyzer';
+import { resetMeshCounter } from "./mesh";
+import { Circuit } from './circuit';
+import { CircuitGenerator } from './circuitgenerator';
+import { CircuitAnalyzer } from './circuitanalyzer';
 
 /**
  * Szerver oldalon a logika belepesi pontja.

@@ -25,7 +25,7 @@
  /**
   * NODE Szerver letrehozasa itt tortenik. Itt van lekezelve a kliens - szerver kapcsolat.
   */
-import { Main } from './main';
+import { Main } from './model/main';
 import { Serverfunction } from './serverfunction';
 
 
