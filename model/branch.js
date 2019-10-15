@@ -10,8 +10,10 @@ var Branch = /** @class */ (function () {
     function Branch(type, meshNumber) {
         this.current = 0;
         this.resistanceOfBranch = [];
-        /*alapesetben a kozossegi ertek az agat tartalmazo hurok szama.
-        Ha tobb hurokhoz tartozik a hurkok akkor azok szamanak osszege*/
+        /**
+         * alapesetben a kozossegi ertek az agat tartalmazo hurok szama.
+         * Ha tobb hurokhoz tartozik a hurkok akkor azok szamanak osszege
+         * */
         this.common = 0;
         this.branchResistance = 0;
         this.branchVoltage = 0;
@@ -46,6 +48,10 @@ var Branch = /** @class */ (function () {
         this.branchNumber = exports.branchCounter;
         exports.branchCounter++;
     }
+    /**
+     * Beallitja az ag allanallaserteket a megadott ertekre.
+     * @param resNumber ertekadas
+     */
     Branch.prototype.setResistanceOfBranch = function (resNumber) {
         this.resistanceOfBranch.push(resNumber);
     };
@@ -56,15 +62,11 @@ var Branch = /** @class */ (function () {
     Branch.prototype.setCurrent = function (currentVector) {
         var curVect = currentVector.valueOf();
         if (this.current === 0) {
-            //console.log('COMMON: '+this.common);
             if (this.common === this.meshNumber) {
                 this.current = curVect[this.meshNumber - 1];
-                //this.current = +currentVector.subset(math.index(this.meshNumber,0));
             }
             else {
                 this.current = curVect[this.meshNumber - 1] - curVect[(this.common - this.meshNumber) - 1];
-                //console.log('KOZOS AGAK ARAMA: '+this.current);
-                //this.current = +currentVector.subset(math.index(this.meshNumber,0)) - (+currentVector.subset(math.index(this.common-this.meshNumber,0)));
             }
         }
     };
@@ -77,16 +79,13 @@ var Branch = /** @class */ (function () {
         this.branchElements.push(element);
         if (element.getId() === 'R') {
             this.branchResistance += element.getResistance();
-            //mesh.setMeshResistance(element.getResistance());
         }
         if (element.getId() === 'V') {
             if (element.getDirection() === true) {
                 this.branchVoltage += (element.getVoltage() * (-1));
-                //mesh.setMeshVoltage(element.getVoltage());
             }
             else {
                 this.branchVoltage += element.getVoltage();
-                //mesh.setMeshVoltage(element.getVoltage() * (-1));
             }
         }
         if (element.getId() === 'C') {
@@ -112,12 +111,22 @@ var Branch = /** @class */ (function () {
     Branch.prototype.setCommon = function (meshNum) {
         this.common += meshNum;
     };
+    /**
+     * Beallitja a parameterul kapot ertekre az ag hosszat. Megjeleniteskor van ra szukseg.
+     * @param size A megjeleniteshez szokseges meret
+     */
     Branch.prototype.setBranchSize = function (size) {
         this.branchSize = size;
     };
+    /**
+     * Torli az ag ellenallas erteket.
+     */
     Branch.prototype.clearBranchResistance = function () {
         this.branchResistance = 0;
     };
+    /**
+     * Az objektum property-einek klonozasat vegzo fuggvenyek.
+     */
     Branch.prototype.cloneSetCommon = function (com) {
         this.common = com;
     };
@@ -142,12 +151,10 @@ var Branch = /** @class */ (function () {
     Branch.prototype.cloneMeshNumber = function (num) {
         this.meshNumber = num;
     };
-    Branch.prototype.deleteLastBranchElement = function () {
-        this.branchElements.pop();
-    };
-    Branch.prototype.deleteAllBranchElements = function () {
-        this.branchElements = [];
-    };
+    /**
+     * A parameterul kapott ag objektum teljas klonjat kesziti el.
+     * @param branch klonozando ag objektum
+     */
     Branch.prototype.cloneBranch = function (branch) {
         var branchClone = new Branch(branch.getType(), (branch.getMeshNumber() - 1));
         branchClone.cloneMeshNumber(branch.getMeshNumber());
@@ -159,10 +166,12 @@ var Branch = /** @class */ (function () {
         branchClone.cloneSetThev2Pole(branch.getTh2Pole());
         for (var i = 0; i < branch.getBranchElements().length; i++) {
             branchClone.cloneSetBrancElements(branch.getBranchElements()[i].cloneElements(branch.getBranchElements()[i]));
-            //branchClone.setBranchElements(branch.getBranchElements()[i].cloneElements(branch.getBranchElements()[i]));
         }
         return branchClone;
     };
+    /**
+     * Osztaly getter metodusok a propertykhez.
+     */
     Branch.prototype.getResistanceOfBranch = function () {
         return this.resistanceOfBranch;
     };

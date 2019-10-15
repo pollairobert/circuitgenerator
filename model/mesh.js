@@ -6,7 +6,7 @@ function resetMeshCounter() {
 }
 exports.resetMeshCounter = resetMeshCounter;
 var Mesh = /** @class */ (function () {
-    function Mesh( /*maxmesh: number, res: number, cur: number, volt: number, comm: number*/) {
+    function Mesh() {
         this.branches = [];
         this.meshResistance = 0;
         this.meshVoltage = 0;
@@ -21,7 +21,6 @@ var Mesh = /** @class */ (function () {
          */
         this.commonBranchesArray = [];
         this.meshBranchesSize = [0, 0, 0, 0]; //a megfelelo tipusu branchekhez tartozo ertekek (0,1,2,3)
-        //this.maxMeshNumb = maxmesh;
         this.meshNumber = exports.meshCounter;
         exports.meshCounter++;
     }
@@ -39,8 +38,6 @@ var Mesh = /** @class */ (function () {
     };
     Mesh.prototype.setBranches = function (branch) {
         this.branches.push(branch);
-        //this.meshResistance += branch.getBranchResistance();
-        //this.meshVoltage += branch.getBranchVoltage();
     };
     Mesh.prototype.setCommonBranchesArray = function (array) {
         this.commonBranchesArray.push(array);
@@ -63,6 +60,10 @@ var Mesh = /** @class */ (function () {
     Mesh.prototype.cloneCommonBranchesArray = function (mshCBA) {
         this.commonBranchesArray = mshCBA;
     };
+    /**
+     * A parameterben kapott hurok klonjat kesziti el.
+     * @param msh hurok
+     */
     Mesh.prototype.cloneMesh = function (msh) {
         var meshClone = new Mesh();
         meshClone.cloneMeshNumber(msh.getMeshNumber());

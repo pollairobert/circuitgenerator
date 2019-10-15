@@ -27,7 +27,7 @@
  */
 export class Serverfunction{
     private fs = require('fs');
-    private checkTimeToSolvedTask: number = 50*60*1000; //ennyi ideig hagyja meg a generateLOG fajlban a generalt de valamiert nem torolt (pl oldal ujratoltes) feladatot.
+    private checkTimeToSolvedTask: number = 3*60*1000; //ennyi ideig hagyja meg a generateLOG fajlban a generalt de valamiert nem torolt (pl oldal ujratoltes) feladatot.
     
     /**
      * A kapott adatot (feladat informaciok) lementi a generateLOG.json fajlba.  
@@ -86,7 +86,7 @@ export class Serverfunction{
             for (let key in resultLOG) {
                 if (resultLOG.hasOwnProperty(key)) {
                     difference = this.timeDifference(new Date(),new Date(resultLOG[key].timestamp));
-                    if (difference[0] > 0 || difference[1] > 23 /*|| difference[2] > 5 || difference[3] > 25 */ ){
+                    if (difference[0] > 0 || difference[1] > 2 /*|| difference[2] > 5 || difference[3] > 25 */ ){
                         deleted = true;
                         delete resultLOG[key];
                     }

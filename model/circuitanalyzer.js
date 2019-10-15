@@ -213,7 +213,6 @@ var CircuitAnalyzer = /** @class */ (function () {
             }
         }
         connectedCircuit.getMeshes()[0].getBranches()[0].setBranchElements(new voltagesource_1.VoltageSource(math.abs(theveninvoltage), (theveninvoltage < 0 ? true : false)));
-        //connectedCircuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(math.abs(theveninvoltage),true));
         connectedCircuit.getMeshes()[0].getBranches()[1].setBranchElements(new resistance_1.Resistance(theveninresistance));
         connectedCircuit.getMeshes()[1].getBranches()[2].setBranchElements(new voltagesource_1.VoltageSource(connvoltage, true));
         connectedCircuit.getMeshes()[1].getBranches()[1].setBranchElements(new resistance_1.Resistance(connresistance));

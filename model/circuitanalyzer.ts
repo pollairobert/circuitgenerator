@@ -21,13 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-import { CircuitGenerator } from './circuitgenerator'
 import { CircuitElements } from './interfaceCircElement';
-import { Wire } from "./wire";
 import { Resistance } from "./resistance";
 import { CurrentSource } from "./currentsource";
 import { VoltageSource } from "./voltagesource";
-import { Branch, branchCounter } from "./branch";
+import { Branch } from "./branch";
 import { Mesh } from "./mesh";
 import { Circuit } from "./circuit";
 import * as math from 'mathjs';
@@ -260,7 +258,6 @@ export class CircuitAnalyzer {
             }
         }
         connectedCircuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(math.abs(theveninvoltage),(theveninvoltage < 0 ? true : false)));
-        //connectedCircuit.getMeshes()[0].getBranches()[0].setBranchElements(new VoltageSource(math.abs(theveninvoltage),true));
         connectedCircuit.getMeshes()[0].getBranches()[1].setBranchElements(new Resistance(theveninresistance));
         connectedCircuit.getMeshes()[1].getBranches()[2].setBranchElements(new VoltageSource(connvoltage,true));
         connectedCircuit.getMeshes()[1].getBranches()[1].setBranchElements(new Resistance(connresistance));

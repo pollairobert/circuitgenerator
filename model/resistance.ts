@@ -55,7 +55,6 @@ export class Resistance implements CircuitElements {
             this.voltage = this.current * this.resistance;
         } else {
             this.voltage = 0;
-            //console.log('Hianyzo ertek');
         }
 
     }

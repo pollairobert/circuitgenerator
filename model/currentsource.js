@@ -1,5 +1,8 @@
 "use strict";
 exports.__esModule = true;
+/**
+ * Aramgenerator osztaly. Egyelore meg nem lett felhasznalva.
+ */
 var CurrentSource = /** @class */ (function () {
     /**
      * Konstruktor

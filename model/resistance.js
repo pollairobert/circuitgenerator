@@ -28,7 +28,6 @@ var Resistance = /** @class */ (function () {
         }
         else {
             this.voltage = 0;
-            //console.log('Hianyzo ertek');
         }
     };
     Resistance.prototype.cloneElements = function (element) {

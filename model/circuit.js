@@ -1,27 +1,19 @@
 "use strict";
 exports.__esModule = true;
+/**
+ * Aramkor osztaly, melynek peldanya egy kesz aramkort reprezental.
+ */
 var Circuit = /** @class */ (function () {
     /**
      * Aramkor konstruktora, amely beallitja a szukseges ertkeit a prameterek alapjan
-     * @param meshnumb az aramkorben letrehozott hurkok szama (technikai okok miatt a kivezetest is horokkent tarolja)
-     * @param res aramkori ellanalasok darabszama
-     * @param cur aramgeneratorok szama
-     * @param volt feszultseggeneratorok szama
-     * @param comm hurkok kozos againak szama (ez meg kerdeses, hogy marad-e)
-     *
-    constructor(meshnumb: number, res: number, cur: number, volt: number, comm: number) {
-        this.numberOfMesh = meshnumb;
-        this.numbOfResistance = res;
-        this.numbOfCurrentSource = cur;
-        this.numbOfVoltageSource = volt;
-        this.numbOfCommonBranch = comm;
-    }*/
+     
+     * @parameters megfelelo hurok, ellenallas, generator szamot tartalmazo tomb
+    */
     function Circuit(parameters) {
         this.meshes = [];
         this.theveninResistance = 0;
         this.theveninVoltage = 0;
         this.numberOfMesh = parameters[0];
-        //this.numbOfResistance = parameters[1];
         this.numbOfCurrentSource = parameters[2];
         this.numbOfVoltageSource = parameters[3];
         this.circuitParameters = parameters;
@@ -35,9 +27,6 @@ var Circuit = /** @class */ (function () {
     Circuit.prototype.setExpOutVolt = function (volt) {
         this.expectedOutputVoltage = volt;
     };
-    /**
-     * setNumberOfResistance
-     */
     Circuit.prototype.setNumberOfResistors = function (number) {
         this.numbOfResistors = number;
     };
@@ -65,8 +54,11 @@ var Circuit = /** @class */ (function () {
     Circuit.prototype.cloneNumbOfVoltageSource = function (num) {
         this.numbOfVoltageSource = num;
     };
+    /**
+     * Aramkor klonozasakor ezzel lehet klont kesziteni a parameterul kapott aramkorrol
+     * @param circ aramkor objektum
+     */
     Circuit.prototype.cloneCircuit = function (circ) {
-        //var circuitClone: Circuit = new Circuit(circ.getNumberOfMesh(),circ.getNumbOfRes(),circ.getNumbOfCurrSource(),circ.getNumbOfVoltSource(),circ.getNumbOfCommonBranc());
         var circuitClone = new Circuit(this.circuitParameters);
         for (var i = 0; i < circ.getMeshes().length; i++) {
             circuitClone.cloneCircuitMeshes(circ.getMeshes()[i].cloneMesh(circ.getMeshes()[i]));

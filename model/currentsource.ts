@@ -23,6 +23,10 @@
  */
 import { CircuitElements } from "./interfaceCircElement";
 
+
+/**
+ * Aramgenerator osztaly. Egyelore meg nem lett felhasznalva.
+ */
 export class CurrentSource implements CircuitElements {
     private id = 'C';
     private number: number;

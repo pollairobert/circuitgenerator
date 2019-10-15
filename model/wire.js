@@ -7,16 +7,12 @@ var Wire = /** @class */ (function () {
         this.voltage = 0;
         this.coordinate = [];
     }
-    /*constructor(){
-        wireCounter += 1;
-    }*/
     Wire.prototype.setInverzDirection = function () {
         throw new Error("Method not implemented.");
     };
     Wire.prototype.cloneElements = function (element) {
         var wireClone = new Wire();
         wireClone.setCurrent(element.getCurrent());
-        //wireClone.setCoordinate(element.getCoordinate()[0],element.getCoordinate()[1],element.getCoordinate()[2],element.getCoordinate()[3]);
         return wireClone;
     };
     Wire.prototype.setNumber = function (num) {
