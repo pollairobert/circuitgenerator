@@ -22,11 +22,10 @@
  * THE SOFTWARE.
  */
 
- import { resetMeshCounter } from "./model/mesh";
-import { Circuit } from "./model/circuit";
+import { resetMeshCounter } from "./model/mesh";
+import { Circuit } from './model/circuit';
 import { CircuitGenerator } from './model/circuitgenerator';
 import { CircuitAnalyzer } from './model/circuitanalyzer';
-import * as math from 'mathjs';
 
 /**
  * Szerver oldalon a logika belepesi pontja.
@@ -39,16 +38,7 @@ export class Main {
     private ohmPrefix: string;
     private measurementVoltPrefix: string;
     private taskResults;
-
-    /*
-    public createCircuitToTask10(r1: number, r2: number, r3: number, u1: number, u2: number, expectedResult: number){
-        let cg: CircuitGenerator = new CircuitGenerator(); 
-        let circuit: Circuit = cg.generateCircuit(10);
-    }*/
-    /*public generateFalstadLinkToTask10CorrectResult(falstadTxt: string){
-        let cg: CircuitGenerator = new CircuitGenerator();
-    }*/
-
+    
     /**
      * Ezzel a metodussal indul a halozat generalasa es megoldasa a feladattipusnak megfeleloen.
      * Majd itt kap erteket a szervertol kuldott valasz objektum is a halozatanalizis ertekeive,
@@ -58,9 +48,12 @@ export class Main {
      * de a cel a felhasznalonak is a gyakorlas, attol, hogy a bongeszo megfelelo funkcioival meg tudja
      * nezni a valasz objektum tartalmat konzolra iratas nelkul is.
      *
+     * Lehetosege van a felhasznalonak bizonyos feladatoknal megadni a hurokszamot, akkor a fuggveny ezt a parametert is megkapja,
+     * majd ennek megfeleloen hivja meg az aramkort letrehozo fuggvenyt.
      * @param type feladat tipusa
+     * @param pieceOfMesh felhasznalo altal megadott hurokszam (opcionalis)
      */
-    public start(type: number/*, circ?: Circuit*/){
+    public start(type: number, pieceOfMesh? : number){
         let cg: CircuitGenerator = new CircuitGenerator();
         let can: CircuitAnalyzer = new CircuitAnalyzer();
         let circuit: Circuit;
@@ -71,7 +64,6 @@ export class Main {
             temptype = cg.randomChoiseTwoNumber(2,2.1);
         }
         if (type === 6){
-            //temptype = cg.randomChoiseTwoNumber(4,5);
             temptype = 6;
             can.setQuestionOrVoltmeterResistance(cg.randomE6Resistance());
         }
@@ -80,13 +72,20 @@ export class Main {
             can.setQuestionOrVoltmeterResistance(10000000);
         }
         if (type === 8){
-            temptype = cg.randomChoiseInAnyArray(typeArray);
+            if (pieceOfMesh !== undefined){
+                temptype = cg.randomChoiseTwoNumber(4,5);
+            } else {
+                temptype = cg.randomChoiseInAnyArray(typeArray);
+            }
             can.setConnectedVoltagesourceValue(cg.randomVoltageSourceValue());
             can.setConnectedVoltagesourceResistance(cg.randomE6Resistance());
         }
-        
-        circuit = cg.generateCircuit(temptype);
-        
+        if (pieceOfMesh !== undefined){
+            circuit = cg.generateCircuit(temptype, pieceOfMesh);
+        } else {
+            circuit = cg.generateCircuit(temptype);
+        }
+         
         if (type === 10){
             let paralellRes: number;
             let inputVoltage: number;
@@ -105,7 +104,6 @@ export class Main {
                             paralellRes = circuit.getMeshes()[0].getBranches()[i].getBranchElements()[j].getResistance();
                         }
                     }
-                    
                 }
             }
             let r3resistance: number = this.calculateTask10R3resistanceValue(paralellRes,inputVoltage,circuit.getExpOutVolt())
@@ -119,15 +117,11 @@ export class Main {
                 }
             }
             cg.getCircuitResistorsDetails().push("R3 "+r3resistance);
-
         }
-        
         can.analyzeCircuit(circuit);
-
         cg.setMultiplyResistorInBranch(cg.getCircuitResistorsDetails());
         this.circuitCoordinateArray = cg.getCircuitCoordinatesToFalstad();
-        
-        
+         
         this.falstadLink = cg.generateFalstadLink(circuit, type, ((type === 6 || type ===7) ? can.getQuestionRes() : can.getConnectedVoltagesourceResistance()),can.getConnectedVoltagesourceValue());
         if (type === 7){
             measurementError = this.calculateMeasurementError(can.getQuestionResVoltage(),can.getResultOfTheveninVoltage());
@@ -150,7 +144,11 @@ export class Main {
             resistorDetails: undefined,
             multiResInBranch: undefined,
             expectedOutVoltage: undefined,
+            tasktime: undefined, 
             timestamp: new Date()
+        }
+        if (type >=4 && type < 9){
+            this.taskResults["tasktime"] = this.calculateTaskTime(circuit);
         }
         if (type === 10){
             this.taskResults["expectedOutVoltage"] = circuit.getExpOutVolt();
@@ -159,26 +157,26 @@ export class Main {
             this.taskResults["resistorDetails"] = cg.getCircuitResistorsDetails();
             this.taskResults["multiResInBranch"] = cg.getMultiplyResistorInBranch();
         }
-        if (can.getQuestionRes() !== undefined){
-            console.log('A keresett ellenallas feszultsege: '+can.getQuestionResVoltage()+ ' V');
-            console.log('A keresett ellenallason folyo aram: '+can.getQuestionResCurrent()+ ' A');
-        }
-        if (can.getOutputVoltageWithConnectedVoltageSource() !== undefined){
-            console.log('   A halozat kapocsfeszultseges a keresett pontok kozott: ' +can.getOutputVoltageWithConnectedVoltageSource());
-        }
-        
-        if (type >= 1){
-            console.log('Az aramkor Thevenin ellenalasa: '+can.getResultOfTheveninResistance()+ ' Ω');
-            console.log('Az aramkor Thevenin helyettesito feszultsege: '+can.getResultOfTheveninVoltage()+ ' V');
-        }
         resetMeshCounter();
     }
+    /**
+     * Csak es kizarolag az Aramkor keresese II. tipusu feladathoz tartozo R3 ellenallas erteket adja meg
+     * a parameterek megfelelo szamolasaval. 
+     * @param paralellResistorsValue parhozamosan kotott R1 es R2 ellenallasok erteke
+     * @param inputVoltage a maximalis feszultseg, amit a bemenet hataroz meg.
+     * @param expextedOutputVoltage elvart kimeneti feszultseg legnagyobb erteke. 
+     */
     public calculateTask10R3resistanceValue(paralellResistorsValue: number, inputVoltage: number, expextedOutputVoltage: number, ): number {
-        
         let resultingResistance: number = ((paralellResistorsValue*paralellResistorsValue)/(paralellResistorsValue+paralellResistorsValue));
         let r3resistance: number = ((resultingResistance*expextedOutputVoltage)/(inputVoltage-expextedOutputVoltage));
         return r3resistance;
     }
+
+    /**
+     * Kiszamolja es egy tombben eltarolja az abszolut es relativ hiba nagysagat a megfelelo feladattipusnal.
+     * @param measuredVoltage mert ertek
+     * @param realVoltage a halozat kimeneti erteke
+     */
     public calculateMeasurementError(measuredVoltage: number, realVoltage: number): number[]{
         let measurementErr: number[] = [];
         let absolutError: number = Math.abs(measuredVoltage) - Math.abs(realVoltage);
@@ -186,7 +184,19 @@ export class Main {
         measurementErr.push(Math.abs(absolutError),relativeError);
         return measurementErr;
     }
-    
+
+    /**
+     * A parameterul kapott aramkor hurokszamanak megfeleloen beallit egy standard idokrlatot a feladat megoldasahoz.
+     * @param circuit aramkor objektum
+     */
+    public calculateTaskTime(circuit: Circuit): number{
+        let time: number = 10 + ((circuit.getNumberOfMesh() - 3)*10);
+        return time;
+    }
+
+    /**
+     * Az osztaly propertykhez tartozo getter metodusok.
+     */
     public getTaskResults(): Object{
         return this.taskResults;
     }

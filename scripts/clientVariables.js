@@ -40,19 +40,20 @@ var prefixes = {
 var checkUsrResistors = [];
 var userResistorsResult = [];
 var timer, timeout, thr, thv, countdownMin, countdownSec, select, removeTaskID, 
-    title, descript, circuitResults, //A servertol kapott valasz Obj
-    checkingUsrResult1, checkingUsrResult2, canvas, ctx, /*cloneCanvas, 
-    cloneContext,*/ task10outputVoltage,task10inputVoltage, stdTime, tempStdTime;
+    title, descript, 
+    circuitResults, //A servertol kapott valasz Obj
+    checkingUsrResult1, checkingUsrResult2, canvas, ctx,
+    task10outputVoltage,task10inputVoltage, stdTime, userTime;
 
 /**
  * Megjeleniteshez (CANVAS) tartozo valtozok.
- * Az svg image-k azert kellenek, mert a sima szoveget a canvas nem kezeli SVG-ben, 
- * igy zoomolaskor vagy mozgataskor eltunne.
+ * Az svg image-k azert kellenek, mert a sima szoveget a canvas nem kezeli SVG-ben. 
+ * Elso verzioban volt zoom es mozgatasi lehetoseg, igy az SVG formatumu szoveget bennehagytam.
  * 
  */
-var translateX;// = 375; //A Canvas bal felso sarkabol 
-var translateY;// = 375; //eltolja a 0,0 kezdokoordinatat.
-
+var arcX, arcY, startValueXofVoltageSource, startValueYofVoltageSource, startValueXofResistor,translateOffset, translateX,
+    translateY, startValueYofResistor, arrowX, arrowY, startRectX, startRectY, negativX, negativY, positiveX, positiveY;
+var dimensionOfRect = [];
 var img_0 = new Image(); img_0.src = host+"/number0.svg";
 var img_1 = new Image(); img_1.src = host+"/number1.svg";
 var img_2 = new Image(); img_2.src = host+"/number2.svg";
@@ -78,14 +79,6 @@ var svgObject = {
     "." : img_dot, "a" : img_a, "b" : img_b, "r" : img_r,
     "u" : img_u
 }
-var arcX, arcY, startValueXofVoltageSource, startValueYofVoltageSource, startValueXofResistor,
-    startValueYofResistor, arrowX, arrowY, startRectX, startRectY;
-var dimensionOfRect = [];
-var negativX, negativY;// = Infinity;
-//var negativY = Infinity;
-var positiveX, positiveY; // = -Infinity;
-//var positiveY = -Infinity;
-var translateOffset;
 
 /**
  * Feladatkiirashoz szukseges JSON objektum.

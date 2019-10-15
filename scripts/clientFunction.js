@@ -21,12 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- /**
-  * A felhasznalo altal beirt erteket hasonlitja ossze a tenyleges ertekkel. 
-  * Legtobb esetben 5 ezrelekes hibahatar megengedett
-  * @param {*} userCalc fehasznalo eredmenye
-  * @param {*} circResult tenyleges erteke a keresett valtozonak.
-  */
+
+/**
+ * A felhasznalo altal beirt erteket hasonlitja ossze a tenyleges ertekkel. 
+ * Legtobb esetben 5 ezrelekes hibahatar megengedett
+ * @param {*} userCalc fehasznalo eredmenye
+ * @param {*} circResult tenyleges erteke a keresett valtozonak.
+ */
 function compareResults(userCalc, circResult){
     let resultTolerance = [circResult - 0.005, circResult + 0.005];
     if (+userCalc >= resultTolerance[0] && +userCalc <= resultTolerance[1]){
@@ -37,10 +38,74 @@ function compareResults(userCalc, circResult){
 }
 
 /**
- * Lap betoltesekor elrejti a nem szukseges html elemeket. 
+ * Lap betoltesekor elrejti a nem szukseges html elemeket es inicializalja a canvas-hoz szukseges valtozokat.
+ * Valamint a dinamikus feladatvalszto lista, idokorlat, hurokszammegadas megvalositasa.
  */
 function refresingAndLoadingPage(){
-    
+    stdTime = 5;
+    $("#usrSetTime").val(stdTime);
+    $("#task").val("1");
+    $("#stdTime").text("(alap: "+ stdTime+ " perc)");
+    $('#meshSelect').change(function() {
+        if (this.checked) {
+            $("#stdMesh").hide();
+            $("#meshChoise").show();
+        } else {
+            $("#stdMesh").show();
+            $("#meshChoise").hide();
+        }
+    });
+    $('#setTime').change(function() {
+        if (this.checked) {
+            $("#stdTime").hide();
+            $("#usrSetTime").show();
+        } else {
+            $("#stdTime").show();
+            $("#usrSetTime").hide();
+        }
+    });
+
+    $("#task").on('change', function() {
+    $("#usrSetTime").hide();
+    $("#stdTime").show();
+    $("#stdMesh").show();
+    $(".checkbox").prop("checked", false);
+    $("#meshChoise").val("3");
+    $("#meshChoise").hide();
+    var selected = +$(this).find(":selected").val();
+    if (selected === 1 || selected === 1.1){
+        stdTime = 5;
+        $("#usrSetTime").val(stdTime);
+    }
+    if (selected === 2 || selected === 3 || selected === 3.1){
+        stdTime = 10;
+        $("#usrSetTime").val(stdTime);
+    }
+    if (selected >= 4 && selected < 9){
+        stdTime = 15;
+        $("#usrSetTime").val(stdTime);
+        $("#meshSelect").show();
+        $("#labms").show();
+    } else {
+        $("#meshSelect").hide();
+        $("#labms").hide();
+        $("#meshChoise").hide();
+    }
+    if (selected === 9){
+        stdTime = 10;
+        $("#usrSetTime").val(stdTime);
+    }
+    if (selected === 10){
+        stdTime = 15;
+        $("#usrSetTime").val(stdTime);
+    }
+    if (selected >= 4 && selected < 9){
+        $("#stdTime").text("(alap: 10 perc / 3 hurok, +10 perc / +hurok)");
+    } else {
+        $("#stdTime").text("(alap: "+ stdTime+ " perc)");
+    }
+
+    });
     canvas = document.getElementById('drawCircuit');
     ctx = canvas.getContext('2d');
     $("#usrCheck").hide();
@@ -251,20 +316,16 @@ function setResultWithPrefix(originalResult ,prefix){
 
 /**
  * A feladat vegrehajtasara adott idoszamlalot inditja. 
- * Valamint ebben tortenik a megfelelo HTML elemek feladattipustol fuggo megjelenite, vagy elrejtese (SPA).
+ * A megfelelo HTML elemek feladattipustol fuggo megjelenite, vagy elrejtese (SPA).
  * @param {*} taskType feladat tipusa
  * @param {*} resultsOfcircuit a halozatanalizis utan a szervertol kapott eredmeny objektum
  * @param {*} prefixObj a scanPrefix() fuggveny altal beallitott perfixumokat tartalmazo objektum
  */
-function startTimer(taskType, resultsOfcircuit, prefixObj){
-    //console.log("$(\"#usrSetTime\").val():" +$("#usrSetTime").val());
-    //if ($("#usrSetTime").val() !== ""){
-        stdTime = $("#usrSetTime").val();
-    //} 
-    console.log("$(\"#usrSetTime\").val() starttimer:" +$("#usrSetTime").val());
-    countdownMin = +stdTime - 1;
-    countdownSec = 59;
-    //$("#usrSetTime").val(tempStdTime);
+function startTimer(taskType, resultsOfcircuit, prefixObj, time){
+    var setTime;
+    countdownMin = +time;
+    countdownSec = 1;
+    $("#usrSetTime").val(stdTime);
     $("#checkUsrResult").prop("disabled", false);
     $("#result").html('');
     $("#content").html('');
@@ -277,10 +338,11 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     $("#taskLabel1").show();
     $(".resultOUT").hide();
     $(".resultOUTRes").hide();
-    $("input").val("");
     $(".resultOUT").val("");
     $(".resultOUTRes").val("");
-    $("userIN").val("");
+    $(".usrIN").val("");
+    $(".usrINRes").val("");
+    $("#tskID").val("");
     $("#content").append("<h2>" + title + "</h2>");
     $("#content").append("<p style=\"font-size: 18px;\">" + descript + "</p>");
     $("#hrUP").show();
@@ -348,7 +410,7 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     let linkOfFalstad = '<b><a href="' + resultsOfcircuit.link + '" target="_blank">Falstad</a></b>';
 
     /**
-     * Az a fuggveny figyeli a a feladatra kiadott idot es mikor lejar, elerhetove teszi a megfelelo HTML elemeket.
+     * Az a fuggveny figyeli a feladatra kiadott idot es mikor lejar, elerhetove teszi a megfelelo HTML elemeket, valamint a megoldasra mutato FALSTAD linket.
      */
     timer = setInterval(function () {
         countdownSec--;
@@ -398,6 +460,7 @@ function startTimer(taskType, resultsOfcircuit, prefixObj){
     }, 1000);
     
 }
+
 /**
  * Megallapitja, hogy a parameterul kapott ellenallas egyeduli-e az adott agban.
  * @param {*} multiRes tobb ellenallast is tartalmazo ag adat tombje

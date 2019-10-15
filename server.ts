@@ -26,7 +26,7 @@
   * NODE Szerver letrehozasa itt tortenik. Itt van lekezelve a kliens - szerver kapcsolat.
   */
 import { Main } from './main';
-import { Serverfunction } from './scripts/serverfunction';
+import { Serverfunction } from './serverfunction';
 
 
 const path = require('path');
@@ -68,9 +68,14 @@ app.get('/generate', function (req, res) {
     type = +req.query.type;
     if (req.query.id !== undefined){
         serverFunction.deleteDatatoJSONfile(req.query.id);
-        console.log('nem megoldott feladat, ujrageneralas tortent');
+        console.log('Nem megoldott feladat, ujrageneralas tortent');
     }
-    main.start(type);
+    if (req.query.mesh !== undefined){
+        main.start(type,+req.query.mesh);
+    } else {
+        main.start(type);
+    }
+    
     let generateResponse = main.getTaskResults();
     res.send(JSON.stringify(generateResponse));
     serverFunction.addDatatoJSONfile(main.getTaskResults());

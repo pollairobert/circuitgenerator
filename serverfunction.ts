@@ -29,23 +29,6 @@ export class Serverfunction{
     private fs = require('fs');
     private checkTimeToSolvedTask: number = 50*60*1000; //ennyi ideig hagyja meg a generateLOG fajlban a generalt de valamiert nem torolt (pl oldal ujratoltes) feladatot.
     
-    public selectDescription(){
-        
-        //let valami = "IDE JON EGY VALTOZO";
-        //let test = "itt kell "+valami+ " kivalasztodni";
-        //let descript = this.fs.readFileSync('descript/description.json',"utf8");
-        //descript = descript.trim()
-        //console.log(descript);
-
-        //let result = JSON.parse(descript);
-        //let result2 = JSON.parse(result)
-        /*this.fs.readFile('descript/description.json',"utf8", (err, data) => {
-            if (err) throw err;
-            let result = JSON.parse(data);
-            console.log("student: "+data);
-        });*/
-    }
-
     /**
      * A kapott adatot (feladat informaciok) lementi a generateLOG.json fajlba.  
      * @param pushData a menteni kivant adat
@@ -163,12 +146,5 @@ export class Serverfunction{
      */
     public intervalTimer(){
         setInterval(() =>this.checkSolving(),this.checkTimeToSolvedTask);
-        //return setInterval(this.checkSolving(),this.checkTimeToSolvedTask);
     }
-    /*public getCheckTime():number {
-        return this.checkTimeToSolvedTask;
-    }
-    public getFs(){
-        return this.fs;
-    }*/
 }

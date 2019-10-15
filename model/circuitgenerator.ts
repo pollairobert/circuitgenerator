@@ -46,14 +46,14 @@ export class CircuitGenerator {
      * Aramkor generalasaert felelos. Ezzel a metodussal kezdodik a teljes halozat generalasaert felelos tobbi metodus meghivasa
      * @param type aramkor tipusa adott struktura alapjan 
      */
-    public generateCircuit(type: number): Circuit{
-        //console.log('meghivtak a generalosfugvt');
+    public generateCircuit(type: number, pieceOfMesh? :number): Circuit{
         let circuit: Circuit;
-        circuit = this.buildFinalCircuit(new Circuit(this.circuitParameterLimits(type)),type);
-        //if (type < 11) {
-            this.setCircuitElementCoordinatesArrayToFalstadExport(circuit, type);
-        //}
-        
+        if (pieceOfMesh !== undefined){
+            circuit = this.buildFinalCircuit(new Circuit(this.circuitParameterLimits(type, pieceOfMesh)),type);
+        } else {
+            circuit = this.buildFinalCircuit(new Circuit(this.circuitParameterLimits(type)),type);
+        }
+        this.setCircuitElementCoordinatesArrayToFalstadExport(circuit, type);
         return circuit;
     }
     /**
@@ -65,10 +65,12 @@ export class CircuitGenerator {
      *               [feszultseggeneratorok maximalis szama],
      * @param type ez a parameter reprezentalja a halozat 'nehezsegi' szintjet
      */
-    public circuitParameterLimits(type: number): number[]{
+    public circuitParameterLimits(type: number, pieceOfMesh?: number): number[]{
         //let parameters = new Array(5);
         let parameters: number[] = [];
         let temptype: number = type;
+        let minMesh: number = 3;
+        let maxMesh: number = 5;
         if (type >= 4 && type < 8){
             temptype = 4;
         }
@@ -77,6 +79,16 @@ export class CircuitGenerator {
         }
         if (type === 10){
             temptype = 3;
+        }
+        if (pieceOfMesh !== undefined){
+            temptype = 4;
+            if (pieceOfMesh < 11){
+                minMesh = pieceOfMesh;
+                maxMesh = pieceOfMesh;
+            } else {
+                minMesh = 3;
+                maxMesh = 10;
+            }
         }
         switch (temptype){
             //Egyszeru feszoszto, csak feszgennel
@@ -127,14 +139,15 @@ export class CircuitGenerator {
                               this.randomIntNumber(3,3)];
                 break;
             }
+            //Random hurokszamu feladatokhoz tartozo parameterlista
             case 4: {
-                parameters = [this.randomIntNumber(10,10),
+                parameters = [this.randomIntNumber(maxMesh,minMesh),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
-                              this.randomIntNumber(15,8)];
+                              this.randomIntNumber(20,12)];
                 break;
             }
-            case 5: {
+            /*case 5: {
                 parameters = [this.randomIntNumber(30,30),
                               this.randomIntNumber(15,4),
                               this.randomIntNumber(0,0),
@@ -154,8 +167,8 @@ export class CircuitGenerator {
                               this.randomIntNumber(0,0),
                               this.randomIntNumber(2,2)];
                 break;
-            }
-            case 9: {
+            }*/
+            default: {
                 break;
             }
         }
@@ -185,7 +198,6 @@ export class CircuitGenerator {
      */
     public buildFinalCircuit(circuit: Circuit, type: number): Circuit{
         let circParam: Object = circuit.getParameters();
-        //console.log("circParam: "+ circParam);
         /**
          * Azokat az ag tipusokat es hozzajuk tartozo hurok szamokat tartalmazza, 
          * amielyekhez megengedtt a kovetkezo hurok csatlakoztatatsa.
@@ -209,37 +221,20 @@ export class CircuitGenerator {
         } else if (type === 2.1){
             randomCommonBranchPair = [1,3];
         } 
-        //console.log('randomCommonBranchPair: '+randomCommonBranchPair);
-        //console.log('START - meshPieceArray: '+meshPieceArray);
-        //console.log(typeof(meshPieceArray));
         let multiConnection: boolean = true;
         let meshes: Mesh[] = circuit.getMeshes();
         if (type <= 6 || type === 9 || type === 10){
             for (let h = 1; h <= numberOfMeshes; h++){
-                
-                //this.removeElementInAnyArray(h,meshPieceArray);
-                //console.log('FOR - meshPieceArray: '+meshPieceArray+ ',for: '+h);
-                //console.log(meshPieceArray);
-                //let tempBranchPairs: number[] = [];
                 let connectBranches: number[] = [];
                 let choiseMeshNumber: number;
-                //let multiConnection: boolean;
                 let multiBranch: number[];
-                //let tempPieceArray: number[] = meshPieceArray.slice();
-                ///console.log('tempPieceArray: '+tempPieceArray);
-                //let randomFor: number;
                 if (type === 1 || type === 1.1 || type === 2 || type === 2.1 || type === 3 || type === 3.1 || type === 9 || type === 10){
-                    //randomFor = 1;
                     if (h < numberOfMeshes){
                         choiseMeshNumber = (h+1); 
-                        //console.log('choiseMeshNumber: '+choiseMeshNumber);
-                        //this.removeElementInAnyArray(choiseMeshNumber,tempPieceArray);
                         if (type === 2.1 && h > 1){
                             randomCommonBranchPair = this.randomChoiseTwoAnything([0,2],[2,0]);
                         }
                         connectBranches.push(randomCommonBranchPair[0],randomCommonBranchPair[1],choiseMeshNumber,h);
-                        //.log('connectBranches - for: '+connectBranches);
-                        
                         meshes[h-1].setCommonBranchesArray(connectBranches);
                         this.addConnectedBranchFromCommmonBranchesArrayElement(circuit,h,choiseMeshNumber);
                     } 
@@ -932,7 +927,7 @@ export class CircuitGenerator {
                 break;
             }
             case 10: {
-                console.log("10 -es feladat");
+                //console.log("10 -es feladat");
                 let resistance: number = this.randomE6Resistance();
                 if (msh1CommBrArray[0][0] === 1){
                     mesh1branches[1].setBranchElements(new Resistance(resistance));
@@ -944,11 +939,11 @@ export class CircuitGenerator {
                             mesh1branches[0].setBranchElements(new Resistance(resistance));
                             this.circuitResistorsDetails.push("R1 "+resistance);
 
-                            console.log("mesh1branches[0]");
-                            console.log(mesh1branches[0]);
-                            for (var i = 0; i < mesh1branches[0].getBranchElements.length; i++){
-                                console.log("mesh1branches[0].getBranchElements[i]: "+mesh1branches[0].getBranchElements[i]);
-                            }
+                            //console.log("mesh1branches[0]");
+                            //console.log(mesh1branches[0]);
+                            //for (var i = 0; i < mesh1branches[0].getBranchElements.length; i++){
+                                //console.log("mesh1branches[0].getBranchElements[i]: "+mesh1branches[0].getBranchElements[i]);
+                            //}
                             if (mesh1branches[0].getBranchElements()[0].getId() !== "V"){
                                 mesh1branches[0].getBranchElements()[0].setNumber(1);
 
@@ -967,11 +962,11 @@ export class CircuitGenerator {
                         //if (this.percentRandom(this.randomIntNumber(100,1))){
                             mesh1branches[2].setBranchElements(new Resistance(resistance));
                             this.circuitResistorsDetails.push("R1 "+resistance);
-                            console.log("mesh1branches[2]");
-                            console.log(mesh1branches[2]);
-                            for (var i = 0; i < mesh1branches[2].getBranchElements.length; i++){
-                                console.log("mesh1branches[2].getBranchElements[i]: "+ mesh1branches[2].getBranchElements[i]);
-                            }
+                            //console.log("mesh1branches[2]");
+                            //console.log(mesh1branches[2]);
+                            //for (var i = 0; i < mesh1branches[2].getBranchElements.length; i++){
+                                //console.log("mesh1branches[2].getBranchElements[i]: "+ mesh1branches[2].getBranchElements[i]);
+                            //}
                             if (mesh1branches[2].getBranchElements()[0].getId() !== "V"){
                                 mesh1branches[2].getBranchElements()[0].setNumber(1);
                             } else {

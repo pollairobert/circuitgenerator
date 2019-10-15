@@ -27,7 +27,7 @@ exports.__esModule = true;
  * NODE Szerver letrehozasa itt tortenik. Itt van lekezelve a kliens - szerver kapcsolat.
  */
 var main_1 = require("./main");
-var serverfunction_1 = require("./scripts/serverfunction");
+var serverfunction_1 = require("./serverfunction");
 var path = require('path');
 var express = require('express');
 var app = express();
@@ -65,9 +65,14 @@ app.get('/generate', function (req, res) {
     type = +req.query.type;
     if (req.query.id !== undefined) {
         serverFunction.deleteDatatoJSONfile(req.query.id);
-        console.log('nem megoldott feladat, ujrageneralas tortent');
+        console.log('Nem megoldott feladat, ujrageneralas tortent');
     }
-    main.start(type);
+    if (req.query.mesh !== undefined) {
+        main.start(type, +req.query.mesh);
+    }
+    else {
+        main.start(type);
+    }
     var generateResponse = main.getTaskResults();
     res.send(JSON.stringify(generateResponse));
     serverFunction.addDatatoJSONfile(main.getTaskResults());

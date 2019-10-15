@@ -28,29 +28,21 @@
   * Ez felelos a zoomert es a mozgatasert, valamint hogy SVG-ben jelenik meg a canvasban a tartalom.
   */
 
-  /**
-   * Betolti a halozat kirajzolasat megjelnito feluletet.
-   */
+/**
+ * Betolti a halozat kirajzolasat megjelnito feluletet.
+ */
 function loadCanvas(){	
-    //$("#canvas").show();
-    
     /**
      * Ebben a reszben van beallitva, hogy a generalt halozat a kanvas kozepere keruljon.
-     * A kiszamolt ket ellentetes sarokpont segitsegevel.
+     * A kiszamolt ket ellentetes sarokpont segitsegevel. Valamint dinamikus canvas meret beallitas.
      */
-    //var xscale = 3.9;
-    //var yscale = 3.9;
-    //ctx.scale(2,2);
     var coordinateArray = circuitResults.falstadTXT;
-    //translateX = 375;
-    //translateY = 375;
+    var scale;
     negativX = Infinity;
     negativY = Infinity;
     positiveX = -Infinity;
     positiveY = -Infinity;
     findDrawingCircuitPositivAndNegativCorners(coordinateArray);
-    var scale;
-    //ctx.scale(xscale,yscale);
     var circuitMaxWidth = Math.abs(negativX - positiveX);
     var circuitMaxHeight = Math.abs(negativY - positiveY);
     if (circuitMaxWidth > circuitMaxHeight) {
@@ -68,316 +60,128 @@ function loadCanvas(){
     if (circuitMaxHeight > 350){
         scale = 1.2;
     }
-    /*if (+select >= 4 && +select < 9){
-        scale = 1.5;
-    }*/
-    //console.log("scale:" +scale);
-   
     ctx.canvas.width = scale*(Math.abs(negativX - positiveX) + (+select === 8 ? 170: 100));
     ctx.canvas.height = scale*(Math.abs(negativY - positiveY) + 50);
-    //console.log("ctx.canvas.width:" +ctx.canvas.width);
-    //console.log("ctx.canvas.height:" +ctx.canvas.height);
     ctx.scale(scale,scale);
-    //ctx.canvas.height = 750;
-    //ctx.canvas.width = 750;
-    //ctx.scale(xscale,yscale);
     translateX = ctx.canvas.width / 2;
     translateY = ctx.canvas.height / 2;
-    //console.log("translateX:" +translateX)
-    //console.log("translateY:" +translateY)
     translateOffset = [(negativX + positiveX)/2,(negativY + positiveY)/2];
-    //translateX -= translateOffset[0];
-    //translateY -= translateOffset[1];
     translateX = (translateX / scale) - translateOffset[0];
     translateY = (translateY / scale) - translateOffset[1];
     ctx.translate(translateX + ((+select === 8 ? 40 : 0)), translateY);
-    //ctx.canvas.width = Math.abs(negativX - positiveX);
-    //ctx.canvas.height = Math.abs(negativY - positiveY);
-    //console.log("negativX:" +negativX)
-    //console.log("negativY:" +negativX)
-    //console.log("positiveX:" +positiveX)
-    //console.log("positiveY:" +positiveY)
-    //console.log("kozeppontX:" +translateOffset[0])
-    //console.log("kozeppontY:" +translateOffset[1])
-
-    //trackTransforms(ctx);
     
     /**
-     * A halozat megrajzolasat vegzo fuggveny.
+     * A halozat megrajzolasa innen kezdodik.
      */
-    //function redraw(){
-       
-        // Alternatively:
-        ctx.save();
-        ctx.setTransform(1,0,0,1,0,0);
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.restore();
-        var directionType;
-        var isCommonBranch = [];
-        /**
-         * Ebben a ciklusban tortenik a halozat komponenseinek kirajzolasa a canvasra feladattipusokkent kicsit elteroen.
-         */
-        for(var i = 0; i < coordinateArray.length; i++){
-            var branchCoordinates = coordinateArray[i].split(" ");
-            //console.log("branchCoordinates:" + branchCoordinates);
-            directionType = setDirectionTypeToCircuitElementInCanvas(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4]);
-            if (branchCoordinates[0] !== "p"){
+    ctx.save();
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.restore();
+    var directionType;
+    var isCommonBranch = [];
+    /**
+     * Ebben a ciklusban tortenik a halozat komponenseinek kirajzolasa a canvasra feladattipusokkent kicsit elteroen.
+     */
+    for(var i = 0; i < coordinateArray.length; i++){
+        var branchCoordinates = coordinateArray[i].split(" ");
+        directionType = setDirectionTypeToCircuitElementInCanvas(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4]);
+        if (branchCoordinates[0] !== "p"){
+            ctx.beginPath();
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.moveTo(branchCoordinates[1],branchCoordinates[2]);
+            ctx.lineTo(branchCoordinates[3],branchCoordinates[4]);
+            ctx.stroke();
+        }
+        if (branchCoordinates[0] === "v"){
+            var voltage = +branchCoordinates[8];
+            var number = +branchCoordinates[12]
+            setStartingPositionsToElementsDrawing(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4],directionType);
+            ctx.beginPath();
+            ctx.arc(arcX, arcY, 10, 0, 2*Math.PI,false);
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.fillStyle = 'transparent';
+            ctx.fill();
+            ctx.stroke();
+            if (+select === 10){
+                drawValueOfElements(number,startValueXofVoltageSource,startValueYofVoltageSource,"V");
+            } else {
+                drawValueOfElements(voltage,startValueXofVoltageSource,startValueYofVoltageSource,"V");
+                drawVoltageSourceDirection(directionType,arrowX,arrowY,(+select === 9 ? Math.abs(voltage): voltage));
+            }
+        }
+        if (branchCoordinates[0] === "r"){
+            var kiloOhm = +branchCoordinates[6]/1000;
+            var number = +branchCoordinates[7]
+            setStartingPositionsToElementsDrawing(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4],directionType);
+            ctx.beginPath();
+            ctx.strokeStyle = '#000000';
+            ctx.rect(startRectX, startRectY, dimensionOfRect[0], dimensionOfRect[1]);
+            ctx.lineWidth = 2;
+            ctx.fillStyle = 'white';
+            ctx.fill();
+            ctx.stroke();
+            if (+select === 9 || +select === 10){
+                drawValueOfElements(number,startValueXofResistor,startValueYofResistor,"r");
+            } else {
+                drawValueOfElements(kiloOhm,startValueXofResistor,startValueYofResistor,"r");
+            }
+        }
+        if (branchCoordinates[0] === "p"){
+            if (+select <6 || +select === 8 || +select === 9 || +select === 10){
+                draw2Pole(branchCoordinates,directionType);
+                if (+select === 8){
+                    drawConnectedVoltageSource();
+                }
+            }
+            if (+select === 6){
+                var kiloOhm = circuitResults.resValue/1000;
                 ctx.beginPath();
                 ctx.strokeStyle = '#000000';
                 ctx.lineWidth = 2;
                 ctx.moveTo(branchCoordinates[1],branchCoordinates[2]);
                 ctx.lineTo(branchCoordinates[3],branchCoordinates[4]);
                 ctx.stroke();
-            }
-            if (branchCoordinates[0] === "v"){
-                var voltage = +branchCoordinates[8];
-                var number = +branchCoordinates[12]
+
                 setStartingPositionsToElementsDrawing(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4],directionType);
                 ctx.beginPath();
-                ctx.arc(arcX, arcY, 10, 0, 2*Math.PI,false);
-                ctx.strokeStyle = '#000000';
-                ctx.lineWidth = 2;
-                ctx.fillStyle = 'transparent';
-                ctx.fill();
-                ctx.stroke();
-                if (+select === 10){
-                    drawValueOfElements(number,startValueXofVoltageSource,startValueYofVoltageSource,"V");
-                } else {
-                    drawValueOfElements(voltage,startValueXofVoltageSource,startValueYofVoltageSource,"V");
-                    drawVoltageSourceDirection(directionType,arrowX,arrowY,(+select === 9 ? Math.abs(voltage): voltage));
-                }
-                
-            }
-            if (branchCoordinates[0] === "r"){
-                var kiloOhm = +branchCoordinates[6]/1000;
-                var number = +branchCoordinates[7]
-                setStartingPositionsToElementsDrawing(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4],directionType);
-                ctx.beginPath();
-                ctx.strokeStyle = '#000000';
+                ctx.strokeStyle = '#ff0000';
                 ctx.rect(startRectX, startRectY, dimensionOfRect[0], dimensionOfRect[1]);
                 ctx.lineWidth = 2;
-                ctx.fillStyle = 'white';
+                ctx.fillStyle = '#ff0000';
                 ctx.fill();
                 ctx.stroke();
-                if (+select === 9 || +select === 10){
-                    drawValueOfElements(number,startValueXofResistor,startValueYofResistor,"r");
-                } else {
-                    drawValueOfElements(kiloOhm,startValueXofResistor,startValueYofResistor,"r");
-                }
+                drawValueOfElements(kiloOhm,startValueXofResistor,startValueYofResistor,"r");
             }
-            if (branchCoordinates[0] === "p"){
-                if (+select <6 || +select === 8 || +select === 9 || +select === 10){
-                    draw2Pole(branchCoordinates,directionType);
-                    if (+select === 8){
-                        drawConnectedVoltageSource();
-                    }
-                }
-                if (+select === 6){
-                    var kiloOhm = circuitResults.resValue/1000;
-                    ctx.beginPath();
-                    ctx.strokeStyle = '#000000';
-                    ctx.lineWidth = 2;
-                    ctx.moveTo(branchCoordinates[1],branchCoordinates[2]);
-                    ctx.lineTo(branchCoordinates[3],branchCoordinates[4]);
-                    ctx.stroke();
-
-                    setStartingPositionsToElementsDrawing(branchCoordinates[1],branchCoordinates[2],branchCoordinates[3],branchCoordinates[4],directionType);
-                    ctx.beginPath();
-                    ctx.strokeStyle = '#ff0000';
-                    ctx.rect(startRectX, startRectY, dimensionOfRect[0], dimensionOfRect[1]);
-                    ctx.lineWidth = 2;
-                    ctx.fillStyle = '#ff0000';
-                    ctx.fill();
-                    ctx.stroke();
-                    drawValueOfElements(kiloOhm,startValueXofResistor,startValueYofResistor,"r");
-                }
-                if (+select === 7){
-                    ctx.beginPath();
-                    ctx.strokeStyle = '#16600b';
-                    ctx.lineWidth = 2;
-                    ctx.moveTo(branchCoordinates[1],branchCoordinates[2]);
-                    ctx.lineTo(branchCoordinates[3],branchCoordinates[4]);
-                    ctx.stroke();
-                    draw2Pole(branchCoordinates,directionType);
-                    var centerOfbranch = [meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]),meanOfCoordinates(branchCoordinates[2],branchCoordinates[4])];
-                    ctx.drawImage(img_vmeter, centerOfbranch[0] - 20, centerOfbranch[1] - 20);
-                }
-            }
-            
-            if (branchCoordinates[branchCoordinates.length-2] === "com"){
-                isCommonBranch.push(coordinateArray[i]);
-                /*ctx.beginPath();
-                ctx.arc(branchCoordinates[1], branchCoordinates[2], 3, 0, 2*Math.PI,false);
-                ctx.strokeStyle = '#000000';
-                ctx.lineWidth = 2;
-                ctx.fillStyle = '#000000';
-                ctx.fill();
-                ctx.stroke();
-
+            if (+select === 7){
                 ctx.beginPath();
-                ctx.arc(branchCoordinates[3], branchCoordinates[4], 3, 0, 2*Math.PI,false);
-                ctx.strokeStyle = '#000000';
+                ctx.strokeStyle = '#16600b';
                 ctx.lineWidth = 2;
-                ctx.fillStyle = '#000000';
-                ctx.fill();
-                ctx.stroke();*/
+                ctx.moveTo(branchCoordinates[1],branchCoordinates[2]);
+                ctx.lineTo(branchCoordinates[3],branchCoordinates[4]);
+                ctx.stroke();
+                draw2Pole(branchCoordinates,directionType);
+                var centerOfbranch = [meanOfCoordinates(branchCoordinates[1],branchCoordinates[3]),meanOfCoordinates(branchCoordinates[2],branchCoordinates[4])];
+                ctx.drawImage(img_vmeter, centerOfbranch[0] - 20, centerOfbranch[1] - 20);
             }
         }
-        drawJunction(isCommonBranch);
-        //console.log(junction);
-        /*
-        //Az aramkori rajz bal felso sarka
-        //-x -y
-        ctx.beginPath();
-        ctx.arc(negativX, negativY, 3, 0, 2*Math.PI,false);
-        ctx.strokeStyle = '#ff0000';
-        ctx.lineWidth = 2;
-        ctx.fillStyle = '#ff0000';
-        ctx.fill();
-        ctx.stroke();
-        
-        
-        //Az aramkori rajz jobb also sarka
-        //+x +y
-        ctx.beginPath();
-        ctx.arc(positiveX, positiveY, 3, 0, 2*Math.PI,false);
-        ctx.strokeStyle = '#ff0000';
-        ctx.lineWidth = 2;
-        ctx.fillStyle = '#ff0000';
-        ctx.fill();
-        ctx.stroke();
-
-        //Aramkori rajz kozeppontja
-        ctx.beginPath();
-        ctx.arc(translateOffset[0], translateOffset[1], 3, 0, 2*Math.PI,false);
-        ctx.strokeStyle = '#ff0000';
-        ctx.lineWidth = 2;
-        ctx.fillStyle = '#ff0000';
-        ctx.fill();
-        ctx.stroke();
-
-        //0,0 koordinata megjelolese
-        ctx.beginPath();
-        ctx.arc(0, 0, 4, 0, 2*Math.PI,false);
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 1;
-        ctx.fillStyle = '#4df50a';
-        ctx.fill();
-        ctx.stroke();
-        */
-    //}
-    //redraw();
-    
-    /*var lastX=canvas.width, lastY=canvas.height;
-    var dragStart,dragged;
-    canvas.addEventListener('mousedown',function(evt){
-        document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
-        lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
-        lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
-        dragStart = ctx.transformedPoint(lastX,lastY);
-        dragged = false;
-    },false);
-    canvas.addEventListener('mousemove',function(evt){
-        lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
-        lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
-        //console.log("x: "+lastX);
-        //console.log("y: "+lastY);
-        dragged = true;
-        if (dragStart){
-            var pt = ctx.transformedPoint(lastX,lastY);
-            ctx.translate(pt.x-dragStart.x,pt.y-dragStart.y);
-            redraw();
-        }
-    },false);
-    canvas.addEventListener('mouseup',function(evt){
-        dragStart = null;
-        if (!dragged) zoom(evt.shiftKey ? -1 : 1 );
-    },false);
-
-    var scaleFactor = 1.005; //zoomolas lepteke
-    var zoom = function(clicks){
-        var pt = ctx.transformedPoint(lastX-translateX,lastY-translateY);  //a translate-el el kellett tolni, hogy jo helyen zoomoljon
-        ctx.translate(pt.x,pt.y);
-        var factor = Math.pow(scaleFactor,clicks);
-        ctx.scale(factor,factor);
-        ctx.translate(-pt.x,-pt.y);
-        redraw();
+        if (branchCoordinates[branchCoordinates.length-2] === "com"){
+            isCommonBranch.push(coordinateArray[i]);
+           }
     }
-
-    var handleScroll = function(evt){
-        var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
-        if (delta) zoom(delta);
-        return evt.preventDefault() && false;
-    };
-    canvas.addEventListener('DOMMouseScroll',handleScroll,false);
-    canvas.addEventListener('mousewheel',handleScroll,false);*/
+    drawJunction(isCommonBranch);
 };
 
-// Adds ctx.getTransform() - returns an SVGMatrix
-// Adds ctx.transformedPoint(x,y) - returns an SVGPoint
-/*function trackTransforms(ctx){
-    var svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
-    var xform = svg.createSVGMatrix();
-    ctx.getTransform = function(){ return xform; };
-    
-    var savedTransforms = [];
-    var save = ctx.save;
-    ctx.save = function(){
-        savedTransforms.push(xform.translate(0,0));
-        return save.call(ctx);
-    };
-    var restore = ctx.restore;
-    ctx.restore = function(){
-        xform = savedTransforms.pop();
-        return restore.call(ctx);
-    };
-
-    var scale = ctx.scale;
-    ctx.scale = function(sx,sy){
-        xform = xform.scaleNonUniform(sx,sy);
-        return scale.call(ctx,sx,sy);
-    };
-    var rotate = ctx.rotate;
-    ctx.rotate = function(radians){
-        xform = xform.rotate(radians*180/Math.PI);
-        return rotate.call(ctx,radians);
-    };
-    var translate = ctx.translate;
-    ctx.translate = function(dx,dy){
-        xform = xform.translate(dx,dy);
-        return translate.call(ctx,dx,dy);
-    };
-    var transform = ctx.transform;
-    ctx.transform = function(a,b,c,d,e,f){
-        var m2 = svg.createSVGMatrix();
-        m2.a=a; m2.b=b; m2.c=c; m2.d=d; m2.e=e; m2.f=f;
-        xform = xform.multiply(m2);
-        return transform.call(ctx,a,b,c,d,e,f);
-    };
-    var setTransform = ctx.setTransform;
-    ctx.setTransform = function(a,b,c,d,e,f){
-        xform.a = a;
-        xform.b = b;
-        xform.c = c;
-        xform.d = d;
-        xform.e = e;
-        xform.f = f;
-        return setTransform.call(ctx,a,b,c,d,e,f);
-    };
-    var pt  = svg.createSVGPoint();
-    ctx.transformedPoint = function(x,y){
-        pt.x=x; pt.y=y;
-        return pt.matrixTransform(xform.inverse());
-    }
-}*/
 /**
  * Torli  canvas tartalmat.
  */
 function clearCanvas() {  
     canvas.width = canvas.width;
 }
+
 /**
- * Megrajzolja a halozat againak csatlakozasi pontjat a szakirodalom szerinte csatlakozasi jelolessel (pont)
+ * Megrajzolja a halozat againak csatlakozasi pontjat a szakirodalom szerinte csatlakozasi jelolessel (2 agnal tobb csatlakozo csomopontok)
  * @param {*} commonBranchDetails a kozos agak adatait tartalmazo tomb
  */
 function drawJunction(commonBranchDetails) {
@@ -411,14 +215,13 @@ function drawJunction(commonBranchDetails) {
     for (var i = 0; i < junction.length; i++){
         var junctoinCoord = junction[i].split(",");
         ctx.beginPath();
-        ctx.arc(junctoinCoord[0], junctoinCoord[1], 2, 0, 2*Math.PI,false);
-        //ctx.strokeStyle = '#000000';
-        //ctx.lineWidth = 2;
+        ctx.arc(junctoinCoord[0], junctoinCoord[1], 2.5, 0, 2*Math.PI,false);
         ctx.fillStyle = '#000000';
         ctx.fill();
         ctx.stroke();
     }
 }
+
 /**
  * A "feszultseggenerator hozzadasa" tipusu feladathoz rajzolja ki a kapcsolodo halozatreszt,
  * ami a generatort es az ellenallasat reprezentalja
@@ -749,12 +552,6 @@ function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
             ctx.moveTo(startX-3,startY+28);
             ctx.lineTo(startX+3,startY+28);
             
-            /*ctx.moveTo(startX,startY);
-            ctx.lineTo(startX,startY+28);
-            ctx.moveTo(startX,startY+0.5);
-            ctx.lineTo(startX-3,startY+0.5+3);
-            ctx.moveTo(startX,startY+0.5);
-            ctx.lineTo(startX+3,startY+0.5+3);*/
         } else {
             ctx.moveTo(startX-3,startY);
             ctx.lineTo(startX+3,startY);
@@ -762,13 +559,6 @@ function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
             ctx.lineTo(startX,startY+3);
             ctx.moveTo(startX-3,startY+28);
             ctx.lineTo(startX+3,startY+28);
-
-            /*ctx.moveTo(startX,startY+20);
-            ctx.lineTo(startX,startY);
-            ctx.moveTo(startX,startY+19.5);
-            ctx.lineTo(startX-3,startY+19.5-3);
-            ctx.moveTo(startX,startY+19.5);
-            ctx.lineTo(startX+3,startY+19.5-3);*/
         }
     }
     if(branchDirectionType === "1"){
@@ -779,13 +569,6 @@ function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
             ctx.lineTo(startX-28,startY+3);
             ctx.moveTo(startX-31,startY);
             ctx.lineTo(startX-25,startY);
-
-            /*ctx.moveTo(startX,startY);
-            ctx.lineTo(startX-20,startY);
-            ctx.moveTo(startX-0.5,startY);
-            ctx.lineTo(startX-0.5-3,startY-3);
-            ctx.moveTo(startX-0.5,startY);
-            ctx.lineTo(startX-0.5-3,startY+3);*/
         } else {
             ctx.moveTo(startX-3,startY);
             ctx.lineTo(startX+3,startY);
@@ -793,13 +576,6 @@ function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
             ctx.lineTo(startX,startY+3);
             ctx.moveTo(startX-31,startY);
             ctx.lineTo(startX-25,startY);
-
-            /*ctx.moveTo(startX-20,startY);
-            ctx.lineTo(startX,startY);
-            ctx.moveTo(startX-19.5,startY);
-            ctx.lineTo(startX-19.5+3,startY-3);
-            ctx.moveTo(startX-19.5,startY);
-            ctx.lineTo(startX-19.5+3,startY+3);*/
         }
     }
     if(branchDirectionType === "2"){
@@ -810,13 +586,6 @@ function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
             ctx.lineTo(startX,startY+3+28);
             ctx.moveTo(startX-3,startY+28);
             ctx.lineTo(startX+3,startY+28);
-
-            /*ctx.moveTo(startX,startY);
-            ctx.lineTo(startX,startY+20);
-            ctx.moveTo(startX,startY+0.5);
-            ctx.lineTo(startX-3,startY+0.5+3);
-            ctx.moveTo(startX,startY+0.5);
-            ctx.lineTo(startX+3,startY+0.5+3);*/
         } else {
             ctx.moveTo(startX-3,startY);
             ctx.lineTo(startX+3,startY);
@@ -824,13 +593,6 @@ function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
             ctx.lineTo(startX,startY+3);
             ctx.moveTo(startX-3,startY+28);
             ctx.lineTo(startX+3,startY+28);
-
-            /*ctx.moveTo(startX,startY+20);
-            ctx.lineTo(startX,startY);
-            ctx.moveTo(startX,startY+19.5);
-            ctx.lineTo(startX-3,startY+19.5-3);
-            ctx.moveTo(startX,startY+19.5);
-            ctx.lineTo(startX+3,startY+19.5-3);*/
         }
     }
     if(branchDirectionType === "3"){
@@ -841,13 +603,6 @@ function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
             ctx.lineTo(startX-28,startY+3);
             ctx.moveTo(startX-31,startY);
             ctx.lineTo(startX-25,startY);
-
-            /*ctx.moveTo(startX,startY);
-            ctx.lineTo(startX-20,startY);
-            ctx.moveTo(startX-0.5,startY);
-            ctx.lineTo(startX-0.5-3,startY-3);
-            ctx.moveTo(startX-0.5,startY);
-            ctx.lineTo(startX-0.5-3,startY+3);*/
         } else {
             ctx.moveTo(startX-3,startY);
             ctx.lineTo(startX+3,startY);
@@ -855,14 +610,6 @@ function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
             ctx.lineTo(startX,startY+3);
             ctx.moveTo(startX-31,startY);
             ctx.lineTo(startX-25,startY);
-            
-
-            /*ctx.moveTo(startX-20,startY);
-            ctx.lineTo(startX,startY);
-            ctx.moveTo(startX-19.5,startY);
-            ctx.lineTo(startX-19.5+3,startY-3);
-            ctx.moveTo(startX-19.5,startY);
-            ctx.lineTo(startX-19.5+3,startY+3);*/
         }
     }
     ctx.stroke();
@@ -874,7 +621,6 @@ function drawVoltageSourceDirection(branchDirectionType,startX, startY, value){
  * @param {*} coord2 
  */
 function meanOfCoordinates(coord1, coord2){
-    //console.log("meanofcoord: "+ (+coord1 + coord2)/2);
     return ((Number(coord1)+Number(coord2))/2);
 }
 

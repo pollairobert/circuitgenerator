@@ -24,28 +24,19 @@ THE SOFTWARE.
 -->
 <html>
 	<head>
-    <!--<title>Thevenin online generator</title>-->
     <title>Thevenin online generátor</title>
       <meta charset="utf-8">
-      <!--<script src="jquery-3.4.1.min.js"></script>-->
       <script
 			  src="https://code.jquery.com/jquery-3.4.1.js"
 			  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
 			  crossorigin="anonymous"></script>
-      <!--<script src="jquery/jquery-3.4.1.min.js"></script>-->
       <script src="scripts/clientVariables.js" type="text/javascript"></script>
       <script src="scripts/circuitjQuery.js" ></script>
       <script src="scripts/clientFunction.js" type="text/javascript"></script>
       <script src="scripts/canvas.js" type="text/javascript"></script>
-      
-      <!--<script src="descript/description.json" type="application/json"></script>-->
-      <!--<link rel="stylesheet" type="text/css" href="css/generator.css">-->
-
-      
-	</head>
+  </head>
 	
 	<body>
-    <!--<h1>Circuit Generator to the Thevenin Theorem</h1>-->
     <h1 >Áramkör generátor a Thevenin tétel alkalmazásához</h1>
     
     <!--Task type (difficulty):-->
@@ -63,19 +54,16 @@ THE SOFTWARE.
       <option value="8" >Feszültséggenerátor beiktatása (Random hálózat) </option>
       <option value="9" >Áramkör keresése I.</option>
       <option value="10" >Áramkör keresése II.</option>
-
     </select>
     
     <button  id="generate" >Hálózat generálása</button><br>
-    <input class="checkbox" id="setTime" type="checkbox" name="time" value="time"><label for="setTime" id="labst">Saját időkorlát megadása percben (alap: <span id="stdTime"></span> perc) </label>
-    <input id="usrSetTime" type="number" value="" min="1" hidden><br>
+
+    <input class="checkbox" id="setTime" type="checkbox" name="time" value="time"><label for="setTime" id="labst">Saját időkorlát megadása percben <span id="stdTime"></span></label>
+    <input id="usrSetTime" type="number" value="" min="1" max="120" hidden><br>
     
-    
-    
-    <input class="checkbox" id="meshSelect" type="checkbox" name="meshnumb" value="ownmesh" hidden><label for="meshSelect" id="labms" hidden>Hurokszám kiválasztás (alap: random 3 - 5) </label>
+    <input class="checkbox" id="meshSelect" type="checkbox" name="meshnumb" value="ownmesh" hidden><label for="meshSelect" id="labms" hidden>Hurokszám kiválasztás <span id="stdMesh">(alap: random 3 - 5)</span></label>
     <select id="meshChoise" size=”1” hidden>
-      <option value="rnd" selected>Random(3-10)</option>
-      <option value="3">3</option>
+      <option value="3" selected>3</option>
       <option value="4" >4</option>
       <option value="5" >5</option>
       <option value="6" >6</option>
@@ -83,9 +71,8 @@ THE SOFTWARE.
       <option value="8" >8</option>
       <option value="9" >9</option>
       <option value="10" >10</option>
-      <option value="10" >Random(11 - 30)</option>
+      <option value="11">Random (3-10)</option>
     </select>
-    <!--<button id="clear" >Clear Canvas</button> -->
     <br>
     
     <hr/>
