@@ -21,12 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-import { CircuitElements } from "./interfaceCircElement";
-import { Wire } from "./wire";
-import { Resistance } from "./resistance";
-import { CurrentSource } from "./currentsource";
-import { VoltageSource } from "./voltagesource";
-import { Branch, branchCounter } from "./branch";
+import { Branch } from "./branch";
 
 export var meshCounter: number = 1;
 export function resetMeshCounter(){
@@ -51,8 +46,7 @@ export class Mesh {
     private commonBranchesArray: number[][] = []; 
     private meshBranchesSize: number[] = [0,0,0,0]; //a megfelelo tipusu branchekhez tartozo ertekek (0,1,2,3)
 
-    constructor(/*maxmesh: number, res: number, cur: number, volt: number, comm: number*/) {
-        //this.maxMeshNumb = maxmesh;
+    constructor() {
         this.meshNumber = meshCounter;
         meshCounter++;
     }
@@ -71,8 +65,6 @@ export class Mesh {
     }
     public setBranches(branch: Branch): void {
         this.branches.push(branch);
-        //this.meshResistance += branch.getBranchResistance();
-        //this.meshVoltage += branch.getBranchVoltage();
     }
     public setCommonBranchesArray(array: number[]): void{
         this.commonBranchesArray.push(array);
@@ -95,6 +87,11 @@ export class Mesh {
     public cloneCommonBranchesArray(mshCBA: number[][]): void{
         this.commonBranchesArray = mshCBA;
     }
+
+    /**
+     * A parameterben kapott hurok klonjat kesziti el.
+     * @param msh hurok
+     */
     public cloneMesh(msh: Mesh): Mesh {
         var meshClone: Mesh = new Mesh();
         meshClone.cloneMeshNumber(msh.getMeshNumber());

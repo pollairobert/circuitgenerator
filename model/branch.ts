@@ -22,11 +22,6 @@
  * THE SOFTWARE.
  */
 import { CircuitElements } from "./interfaceCircElement";
-import { Wire } from "./wire";
-import { Resistance } from "./resistance";
-import { CurrentSource } from "./currentsource";
-import { VoltageSource } from "./voltagesource";
-import { Mesh } from "./mesh";
 import * as math from 'mathjs';
 
 export var branchCounter: number = 1;
@@ -37,9 +32,13 @@ export class Branch {
     private direction: boolean;
     private current: number = 0;
     private resistanceOfBranch: number[] = [];
-    /*alapesetben a kozossegi ertek az agat tartalmazo hurok szama.
-    Ha tobb hurokhoz tartozik a hurkok akkor azok szamanak osszege*/
+    
+    /**
+     * alapesetben a kozossegi ertek az agat tartalmazo hurok szama.
+     * Ha tobb hurokhoz tartozik a hurkok akkor azok szamanak osszege
+     * */
     private common: number = 0; 
+    
     private branchResistance = 0;
     private branchVoltage = 0;
     private branchElements: CircuitElements[] = [];
@@ -82,7 +81,10 @@ export class Branch {
         this.branchNumber = branchCounter;
         branchCounter++;
     }
-
+    /**
+     * Beallitja az ag allanallaserteket a megadott ertekre.
+     * @param resNumber ertekadas
+     */
     public setResistanceOfBranch(resNumber: number): void {
         this.resistanceOfBranch.push(resNumber);
     }
@@ -93,17 +95,14 @@ export class Branch {
     public setCurrent(currentVector: math.MathType): void {
         let curVect: Object = currentVector.valueOf(); 
         if (this.current === 0) {
-            //console.log('COMMON: '+this.common);
             if (this.common === this.meshNumber) {
                 this.current = curVect[this.meshNumber-1];
-                //this.current = +currentVector.subset(math.index(this.meshNumber,0));
             } else {
                 this.current = curVect[this.meshNumber-1] - curVect[(this.common-this.meshNumber)-1]
-                //console.log('KOZOS AGAK ARAMA: '+this.current);
-                //this.current = +currentVector.subset(math.index(this.meshNumber,0)) - (+currentVector.subset(math.index(this.common-this.meshNumber,0)));
             }
         }
     }
+
     /**
      * Az ag altal tarolt halozati elemek hozzaadasa.
      * A kulonbozo tipustol fuggoen beallitja az ag halozatanilizishez szukseges ertekeit (feszultseg, ellenallas).
@@ -113,19 +112,15 @@ export class Branch {
         this.branchElements.push(element);
         if (element.getId() === 'R') {
             this.branchResistance += element.getResistance();
-            //mesh.setMeshResistance(element.getResistance());
         }
         if (element.getId() === 'V') {
             if (element.getDirection() === true) {
                 this.branchVoltage += (element.getVoltage() * (-1));
-                //mesh.setMeshVoltage(element.getVoltage());
             } else {
                 this.branchVoltage += element.getVoltage();
-                //mesh.setMeshVoltage(element.getVoltage() * (-1));
             }
         }
         if (element.getId() === 'C') {
-        
             if (element.getDirection() === true) {
                 this.branchVoltage += element.getVoltage();
             } else {
@@ -133,6 +128,7 @@ export class Branch {
             }
         }
     }
+
     /**
      * Beallitja az agat a keresett ket polusnak, amely felol helyettesitjuk a halozatot
      * @param pole true az ertek ha ez az ag lesz az
@@ -140,6 +136,7 @@ export class Branch {
     public setTh2Pole(pole: boolean): void {
         this.thevenin2pole = pole;
     }
+
     /**
      * Beallitja az agnak a kozossegi erteket ugy, hogy a csatlakozo ag hurokszamat hozzaadja a sajatjahoz
      * @param meshNum a csatlakozo hurok szama
@@ -147,12 +144,24 @@ export class Branch {
     public setCommon(meshNum: number): void{
         this.common += meshNum;
     }
+    /**
+     * Beallitja a parameterul kapot ertekre az ag hosszat. Megjeleniteskor van ra szukseg.
+     * @param size A megjeleniteshez szokseges meret
+     */
     public setBranchSize(size: number): void{
         this.branchSize = size;
     }
+
+    /**
+     * Torli az ag ellenallas erteket.
+     */
     public clearBranchResistance(): void{
         this.branchResistance = 0;
     }
+
+    /**
+     * Az objektum property-einek klonozasat vegzo fuggvenyek.
+     */
     private cloneSetCommon(com: number): void{
         this.common = com;
     }
@@ -178,12 +187,10 @@ export class Branch {
         this.meshNumber = num;
     }
     
-    public deleteLastBranchElement(): void {
-        this.branchElements.pop();
-    }
-    public deleteAllBranchElements(): void {
-        this.branchElements = [];
-    }
+    /**
+     * A parameterul kapott ag objektum teljas klonjat kesziti el.
+     * @param branch klonozando ag objektum
+     */
     public cloneBranch(branch: Branch): Branch{
         var branchClone: Branch = new Branch(branch.getType(),(branch.getMeshNumber()-1));   
         branchClone.cloneMeshNumber(branch.getMeshNumber());
@@ -195,10 +202,13 @@ export class Branch {
         branchClone.cloneSetThev2Pole(branch.getTh2Pole())
         for(var i = 0; i < branch.getBranchElements().length; i++){
             branchClone.cloneSetBrancElements(branch.getBranchElements()[i].cloneElements(branch.getBranchElements()[i]));
-            //branchClone.setBranchElements(branch.getBranchElements()[i].cloneElements(branch.getBranchElements()[i]));
         }
         return branchClone;
     }
+    
+    /**
+     * Osztaly getter metodusok a propertykhez.
+     */
     public getResistanceOfBranch(): number[]{
         return this.resistanceOfBranch;
     }

@@ -1,4 +1,5 @@
-﻿/* 
+"use strict";
+/*
  * The MIT License
  *
  * Copyright 2019 Robert Pollai <pollairobert at gmail.com>, University of Szeged, Department of Technical Informatics.
@@ -21,35 +22,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
- /**
-  * NODE Szerver letrehozasa itt tortenik. Itt van lekezelve a kliens - szerver kapcsolat.
-  */
-import { Main } from './model/main';
-import { Serverfunction } from './serverfunction';
-
-
-const path = require('path');
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-
-let fs = require('fs');
-let serverFunction: Serverfunction = new Serverfunction();
+exports.__esModule = true;
+/**
+ * NODE Szerver letrehozasa itt tortenik. Itt van lekezelve a kliens - szerver kapcsolat.
+ */
+var main_1 = require("./model/main");
+var serverfunction_1 = require("./serverfunction");
+var path = require('path');
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+var fs = require('fs');
+var serverFunction = new serverfunction_1.Serverfunction();
 serverFunction.checkExistTaskLOGfile();
-
 serverFunction.intervalTimer();
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('svg'));
 app.use(express.static('scripts'));
-app.get('/', (req,res)=> {
+app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname + '/index.html'));
 });
-app.get('/scripts/circuitjQuery.js', (req,res)=> {
+app.get('/scripts/circuitjQuery.js', function (req, res) {
     res.sendFile(path.join(__dirname + '/scripts/circuitjQuery.js'));
 });
-app.get('/scripts/clientVariables.js', (req,res)=> {
+app.get('/scripts/clientVariables.js', function (req, res) {
     res.sendFile(path.join(__dirname + '/scripts/clientVariables.js'));
 });
 app.get('/scripts/clientFunction.js', function (req, res) {
@@ -63,29 +60,29 @@ app.get('/css/generator.css', function (req, res) {
 });
 app.get('/generate', function (req, res) {
     serverFunction.checkExistTaskLOGfile();
-    let main: Main = new Main();
-    let type: number;
+    var main = new main_1.Main();
+    var type;
     type = +req.query.type;
-    if (req.query.id !== undefined){
+    if (req.query.id !== undefined) {
         serverFunction.deleteDatatoJSONfile(req.query.id);
         console.log('Nem megoldott feladat, ujrageneralas tortent');
     }
-    if (req.query.mesh !== undefined){
-        main.start(type,+req.query.mesh);
-    } else {
+    if (req.query.mesh !== undefined) {
+        main.start(type, +req.query.mesh);
+    }
+    else {
         main.start(type);
     }
-    
-    let generateResponse = main.getTaskResults();
+    var generateResponse = main.getTaskResults();
     res.send(JSON.stringify(generateResponse));
     serverFunction.addDatatoJSONfile(main.getTaskResults());
 });
-app.get('/timeout', (req, res) => {
-    let id = req.query.id;
+app.get('/timeout', function (req, res) {
+    var id = req.query.id;
     serverFunction.deleteDatatoJSONfile(id);
     res.send('Task removed!');
 });
-let port = process.env.PORT || 3000;
-let server=app.listen(port,function() {
-    console.log('Listening to '+port+' port');
+var port = process.env.PORT || 3000;
+var server = app.listen(port, function () {
+    console.log('Listening to ' + port + ' port');
 });

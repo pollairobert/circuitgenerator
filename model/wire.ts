@@ -31,16 +31,13 @@ export class Wire implements CircuitElements {
     private voltage: number = 0;
     private coordinate: number[] = [];
     private elementSize: number;
-    /*constructor(){
-        wireCounter += 1;
-    }*/
+    
     public setInverzDirection(): void {
         throw new Error("Method not implemented.");
     }
     public cloneElements(element: CircuitElements): CircuitElements {
         var wireClone: CircuitElements = new Wire();
         wireClone.setCurrent(element.getCurrent());
-        //wireClone.setCoordinate(element.getCoordinate()[0],element.getCoordinate()[1],element.getCoordinate()[2],element.getCoordinate()[3]);
         return wireClone;
     }
     public setNumber(num: number): void {
