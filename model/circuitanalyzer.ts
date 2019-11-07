@@ -79,7 +79,7 @@ export class CircuitAnalyzer {
 
     /**
      * A parameterben megadott aramkor objektum ellenallas-matrixat allitja elo.
-     * Altalanos metodus, ami ami a dokumentacioban leirt modon generalt barmely halozathoz hasznalhato.
+     * Altalanos metodus, ami a dokumentacioban leirt modon generalt barmely halozathoz hasznalhato.
      * @param circuit aramkor objektumot var
      */
     public calculateResistanceMatrix(circuit: Circuit): math.Matrix {
@@ -101,6 +101,7 @@ export class CircuitAnalyzer {
                 }
             }
         }
+        console.log(resistanceMatrix);
         return resistanceMatrix;
     }
     

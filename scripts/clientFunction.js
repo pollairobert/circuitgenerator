@@ -395,8 +395,8 @@ function startTimer(taskType, resultsOfcircuit, prefixObj, time){
         $("#value1").hide();
         $(".resultOUT").show();
         $("#searchCirc").append("<h3>A hálózat rendelkezésre álló adatai:</h3>");
-        $("#taskLabel1").html("U2 bemenet bipoláris feszültség tartománya: ");
-        $("#taskLabel2").html("A - B pontok között megengedett unipoláris feszültség tartomány: ");
+        $("#taskLabel1").html("U2 bemenet bipoláris feszültségtartománya: ");
+        $("#taskLabel2").html("A - B pontok között megengedett unipoláris feszültségtartomány: ");
         $("#out1").html("<b> -"+task10inputVoltage+ " - +" +task10inputVoltage+ " <b style=\"color:red;\">V</b>");
         $("#out2").html("<b> 0 - "+circuitResults.expectedOutVoltage+" <b style=\"color:red;\">V</b>");
         $("#out2").append("<hr>");
