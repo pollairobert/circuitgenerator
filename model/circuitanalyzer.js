@@ -43,7 +43,7 @@ var CircuitAnalyzer = /** @class */ (function () {
     };
     /**
      * A parameterben megadott aramkor objektum ellenallas-matrixat allitja elo.
-     * Altalanos metodus, ami ami a dokumentacioban leirt modon generalt barmely halozathoz hasznalhato.
+     * Altalanos metodus, ami a dokumentacioban leirt modon generalt barmely halozathoz hasznalhato.
      * @param circuit aramkor objektumot var
      */
     CircuitAnalyzer.prototype.calculateResistanceMatrix = function (circuit) {
@@ -66,6 +66,7 @@ var CircuitAnalyzer = /** @class */ (function () {
                 }
             }
         }
+        console.log(resistanceMatrix);
         return resistanceMatrix;
     };
     /**
