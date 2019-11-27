@@ -104,13 +104,13 @@ var description = {
             "Legalább 3 tizedesjegy pontosságú legyen!"
     },
     "type3": {
-        "Kettős feszültségosztó (2 generátor)": 
+        "Feszültségosztó (2 generátor)": 
             "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>"+
             "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
             "Legalább 3 tizedesjegy pontosságú legyen!"
     },
     "type3.1": {
-        "Kettős feszültségosztó (3 generátor)": 
+        "Feszültségosztó (3 generátor)": 
             "Old meg az A - B pontok közötti hálózat Thevenin helyattesítését!<br>"+
             "Figyelj az eredmény megadásánál zárójelben szereplő prefixum szerinti értékadásra!<br>"+
             "Legalább 3 tizedesjegy pontosságú legyen!"
