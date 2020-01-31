@@ -36,6 +36,14 @@ var fs = require('fs');
 var serverFunction = new serverfunction_1.Serverfunction();
 serverFunction.checkExistTaskLOGfile();
 serverFunction.intervalTimer();
+
+app.use((req, res, next) => {
+
+    res.header('Access-Control-Allow-Origin', '*');
+  
+    next();
+  
+});
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('svg'));
