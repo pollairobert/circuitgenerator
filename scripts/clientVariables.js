@@ -25,7 +25,7 @@
 /**
  * Kliens oldali valtozok deklaralasa.
  */
-var host = "https://circuitgenerator.appspot.com";
+var host = "https://infinite-journey-05783.herokuapp.com";
 //var host = "http://localhost:3000";
 //var host = "http://87.229.23.189:3000";
 //var host = "http://192.168.1.12:3000";
